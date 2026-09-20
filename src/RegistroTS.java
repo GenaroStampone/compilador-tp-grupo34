@@ -10,7 +10,7 @@ public class RegistroTS{ //Representa una entrada individual dentro de la TS
         this.tipoToken = tipoToken;
         this.nroLinea = nroLinea;
         this.valorNum = valorNum;
-        this.longitud = longitud;
+        this.longitud = lexema.length();
     }
 
     public String getLexema() {
