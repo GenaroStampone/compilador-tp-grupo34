@@ -1,5 +1,5 @@
 public class Token {
-    private idToken int;
+    private int idToken;
     private RegistroTS punteroTS;
 
     public Token(int idToken, RegistroTS punteroTS) { // Constructor para tokens que representan multiples lexemas con atributo, por ejemplo para identificadores y literales.
