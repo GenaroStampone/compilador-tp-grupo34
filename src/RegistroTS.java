@@ -9,7 +9,7 @@ public class RegistroTS{ //Representa una entrada individual dentro de la TS
         this.lexema = lexema;
         this.tipoToken = tipoToken;
         this.nroLinea = nroLinea;
-        this.valorNum = valorNum;
+        this.valorNum = 0.0; // Inicializamos el valor numérico a 0.0 por defecto
         this.longitud = lexema.length();
     }
 

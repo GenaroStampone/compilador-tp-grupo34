@@ -5,7 +5,7 @@ public class TablaDeSimbolos {
     private HashMap<String, RegistroTS> tabla;
     private HashSet<String> palabrasReservadas;
 
-    public TavlaDeSimbolos() {
+    public TablaDeSimbolos() {
         this.tabla = new HashMap<>();
         this.palabrasReservadas = new HashSet<>();
         cargarPalabrasReservadas();
@@ -45,7 +45,7 @@ public class TablaDeSimbolos {
     }
 
     public void imprimirTabla() {
-        System.out.println("\n\=======================================================");
+        System.out.println("\n=======================================================");
         System.out.println(" CONTENIDO DE LA TABLA DE SÍMBOLOS "); 
         System.out.println("======================================================="); 
         System.out.printf("%-25s | %-12s | %-8s | %-10s\\n", "LEXEMA", "TIPO TOKEN", "LÍNEA", "VALOR/LONG"); 
@@ -53,6 +53,6 @@ public class TablaDeSimbolos {
         for (RegistroTS reg : tabla.values()) {
             System.out.printf("%-25s | %-12d | %-8d | %-10.2f\\n", reg.getLexema(), reg.getTipoToken(), reg.getNroLinea(), reg.getValorNum());
         }
-        System.out.println("\=======================================================\n");
+        System.out.println("=======================================================\n");
     }
 }
