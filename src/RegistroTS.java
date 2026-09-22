@@ -7,7 +7,11 @@ public class RegistroTS{ //Representa una entrada individual dentro de la TS
 
     // Constructor para ID, Cadenas y Tokens sin valor numérico inicial 
     public RegistroTS(String lexema, int tipoToken, int nroLinea) { 
-        this(lexema, tipoToken, nroLinea, 0.0); 
+        this.lexema = lexema;
+        this.tipoToken = tipoToken;
+        this.nroLinea = nroLinea;
+        this.valorNum = 0.0;
+        this.longitud = lexema.length();
     }
 
     // Constructor para constantes numericas

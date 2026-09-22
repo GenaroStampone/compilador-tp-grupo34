@@ -1,0 +1,60 @@
+{{}}
+
+{{ 
+  =======================================================
+  1. COMENTARIO MULTILÍNEA Y PALABRAS RESERVADAS
+  =======================================================
+}}
+
+class MiClase begin
+    if (variable1 := 100$us) begin
+        pout {Hola mundo};
+    end_if;
+
+    {{ 
+      =======================================================
+      2. PRUEBA DE IDENTIFICADOR DE MÁS DE 22 CARACTERES
+      =======================================================
+      Debe emitir un Warning y truncarlo en los primeros 22
+    }}
+    identificadorSuperLargoQueExcedeLos22Caracteres := 50s;
+
+    {{ 
+      =======================================================
+      3. PRUEBA DE CONSTANTES ENTERAS CORTAS 's' (0 a 255)
+      =======================================================
+    }}
+    valValido := 255s;
+    valInvalido := 300s;
+
+    {{ 
+      =======================================================
+      4. PRUEBA DE CONSTANTES FLOTANTES 'd' (PUNTO FLOTANTE)
+      =======================================================
+    }}
+    pi := 3.14159d;
+    exponente := 1.5d+30;
+
+    {{ 
+      =======================================================
+      5. OPERADORES COMPUESTOS Y COMPARADORES
+      =======================================================
+    }}
+    if (a >= b) begin
+        c := (a != b) == (x <= y);
+    end_if;
+
+    {{ 
+      =======================================================
+      6. ERRORES LÉXICOS (CARACTERES NO PERMITIDOS / COLUMNA 17)
+      =======================================================
+    }}
+    x := % + @;
+
+    {{ 
+      =======================================================
+      7. ERROR DE CADENA DE 1 LÍNEA NO CERRADA
+      =======================================================
+    }}
+    {Cadena que no se cierra antes del salto de linea
+end

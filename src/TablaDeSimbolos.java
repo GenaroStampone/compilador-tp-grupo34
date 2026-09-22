@@ -51,14 +51,48 @@ public class TablaDeSimbolos {
     }
 
     public void imprimirTabla() {
-        System.out.println("\n=======================================================");
-        System.out.println(" CONTENIDO DE LA TABLA DE SÍMBOLOS "); 
-        System.out.println("======================================================="); 
-        System.out.printf("%-25s | %-12s | %-8s | %-10s\\n", "LEXEMA", "TIPO TOKEN", "LÍNEA", "VALOR/LONG"); 
-        System.out.println("-------------------------------------------------------");
+        String lineaSeparadora = "-----------------------------------------------------------------------------------";
+        String lineaEncabezado  = "===================================================================================";
+
+        System.out.println("\n" + lineaEncabezado);
+        System.out.println("                         CONTENIDO DE LA TABLA DE SÍMBOLOS                         ");
+        System.out.println(lineaEncabezado);
+        
+        System.out.printf("%-25s | %-10s | %-6s | %-6s | %-12s%n", "LEXEMA", "TIPO TOKEN", "LÍNEA", "LONG", "VALOR");
+        System.out.println(lineaSeparadora);
+
         for (RegistroTS reg : tabla.values()) {
-            System.out.printf("%-25s | %-12d | %-8d | %-10.2f\\n", reg.getLexema(), reg.getTipoToken(), reg.getNroLinea(), reg.getValorNum());
+            String lexemaLimpio = reg.getLexema()
+                                    .replaceAll("\r?\n", "\\\\n")
+                                    .replaceAll("\t", "\\\\t");
+
+            // Longitud del lexema (para todos los registros)
+            int longitud = reg.getLexema().length();
+            
+            // Valor numérico (solo para constantes)
+            String valorStr = "-";
+
+            if (reg.getTipoToken() == 258 || reg.getTipoToken() == 259) {
+                if (reg.getValorNum() != 0.0) {
+                    valorStr = String.format("%.2f", reg.getValorNum());
+                } else {
+                    try {
+                        String numPart = lexemaLimpio.split("\\$")[0]; // Extrae la parte numérica antes del '$'
+                        double val = Double.parseDouble(numPart);
+                        valorStr = String.format("%.2f", val);
+                    } catch (Exception e) {
+                        valorStr = String.format("%.2f", reg.getValorNum());
+                    }
+                }
+            }
+
+            System.out.printf("%-25.25s | %-10d | %-6d | %-6d | %-12s%n", 
+                    lexemaLimpio, 
+                    reg.getTipoToken(), 
+                    reg.getNroLinea(), 
+                    longitud,
+                    valorStr);
         }
-        System.out.println("=======================================================\n");
+        System.out.println(lineaEncabezado + "\n");
     }
 }
