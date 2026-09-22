@@ -1,14 +1,14 @@
-// Caso de Prueba Nro5: Cadenas de caracteres y comentarios
-// Comportamiento Esperado del Compilador: Verificacion de cadenas/comentarios validos y reporte de errores por falta de cierre.
+{{Caso de Prueba Nro5: Cadenas de caracteres y comentarios}}
+{{Comportamiento Esperado del Compilador: Verificacion de cadenas/comentarios validos y reporte de errores por falta de cierre.}}
 
 begin
-    /* Comentario multilinea valido
-    que ocupa mas de una linea. */ {{ Hola }}
-    // Cadena valida de 1 linea.
+    {{Comentario multilinea valido
+    que ocupa mas de una linea.}}
+    {{Cadena valida de 1 linea.}}
     pout { ¡Hola Mundo! };
-    // Error Lexico: Cadena de una linea que intenta ocupar mas de una linea.
+    {{Error Lexico: Cadena de una linea que intenta ocupar mas de una linea.}}
     pout{ Hola
     Mundo };
-    // Error Lexico: Comentario multilinea que no cierra al llegar al final del archivo.
+    {{Error Lexico: Comentario multilinea que no cierra al llegar al final del archivo.}}
     {{ Este comentario multilinea nunca se cierra...
 end

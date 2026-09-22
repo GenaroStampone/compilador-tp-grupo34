@@ -1,8 +1,8 @@
-// Caso de Prueba Nro1: Codigo sintacticamente y lexicamente correcto.
-// Comportamiento Esperado del Compilador: Tira de tokens completa, 0 errores y 0 warnings.
+{{Caso de Prueba Nro1: Codigo sintacticamente y lexicamente correcto.}}
+{{Comportamiento Esperado del Compilador: Tira de tokens completa, 0 errores y 0 warnings.}}
 
 begin
-    // Declaración de variables con palabras reservadas en mayúsculas y minúsculas
+    {{Declaración de variables con palabras reservadas en mayúsculas y minúsculas}}
     USHORTINT limite_inferior := 0$us;
     ushortint limite superior := 255$us;
 
