@@ -1,3 +1,5 @@
+package lexico;
+
 public class Token {
     private int idToken;
     private RegistroTS punteroTS;

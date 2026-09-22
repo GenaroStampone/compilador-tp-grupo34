@@ -1,3 +1,5 @@
+import lexico.AnalizadorLexico; 
+import lexico.TablaDeSimbolos; 
 
 import java.io.File; // Importa la clase File para verificar la existencia del archivo de código fuente
 

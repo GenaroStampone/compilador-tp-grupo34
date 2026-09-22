@@ -1,3 +1,5 @@
+package lexico;
+
 public class ParserVal {
     public int ival;
     public double dval;

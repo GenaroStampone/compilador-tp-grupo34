@@ -1,3 +1,5 @@
+package lexico;
+
 public class RegistroTS{ //Representa una entrada individual dentro de la TS
     private String lexema;
     private int tipoToken;
