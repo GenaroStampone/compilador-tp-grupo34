@@ -4,7 +4,7 @@
 begin
     {{Constantes USHORTINT (Rango valido: 0 a 255)}}
     USHORTINT min_valido := 0$us;
-    USHORTINT max_valido := 255$us.
+    USHORTINT max_valido := 255$us;
     {{Constante USHORTINT (Fuera de rango).}}
     USHORTINT error_min := -1$us;
     USHORTINT error_max := 256$us;
