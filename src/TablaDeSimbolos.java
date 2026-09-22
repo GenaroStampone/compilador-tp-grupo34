@@ -35,9 +35,15 @@ public class TablaDeSimbolos {
         return tabla.get(lexema);
     }
 
+    //Alta para ID, Cadenas y Tokens sin valor numérico inicial
     public RegistroTS alta(String lexema, int tipoToken, int nroLinea) {
+        return alta(lexema, tipoToken, nroLinea, 0.0);
+    }
+
+    //Alta para constantes numericas
+    public RegistroTS alta(String lexema, int tipoToken, int nroLinea, double valorNum) {
         if (!tabla.containsKey(lexema)) {
-            RegistroTS registro = new RegistroTS(lexema, tipoToken, nroLinea);
+            RegistroTS registro = new RegistroTS(lexema, tipoToken, nroLinea, valorNum);
             tabla.put(lexema, registro);
             return registro;
         }

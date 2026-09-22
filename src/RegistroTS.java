@@ -5,11 +5,17 @@ public class RegistroTS{ //Representa una entrada individual dentro de la TS
     private double valorNum;
     private int longitud;
 
-    public RegistroTS(String lexema, int tipoToken, int nroLinea) {
+    // Constructor para ID, Cadenas y Tokens sin valor numérico inicial 
+    public RegistroTS(String lexema, int tipoToken, int nroLinea) { 
+        this(lexema, tipoToken, nroLinea, 0.0); 
+    }
+
+    // Constructor para constantes numericas
+    public RegistroTS(String lexema, int tipoToken, int nroLinea, double valorNum) {
         this.lexema = lexema;
         this.tipoToken = tipoToken;
         this.nroLinea = nroLinea;
-        this.valorNum = 0.0; // Inicializamos el valor numérico a 0.0 por defecto
+        this.valorNum = valorNum;
         this.longitud = lexema.length();
     }
 
