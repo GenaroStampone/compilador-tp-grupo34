@@ -40,6 +40,7 @@ public class AnalizadorLexico {
     public static final int EXTENDS = 287;
     public static final int TODF = 288;
     public static final int TOUS = 289;
+    public static final int Token_EOF = 0; // Constante para compatibilidad con pruebas y clientes de EOF
 
     // Símbolos con valor ASCII directo (referencias opcionales)
     public static final int CORCHETE_ABRE = '[';
@@ -63,6 +64,7 @@ public class AnalizadorLexico {
 
     private List<String> errores = new ArrayList<>();
     private List<String> warnings = new ArrayList<>();
+    private List<Token> tokensDetectados = new ArrayList<>();
 
     // Matrices del Autómata
     private int[][] TE_mat;
@@ -352,6 +354,62 @@ public class AnalizadorLexico {
             int caracterLeido = obtenerSiguienteCaracter();
 
             if (caracterLeido == -1) {
+                if (estadoActual == 1) { // Finalizar identificador o palabra reservada en EOF
+                    char delimitador = ' ';
+                    int col = mapearColumna(delimitador);
+                    int tok = (AS_mat[1][col] != null) ? AS_mat[1][col].ejecutar(delimitador) : -1;
+                    estadoActual = 0;
+                    this.ultimoCaracter = -1;
+                    if (tok != -1) {
+                        Token t = (this.yylval != null && this.yylval.obj instanceof RegistroTS) 
+                                ? new Token(tok, (RegistroTS) this.yylval.obj) 
+                                : new Token(tok);
+                        tokensDetectados.add(t);
+                        return tok;
+                    }
+                }
+                if (estadoActual == 12 || estadoActual == 14) { // Comentario multilínea sin cerrar
+                    String err = String.format("Línea %d: Error Léxico: Comentario multilínea no cerrado al final del archivo", nroLinea);
+                    errores.add(err);
+                    System.err.println(err);
+                    estadoActual = 0;
+                }
+                if (estadoActual == 11 || estadoActual == 13) { // Cadena sin cerrar
+                    String err = String.format("Línea %d: Error Léxico: Cadena de 1 línea no cerrada al final del archivo", nroLinea);
+                    errores.add(err);
+                    System.err.println(err);
+                    estadoActual = 0;
+                }
+                if (estadoActual == 6) { // ':'
+                    estadoActual = 0;
+                    Token t = new Token((int) ':');
+                    tokensDetectados.add(t);
+                    return (int) ':';
+                }
+                if (estadoActual == 15) { // '='
+                    estadoActual = 0;
+                    Token t = new Token((int) '=');
+                    tokensDetectados.add(t);
+                    return (int) '=';
+                }
+                if (estadoActual == 16) { // '!'
+                    String err = String.format("Línea %d: Error Léxico: Carácter '!' no esperado sin '='", nroLinea);
+                    errores.add(err);
+                    System.err.println(err);
+                    estadoActual = 0;
+                }
+                if (estadoActual == 17) { // '<'
+                    estadoActual = 0;
+                    Token t = new Token((int) '<');
+                    tokensDetectados.add(t);
+                    return (int) '<';
+                }
+                if (estadoActual == 18) { // '>'
+                    estadoActual = 0;
+                    Token t = new Token((int) '>');
+                    tokensDetectados.add(t);
+                    return (int) '>';
+                }
                 return 0; // EOF
             }
 
@@ -367,6 +425,10 @@ public class AnalizadorLexico {
             estadoActual = TE_mat[estadoActual][columna];
 
             if (tokenDevuelto != -1) {
+                Token t = (this.yylval != null && this.yylval.obj instanceof RegistroTS) 
+                        ? new Token(tokenDevuelto, (RegistroTS) this.yylval.obj) 
+                        : new Token(tokenDevuelto);
+                tokensDetectados.add(t);
                 return tokenDevuelto;
             }
 
@@ -658,7 +720,9 @@ public class AnalizadorLexico {
 
     // AS29: Emitir "Error Léxico: Cadena de 1 línea no cerrada". Limpiar la cadena mal formada. Incrementar contador de líneas.
     private int AS29(char c) {
-        System.err.printf("Línea %d: Error Léxico: Cadena de 1 línea no cerrada%n", nroLinea); // Informa en consola el error de la cadena no cerrada
+        String err = String.format("Línea %d: Error Léxico: Cadena de 1 línea no cerrada", nroLinea);
+        errores.add(err);
+        System.err.println(err);
         buffer.setLength(0); // Vacía el buffer que guardaba la cadena incompleta
         if (c == '\n') {     // Revisa si el carácter que provocó el corte fue un salto de línea
             nroLinea++;      // Incrementa el contador de líneas
@@ -689,8 +753,10 @@ public class AnalizadorLexico {
             buffer.setLength(0);
             return (int) '.';
         } else {
-            System.err.printf("Línea %d: Error Léxico: Constante flotante mal formada (se esperaba dígito tras el punto) '%s'%n",
+            String err = String.format("Línea %d: Error Léxico: Constante flotante mal formada (se esperaba dígito tras el punto) '%s'",
                     nroLinea, buffer.toString());
+            errores.add(err);
+            System.err.println(err);
             buffer.setLength(0);
             return -1;
         }
@@ -747,6 +813,9 @@ public class AnalizadorLexico {
             ultimoCaracter = -1;
             return c;
         }
+        if (lectorFuente == null) {
+            return -1;
+        }
         try {
             return lectorFuente.read();
         } catch (IOException e) {
@@ -772,5 +841,47 @@ public class AnalizadorLexico {
 
     public List<String> getWarnings() {
         return warnings;
+    }
+
+    public List<Token> getTokensDetectados() {
+        return tokensDetectados;
+    }
+
+    public Token obtenerSiguienteToken() {
+        int tok = yylex();
+        if (tok == 0) {
+            return new Token(Token_EOF);
+        }
+        if (this.yylval != null && this.yylval.obj instanceof RegistroTS) {
+            return new Token(tok, (RegistroTS) this.yylval.obj);
+        }
+        return new Token(tok);
+    }
+
+    public void imprimirReporteErroresYWarnings() {
+        if (warnings.isEmpty() && errores.isEmpty()) {
+            System.out.println("No se detectaron errores ni advertencias léxicas.");
+            return;
+        }
+        if (!warnings.isEmpty()) {
+            System.out.println("--- ADVERTENCIAS LÉXICAS (" + warnings.size() + ") ---");
+            for (String w : warnings) {
+                System.out.println(w);
+            }
+        }
+        if (!errores.isEmpty()) {
+            System.out.println("--- ERRORES LÉXICOS (" + errores.size() + ") ---");
+            for (String e : errores) {
+                System.out.println(e);
+            }
+        }
+    }
+
+    public void cerrar() {
+        if (lectorFuente != null) {
+            try {
+                lectorFuente.close();
+            } catch (IOException ignored) {}
+        }
     }
 }

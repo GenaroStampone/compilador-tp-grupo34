@@ -1,11 +1,16 @@
 {{Caso de Prueba Nro1: Codigo sintacticamente y lexicamente correcto.}}
 {{Comportamiento Esperado del Compilador: Tira de tokens completa, 0 errores y 0 warnings.}}
 
+programa_correcto_1;
+
+{{Declaración de variables con palabras reservadas en mayúsculas y minúsculas}}
+USHORTINT limite_inferior, limite_superior;
+DOUBLEF valor_real, constante_exp, flotante_sin_entera;
+
 begin
-    {{Declaración de variables con palabras reservadas en mayúsculas y minúsculas}}
-    USHORTINT limite_inferior := 0$us;
-    ushortint limite superior := 255$us;
-    DOUBLEF valor_real := 15.2;
-    doublef constante_exp := 3.0d-5;
-    DOUBLEF flotante_sin_entera := .6;
-end
+    limite_inferior := 0$us;
+    limite_superior := 255$us;
+    valor_real := 15.2;
+    constante_exp := 3.0d-5;
+    flotante_sin_entera := .6;
+end;

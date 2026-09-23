@@ -1,0 +1,14 @@
+#!/bin/bash
+# Wrapper ejecutable para el Compilador Grupo 34 (TP2)
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+# Localizar classpath del compilador
+if [ -d "$SCRIPT_DIR/bin" ]; then
+    CP="$SCRIPT_DIR/bin:$SCRIPT_DIR/src"
+elif [ -d "$SCRIPT_DIR/compilador-tp-grupo34/bin" ]; then
+    CP="$SCRIPT_DIR/compilador-tp-grupo34/bin:$SCRIPT_DIR/compilador-tp-grupo34/src"
+else
+    CP="."
+fi
+
+java -cp "$CP" Main "$@"

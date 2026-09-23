@@ -1,11 +1,16 @@
 {{Caso de Prueba Nro2: Truncado de identificadores largos.}}
 {{Comportamiento Esperado del Compilador: Warnings por superacion del limite de 22 caracteres.}}
 
+programa_warnings_identificadores;
+
+{{Identificador exacto de 22 caracteres (Valido, sin warning).}}
+USHORTINT variable_de_veintidos;
+{{Identificador de 35 caracteres (Debe truncar y emitir warning).}}
+USHORTINT identificador_largo_que_supera_limite;
+
 begin
-    {{Identificador exacto de 22 caracteres (Valido, sin warning).}}
-    USHORTINT variable_de_veintidos;
-    {{Identificador de 35 caracteres (Debe truncar y emitir warning).}}
-    USHORTINT identificador_largo_que_supera_limite := 10$us;
+    variable_de_veintidos := 1$us;
+    identificador_largo_que_supera_limite := 10$us;
     {{Uso posterior del identificador truncado.}}
     identificador_largo_que_supera_limite := 20$us;
-end
+end;

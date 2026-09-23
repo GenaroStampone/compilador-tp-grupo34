@@ -1,10 +1,14 @@
 {{Caso de Prueba Nro4: Símbolos y caracteres no permitidos}}
 {{Comportamiento Esperado del Compilador: Errores léxicos de caracteres inválidos.}}
 
+programa_errores_simbolos;
+
+USHORTINT var_nombre, precio_total, dato;
+
 begin
     {{Intento de incluir caracteres no permitidos en un identificador.}}
-    USHORTINT var@nombre := 50$us;
-    USHORTINT precio#total := 100$us;
+    var@nombre := 50$us;
+    precio#total := 100$us;
     {{Simbolo no reconocido en el lenguaje.}}
-    USHORTINT dato ~ 5$us;
-end
+    dato ~ 5$us;
+end;

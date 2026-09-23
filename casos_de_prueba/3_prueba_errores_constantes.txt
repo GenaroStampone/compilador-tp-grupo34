@@ -1,22 +1,28 @@
 {{Caso de Prueba Nro3: Validación de rangos en constantes.}}
 {{Comportamiento Esperado del Compilador: Errores léxicos por constantes fuera de rango.}}
 
+programa_errores_constantes;
+
+USHORTINT min_valido, max_valido, error_min, error_max;
+DOUBLEF cero, min_dbl_p, max_dbl_p, max_dbl_n, min_dbl_n;
+DOUBLEF err_max_dbl_p, err_min_dbl_p, err_max_dbl_n, err_min_dbl_n;
+
 begin
     {{Constantes USHORTINT (Rango valido: 0 a 255)}}
-    USHORTINT min_valido := 0$us;
-    USHORTINT max_valido := 255$us;
+    min_valido := 0$us;
+    max_valido := 255$us;
     {{Constante USHORTINT (Fuera de rango).}}
-    USHORTINT error_min := -1$us;
-    USHORTINT error_max := 256$us;
+    error_min := -1$us;
+    error_max := 256$us;
     {{DOUBLEF validas.}}
-    DOUBLEF cero := 0.0;
-    DOUBLEF min_dbl_p := 2.2250738585072014d-308;
-    DOUBLEF max_dbl_p := 1.7976931348623157d+308;
-    DOUBLEF max_dbl_n := -1.7976931348623157d+308;
-    DOUBLEF min_dbl_n := -2.2250738585072014d-308;
+    cero := 0.0;
+    min_dbl_p := 2.2250738585072014d-308;
+    max_dbl_p := 1.7976931348623157d+308;
+    max_dbl_n := -1.7976931348623157d+308;
+    min_dbl_n := -2.2250738585072014d-308;
     {{DOUBLEF fuera de rango.}}
-    DOUBLEF err_max_dbl_p := 1.8d+308;
-    DOUBLEF err_min_dbl_p := 1.0d-309;
-    DOUBLEF err_max_dbl_n := -1.0d-309;
-    DOUBLEF err_min_dbl_n := -1.8d+308;
-end
+    err_max_dbl_p := 1.8d+308;
+    err_min_dbl_p := 1.0d-309;
+    err_max_dbl_n := -1.0d-309;
+    err_min_dbl_n := -1.8d+308;
+end;
