@@ -1,0 +1,69 @@
+{{
+    ========================================================================
+    CASO DE PRUEBA EXHAUSTIVO PARA EL ANALIZADOR LÉXICO DEL TP2 (GRUPO 34)
+    Temas asignados: 2, 8, 9, 11, 16, 18, 20, 23, 27, 29, 30, 35
+    ========================================================================
+}}
+
+class MiClaseBase begin
+    private ushortint contador;
+    private doublef valorReal;
+    friend FuncionAmiga;
+end;
+
+class Derivada begin
+    extends MiClaseBase;
+    
+    typedef ListaValores = [0$us, 128$us, 255$us];
+
+    function ushortint calcular(ushortint a, doublef b) begin
+        if (a >= 10$us) then
+            ret (a + 1$us);
+        else
+            ret (0$us);
+        end_if;
+    end;
+end;
+
+begin
+    {{ Comentario multilínea intermedio
+       que abarca varias líneas para verificar
+       la correcta actualización de yylineno }}
+    
+    ushortint x;
+    doublef y;
+    x := 50$us;
+    y := 1.25d+2;
+
+    while (x <= 100$us) repeat
+    begin
+        x := x + 1$us;
+        y := y * .5;
+        pout {Iterando ciclo while repeat};
+    end;
+
+    {{ Asignación en expresión (Tema 18) y acceso a atributo con punto }}
+    Derivada obj;
+    obj.valorReal := 3.141592653589793d0;
+    
+    {{ Acceso posicional a atributos con corchetes (Tema 29) }}
+    obj[0$us] := 200$us;
+
+    {{ Conversiones explícitas correspondientes al Grupo 34 (Temas 33 y 34) }}
+    y := todf (x);
+    x := tous (y);
+
+    {{ Símbolo dos puntos aislado (':') }}
+    etiqueta : pout {Prueba de dos puntos};
+
+    {{ Comparadores y operadores de asignación }}
+    if (x == 100$us) then
+        if (x != 0$us) then
+            if (y > 0.0) then
+                if (y < 1000.0) then
+                    x := (x = 2$us);
+                end_if;
+            end_if;
+        end_if;
+    end_if;
+end

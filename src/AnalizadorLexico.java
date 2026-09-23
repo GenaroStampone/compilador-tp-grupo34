@@ -1,8 +1,10 @@
 import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 public class AnalizadorLexico {
 
@@ -29,14 +31,38 @@ public class AnalizadorLexico {
     public static final int FUNCTION = 278;
     public static final int USHORTINT = 279;
     public static final int DOUBLEF = 280;
+    public static final int THEN = 281;
+    public static final int WHILE = 282;
+    public static final int REPEAT = 283;
+    public static final int TYPEDEF = 284;
+    public static final int PRIVATE = 285;
+    public static final int FRIEND = 286;
+    public static final int EXTENDS = 287;
+    public static final int TODF = 288;
+    public static final int TOUS = 289;
+
+    // Símbolos con valor ASCII directo (referencias opcionales)
+    public static final int CORCHETE_ABRE = '[';
+    public static final int CORCHETE_CIERRA = ']';
+    public static final int PAREN_ABRE = '(';
+    public static final int PAREN_CIERRA = ')';
+    public static final int COMA = ',';
+    public static final int PUNTO_Y_COMA = ';';
+    public static final int DOS_PUNTOS = ':';
+    public static final int PUNTO = '.';
+    public static final int IGUAL = '=';
 
     // --- Atributos del Autómata y Lectura ---
     private BufferedReader lectorFuente;
     private TablaDeSimbolos tablaSimbolos;
     private int estadoActual;
     private int nroLinea;
+    public int yylineno; // Contador estándar de líneas para interfaz con Parser / Yacc
     private StringBuilder buffer;
     private int ultimoCaracter; // Control de lookahead / ungetc
+
+    private List<String> errores = new ArrayList<>();
+    private List<String> warnings = new ArrayList<>();
 
     // Matrices del Autómata
     private int[][] TE_mat;
@@ -45,7 +71,7 @@ public class AnalizadorLexico {
     // Arreglo de mapeo O(1) ASCII -> Columna
     private int[] mapaCaracteres;
 
-    // Atributo entregado al Parser
+    // Atributo entregado al Parser (contiene la referencia RegistroTS en .obj)
     public ParserVal yylval;
 
     private static final int CANT_ESTADOS = 19;
@@ -63,6 +89,7 @@ public class AnalizadorLexico {
 
         this.tablaSimbolos = tablaSimbolos;
         this.nroLinea = 1; // La numeración de líneas comienza en 1
+        this.yylineno = 1;
         this.estadoActual = 0;
         this.buffer = new StringBuilder();
         this.ultimoCaracter = -1;
@@ -75,13 +102,15 @@ public class AnalizadorLexico {
         mapaCaracteres = new int[256]; // Arreglo de 256 posiciones para ASCII
         Arrays.fill(mapaCaracteres, COLUMNA_C); // Por defecto: todo se asigna a 'C' (columna 17)
 
-        // Columna 0: Símbolos simples '*', '/', '(', ')', ',', ';'
+        // Columna 0: Símbolos simples '*', '/', '(', ')', ',', ';', '[', ']'
         mapaCaracteres['*'] = 0;
         mapaCaracteres['/'] = 0;
         mapaCaracteres['('] = 0;
         mapaCaracteres[')'] = 0;
         mapaCaracteres[','] = 0;
         mapaCaracteres[';'] = 0;
+        mapaCaracteres['['] = 0;
+        mapaCaracteres[']'] = 0;
 
         // Columna 1: '{'
         mapaCaracteres['{'] = 1;
@@ -224,19 +253,19 @@ public class AnalizadorLexico {
         }
 
         // =========================================================
-        // ESTADOS 5 Y 6
+        // ESTADOS 5 Y 6 (Punto / Flotante y Dos Puntos / Asignación)
         // =========================================================
         TE_mat[5][18] = 7; AS_mat[5][18] = this::AS5; // dígito
-                           AS_mat[6][9] = this::AS15; // ':='
+        TE_mat[6][9] = F;  AS_mat[6][9] = this::AS15; // ':='
 
         for (int col = 0; col < CANT_COLUMNAS; col++) {
             if (col != 18) {
-                TE_mat[5][col] = 0;
-                AS_mat[5][col] = this::AS_ErrorLexico;
+                TE_mat[5][col] = F;
+                AS_mat[5][col] = this::AS_Punto;
             }
             if (col != 9) {
-                TE_mat[6][col] = 0;
-                AS_mat[6][col] = this::AS_ErrorLexico;
+                TE_mat[6][col] = F;
+                AS_mat[6][col] = this::AS_DosPuntos;
             }
         }
 
@@ -340,6 +369,10 @@ public class AnalizadorLexico {
             if (tokenDevuelto != -1) {
                 return tokenDevuelto;
             }
+
+            if (estadoActual == F || estadoActual < 0) {
+                estadoActual = 0;
+            }
         }
     }
 
@@ -370,8 +403,10 @@ public class AnalizadorLexico {
         
         // Control de longitud máxima (22 caracteres)
         if (lexema.length() > LARGO_MAX_ID) { // Verifica si la longitud supera los 22 caracteres permitidos
-            System.out.printf("Línea %d: Warning: El identificador '%s' fue truncado a '%s'%n",
-                    nroLinea, lexema, lexema.substring(0, LARGO_MAX_ID)); // Imprime en pantalla una advertencia de truncamiento
+            String warn = String.format("Línea %d: Warning: El identificador '%s' fue truncado a '%s'",
+                    nroLinea, lexema, lexema.substring(0, LARGO_MAX_ID));
+            warnings.add(warn);
+            System.out.println(warn); // Imprime en pantalla una advertencia de truncamiento
             lexema = lexema.substring(0, LARGO_MAX_ID); // Recorta la cadena quedándose solo con los primeros 22 caracteres
         }
         
@@ -381,7 +416,8 @@ public class AnalizadorLexico {
         }
         
         RegistroTS reg = tablaSimbolos.alta(lexema, ID, nroLinea); // Da de alta el Identificador en la Tabla de Símbolos
-        this.yylval = new ParserVal(reg.getLexema());              // Asigna el objeto ParserVal necesario para la integración con Yacc
+        this.yylval = new ParserVal(reg);                          // Asigna objeto ParserVal con referencia directa al RegistroTS
+        this.yylval.sval = reg.getLexema();
         return ID;                                                 // Retorna la constante entera del token ID
     }
 
@@ -413,15 +449,20 @@ public class AnalizadorLexico {
             
             if (val == 0.0 || (absVal >= minVal && absVal <= maxVal)) { // Verifica que el valor esté dentro del rango permitido o sea 0.0
                 RegistroTS reg = tablaSimbolos.alta(lexema, DOUBLEF_VAL, nroLinea, val); // Registra la constante en la Tabla de Símbolos
-                this.yylval = new ParserVal(reg.getLexema());                   // Pasa la referencia del registro a yylval para Yacc
-                return DOUBLEF_VAL;                                                 // Retorna la constante entera del token DOUBLEF
+                this.yylval = new ParserVal(reg);                               // Pasa la referencia del RegistroTS en yylval para Yacc
+                this.yylval.sval = reg.getLexema();
+                return DOUBLEF_VAL;                                             // Retorna la constante entera del token DOUBLEF
             } else {
-                System.err.printf("Línea %d: Error Léxico: Constante flotante fuera de rango '%s'%n", nroLinea, lexema); // Muestra mensaje de error
+                String err = String.format("Línea %d: Error Léxico: Constante flotante fuera de rango '%s'", nroLinea, lexema);
+                errores.add(err);
+                System.err.println(err);
                 buffer.setLength(0); // Vacía el buffer por haber detectado un valor inválido
                 return -1;           // Retorna -1 sin emitir ningún token al Parser
             }
         } catch (NumberFormatException e) {
-            System.err.printf("Línea %d: Error Léxico: Constante flotante mal formada '%s'%n", nroLinea, lexema); // Notifica error si no pudo parsearse
+            String err = String.format("Línea %d: Error Léxico: Constante flotante mal formada '%s'", nroLinea, lexema);
+            errores.add(err);
+            System.err.println(err);
             buffer.setLength(0);     // Limpia el buffer
             return -1;               // Retorna -1 para continuar la lectura
         }
@@ -477,31 +518,27 @@ public class AnalizadorLexico {
                 RegistroTS reg = tablaSimbolos.alta(lexemaCompleto, CTE_ENTERA, nroLinea, val);
                 
                 // 8. Asigna la referencia al elemento de la TS en la variable de atributo del parser (YACC)
-                this.yylval = new ParserVal(reg.getLexema());
+                this.yylval = new ParserVal(reg);
+                this.yylval.sval = reg.getLexema();
                 
                 // 9. Devuelve el identificador del token (CTE_ENTERA) para entregárselo al parser
                 return CTE_ENTERA;
                 
             } else {
                 // Caso de error: El número se pudo parsear pero excede el límite permitido (ejemplo: "300$us")
-                System.err.printf("Línea %d: Error Léxico: Constante entera fuera de rango (0 a 255) '%s'%n", 
+                String err = String.format("Línea %d: Error Léxico: Constante entera fuera de rango (0 a 255) '%s'", 
                         nroLinea, lexemaCompleto);
-                
-                // Vacía el buffer acumulador para dejarlo limpio para el siguiente token
+                errores.add(err);
+                System.err.println(err);
                 buffer.setLength(0);
-                
-                // Retorna -1 para no entregar ningún token y permitir que el lexer continúe
                 return -1;
             }
         } catch (NumberFormatException e) {
-            // Caso de error: Falló la conversión numérica (cadena mal formada o invalida)
-            System.err.printf("Línea %d: Error Léxico: Constante entera mal formada '%s'%n", 
+            String err = String.format("Línea %d: Error Léxico: Constante entera mal formada '%s'", 
                     nroLinea, lexemaCompleto);
-            
-            // Vacía el buffer acumulador
+            errores.add(err);
+            System.err.println(err);
             buffer.setLength(0);
-            
-            // Retorna -1 indicando que no se genera un token válido
             return -1;
         }
     }
@@ -579,7 +616,8 @@ public class AnalizadorLexico {
         buffer.append(c);                                             // Concatena la llave de cierre '}' al buffer
         String lexema = buffer.toString();                            // Convierte el contenido completo del buffer a String
         RegistroTS reg = tablaSimbolos.alta(lexema, CADENA, nroLinea); // Registra el texto completo de la cadena en la Tabla de Símbolos
-        this.yylval = new ParserVal(reg.getLexema());                 // Asigna la referencia de la cadena en yylval para Yacc
+        this.yylval = new ParserVal(reg);                             // Asigna la referencia de la cadena (RegistroTS) en yylval para Yacc
+        this.yylval.sval = reg.getLexema();
         return CADENA;                                                // Retorna la constante del token CADENA
     }
 
@@ -600,6 +638,7 @@ public class AnalizadorLexico {
         buffer.append(c);    // Agrega el carácter al texto del comentario multilínea
         if (c == '\n') {     // Evalúa si el carácter procesado es un salto de línea '\n'
             nroLinea++;      // Incrementa en 1 el contador global de líneas
+            yylineno = nroLinea;
         }
         return -1;           // Retorna -1 para seguir leyendo dentro del comentario
     }
@@ -623,6 +662,7 @@ public class AnalizadorLexico {
         buffer.setLength(0); // Vacía el buffer que guardaba la cadena incompleta
         if (c == '\n') {     // Revisa si el carácter que provocó el corte fue un salto de línea
             nroLinea++;      // Incrementa el contador de líneas
+            yylineno = nroLinea;
         }
         return -1;           // Retorna -1 para recuperarse y continuar escaneando los siguientes tokens
     }
@@ -633,28 +673,52 @@ public class AnalizadorLexico {
         return -1;           // Retorna -1 para continuar acumulando la parte decimal
     }
 
-    // --- ACCIONES AUXILIARES Y NECESARIAS ---
+    // --- ACCIONES AUXILIARES Y SÍMBOLOS NUEVOS ---
+
+    // AS_DosPuntos: Devolver el último carácter leído y retornar el token ':'
+    private int AS_DosPuntos(char c) {
+        ungetc(c);
+        return (int) ':';
+    }
+
+    // AS_Punto: Devolver el último carácter leído. Si el buffer contenía solo '.',
+    // retornar el token literal '.', de lo contrario emitir error léxico por float mal formado.
+    private int AS_Punto(char c) {
+        ungetc(c);
+        if (buffer.length() == 1 && buffer.charAt(0) == '.') {
+            buffer.setLength(0);
+            return (int) '.';
+        } else {
+            System.err.printf("Línea %d: Error Léxico: Constante flotante mal formada (se esperaba dígito tras el punto) '%s'%n",
+                    nroLinea, buffer.toString());
+            buffer.setLength(0);
+            return -1;
+        }
+    }
 
     // AS_Descartar: Saltea espacios, tabuladores y saltos de línea actualizando el número de línea.
     private int AS_Descartar(char c) {
         if (c == '\n') {     // Verifica si el carácter descartado es un salto de línea
             nroLinea++;      // Incrementa el contador de líneas del analizador
+            yylineno = nroLinea;
         }
         return -1;           // Retorna -1 sin entregar token para que yylex() continúe con la siguiente iteración
     }
 
     // AS_ErrorLexico: Maneja transiciones no válidas o símbolos no permitidos en el autómata.
     private int AS_ErrorLexico(char c) {
-        System.err.printf("Línea %d: Error Léxico: Carácter no esperado '%c' (ASCII %d)%n", 
-                nroLinea, c, (int) c); // Imprime el mensaje de error informando línea, carácter numérico y ASCII
+        String err = String.format("Línea %d: Error Léxico: Carácter no esperado '%c' (ASCII %d)", 
+                nroLinea, c, (int) c);
+        errores.add(err);
+        System.err.println(err);
         buffer.setLength(0);            // Vacía el buffer de lecturas parciales erróneas
         return -1;                      // Retorna -1 para permitir que el autómata vuelva a Estado 0 y siga leyendo
     }
 
-
     private int obtenerTokenPalabraReservada(String lexema) {
         switch (lexema.toLowerCase()) {
             case "if": return IF;
+            case "then": return THEN;
             case "else": return ELSE;
             case "end_if": return END_IF;
             case "begin": return BEGIN;
@@ -665,6 +729,14 @@ public class AnalizadorLexico {
             case "function": return FUNCTION;
             case "ushortint": return USHORTINT;
             case "doublef": return DOUBLEF;
+            case "while": return WHILE;
+            case "repeat": return REPEAT;
+            case "typedef": return TYPEDEF;
+            case "private": return PRIVATE;
+            case "friend": return FRIEND;
+            case "extends": return EXTENDS;
+            case "todf": return TODF;
+            case "tous": return TOUS;
             default: return ID;
         }
     }
@@ -684,12 +756,21 @@ public class AnalizadorLexico {
 
     private void ungetc(char c) {
         this.ultimoCaracter = c;
-        if (c == '\n') {
-            nroLinea--;
-        }
     }
 
     public int getNroLinea() {
         return nroLinea;
+    }
+
+    public int getYylineno() {
+        return yylineno;
+    }
+
+    public List<String> getErrores() {
+        return errores;
+    }
+
+    public List<String> getWarnings() {
+        return warnings;
     }
 }

@@ -1,0 +1,91 @@
+{{
+    ============================================================================
+    CASO DE PRUEBA: test_declaraciones.txt (GRUPO 34 - PASO 3 TP2)
+    Verificación integral del bloque declarativo:
+    1. Variables básicas: ushortint ($us) y doublef (d).
+    2. Enumeraciones (Tema 23): Typedef ID = [ <lista_valores> ] e instanciación.
+    3. Funciones: <tipo> FUNCTION ID (...) <declarativas> BEGIN <ejecutables> END.
+    4. Clases y Objetos (Temas 27 y 30):
+       - CLASS ID BEGIN ... END;
+       - Herencia múltiple: extends cb, cc;
+       - Modificador private en atributos y métodos.
+       - Declaración friend ID;
+       - Instanciación de objetos de las clases.
+    ============================================================================
+}}
+
+programa_declaraciones;
+
+{{ 1. Declaración de variables básicas del Grupo 34 }}
+ushortint contador, limite, indice;
+doublef factor, precision, resultado;
+
+{{ 2. Enumeraciones (Tema 23) e instanciación de variables }}
+typedef RangoSinSigno = [0$us, 64$us, 128$us, 255$us];
+typedef Factores = [0.1, 0.5, 1.0, 2.5d0];
+
+RangoSinSigno estadoInicial, estadoFinal;
+Factores factorEscala;
+
+{{ 4. Clases y Objetos (Temas 27 y 30) }}
+class ComponenteA begin
+    ushortint idComponente;
+    doublef voltaje;
+end;
+
+class ComponenteB begin
+    ushortint estado;
+end;
+
+class DispositivoAvanzado begin
+    {{ Herencia múltiple (Tema 30) }}
+    extends ComponenteA, ComponenteB;
+
+    {{ Modificador private antes de atributos (Tema 27) }}
+    private ushortint claveSeguridad;
+    private doublef calibracionInterna;
+
+    {{ Clases y funciones amigas (Tema 27) }}
+    friend ComponenteA;
+    friend AuditorSeguridad;
+
+    {{ Atributos públicos }}
+    doublef tiempoOperacion;
+
+    {{ Métodos públicos y privados }}
+    ushortint function obtenerClave(ushortint semilla) begin
+        ret (claveSeguridad + semilla);
+    end;
+
+    private doublef function ajustarCalibracion(doublef delta)
+        doublef factorTemp;
+    begin
+        factorTemp := delta;
+        ret (calibracionInterna * factorTemp);
+    end;
+end;
+
+{{ Instanciación de objetos de las clases declaradas }}
+ComponenteA sensorPrincipal;
+DispositivoAvanzado centralita, nodoRespaldo;
+
+{{ 3. Declaración de funciones generales }}
+ushortint function calcularTotal(ushortint a, ushortint b)
+    ushortint sumaParcial;
+begin
+    sumaParcial := a + b;
+    ret (sumaParcial);
+end;
+
+doublef function procesarDispositivo(doublef tasa, DispositivoAvanzado disp) begin
+    ret (tasa * 1.5);
+end;
+
+{{ Bloque principal ejecutable }}
+begin
+    contador := 10$us;
+    factor := 2.5d0;
+    resultado := procesarDispositivo(factor, centralita);
+    pout {Fin de ejecucion del test de declaraciones};
+    ret (contador);
+end;

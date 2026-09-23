@@ -1,0 +1,150 @@
+{{
+    ========================================================================
+    UNIVERSIDAD NACIONAL DEL CENTRO DE LA PROVINCIA DE BUENOS AIRES
+    Compiladores e Intérpretes - 2026
+    Grupo 34: Caso de Prueba Válido Integral (prueba_valida_g34.txt)
+    Temas incluidos: 2, 8, 9, 11, 16, 18, 20, 23, 27, 29, 30, 35
+    ========================================================================
+}}
+
+prog_g34_valido;
+
+{{ --- TEMA 2 y TEMA 8: Declaración de Variables de Tipos Básicos --- }}
+ushortint contador, limite, iterador;
+doublef saldoInicial, factorMultiplicador, tasaInteres;
+
+{{ --- TEMA 23: Enumeraciones (TYPEDEF) e Instanciación --- }}
+typedef CodigosControl = [0$us, 64$us, 128$us, 255$us];
+typedef FactoresCalibracion = [-1.5d0, 0.0, 1.0, 2.718281828459045d0];
+
+CodigosControl estadoActual, estadoSiguiente;
+FactoresCalibracion calibracionPrimaria;
+
+{{ --- TEMAS 27 y 30: Clases, Herencia Múltiple, Private y Friend --- }}
+class DispositivoBase begin
+    ushortint idDispositivo;
+    doublef frecuenciaBase;
+end;
+
+class ModuloAuxiliar begin
+    ushortint codigoModulo;
+end;
+
+class ControladorSistema begin
+    {{ Tema 30: Herencia múltiple mediante extends }}
+    extends DispositivoBase, ModuloAuxiliar;
+
+    {{ Tema 27: Modificador private en atributos }}
+    private ushortint claveSeguridad;
+    private doublef ajusteInterno;
+
+    {{ Tema 27: Declaración de clases y funciones amigas (friend) }}
+    friend DispositivoBase;
+    friend AuditoriaExterna;
+
+    {{ Atributo público }}
+    doublef voltajeOperativo;
+
+    {{ Declaración de métodos públicos y privados con retornos }}
+    ushortint function consultarClave(ushortint salt) begin
+        ret (claveSeguridad + salt);
+    end;
+
+    private doublef function calcularAjuste(doublef delta)
+        doublef factorLocal;
+    begin
+        factorLocal := delta;
+        ret (ajusteInterno * factorLocal);
+    end;
+end;
+
+{{ Instanciación de Objetos de las Clases Definidas }}
+DispositivoBase sensorAmbiente;
+ControladorSistema nodoMaestro, nodoSecundario;
+
+{{ Declaración de Funciones Globales }}
+ushortint function procesarDatos(ushortint v1, ushortint v2, ushortint v3)
+    ushortint acumulador;
+begin
+    acumulador := v1 + v2 + v3;
+    ret (acumulador);
+end;
+
+doublef function conversionYCalculo(ushortint entrada)
+    doublef convertido;
+begin
+    {{ Tema 33 y Tema 34: Conversiones Explícitas }}
+    convertido := todf(entrada);
+    ret (convertido * 1.25d-2);
+end;
+
+{{ ========================================================================= }}
+{{                          BLOQUE PRINCIPAL EJECUTABLE                       }}
+{{ ========================================================================= }}
+begin
+    {{ Inicialización de variables con literales del Grupo 34 }}
+    contador := 0$us;
+    limite := 10$us;
+    iterador := 1$us;
+    saldoInicial := 100.50d0;
+    factorMultiplicador := -2.5d0;
+    tasaInteres := .75;
+
+    {{ Tema 18: Asignaciones de identificadores/constantes en expresiones con '=' }}
+    contador := limite = 5$us;
+    saldoInicial := factorMultiplicador = -3.141592653589793d0;
+    contador := limite = iterador + 2$us;
+    contador := limite + iterador = 4$us;
+
+    {{ Tema 29: Acceso posicional a atributos de objeto }}
+    nodoMaestro[0$us] := 250$us;
+    nodoMaestro[iterador] := 125$us;
+    contador := nodoMaestro[0$us] + nodoMaestro[iterador];
+
+    {{ Tema 20: Invocaciones con orden de parámetros opcional mediante corchetes }}
+    contador := procesarDatos(contador, limite, iterador)[3$us, 1$us, 2$us];
+    contador := procesarDatos(contador, limite, iterador);
+    saldoInicial := conversionYCalculo(contador)[1$us];
+    saldoInicial := conversionYCalculo(contador);
+    nodoMaestro.consultarClave(iterador)[1$us];
+    nodoMaestro.consultarClave(iterador);
+
+    {{ Tema 9: Cadenas de una sola línea delimitadas por llaves }}
+    pout({Inicio de procesamiento integral del Grupo 34});
+    pout(saldoInicial + 10.0);
+
+    {{ Tema 18 en selección y control IF-THEN-ELSE-END_IF }}
+    if (contador = 5$us == 5$us) then
+        pout({Condicion IF con asignacion en expresion cumplida});
+    else
+        pout({Rama ELSE ejecutada});
+    end_if;
+
+    if (saldoInicial > 0.0)
+    begin
+        pout({Saldo positivo verificado});
+        saldoInicial := saldoInicial + .25;
+    end
+    else
+    begin
+        pout({Saldo no positivo});
+    end
+    end_if;
+
+    {{ Tema 11: Sentencia de Control Iterativa WHILE-REPEAT }}
+    while (contador < limite) repeat
+        contador := contador + 1$us;
+
+    while (limite > 0$us) repeat
+    begin
+        limite := limite - 1$us;
+        pout({Decrementando ciclo while repeat});
+    end;
+
+    {{ Conversiones explícitas todf y tous }}
+    factorMultiplicador := todf(contador + 2$us);
+    contador := tous(saldoInicial);
+
+    pout({Ejecucion exitosa de prueba_valida_g34});
+    ret (contador);
+end;

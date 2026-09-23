@@ -12,8 +12,9 @@ public class TablaDeSimbolos {
     }
 
     private void cargarPalabrasReservadas() {
-        // Agregar palabras reservadas al conjunto
+        // Palabras reservadas generales del lenguaje
         palabrasReservadas.add("if");
+        palabrasReservadas.add("then");
         palabrasReservadas.add("else");
         palabrasReservadas.add("end_if");
         palabrasReservadas.add("begin");
@@ -22,9 +23,22 @@ public class TablaDeSimbolos {
         palabrasReservadas.add("ret");
         palabrasReservadas.add("class");
         palabrasReservadas.add("function");
-        // Agregar más palabras reservadas segun el tema asignado
+
+        // Tipos de datos correspondientes al Grupo 34
         palabrasReservadas.add("ushortint");
         palabrasReservadas.add("doublef");
+
+        // Control y temas particulares asignados al Grupo 34 (TP2)
+        palabrasReservadas.add("while");
+        palabrasReservadas.add("repeat");
+        palabrasReservadas.add("typedef");
+        palabrasReservadas.add("private");
+        palabrasReservadas.add("friend");
+        palabrasReservadas.add("extends");
+
+        // Conversiones explícitas correspondientes al Grupo 34 (Temas 8 y 2)
+        palabrasReservadas.add("todf");
+        palabrasReservadas.add("tous");
     }
 
     public boolean esPalabraReservada(String lexema) {
@@ -50,6 +64,22 @@ public class TablaDeSimbolos {
         return tabla.get(lexema);
     }
 
+    public boolean verificarRangoDoublef(double val) {
+        if (val == 0.0) return true;
+        double absVal = Math.abs(val);
+        double minVal = 2.2250738585072014e-308;
+        double maxVal = 1.7976931348623157e+308;
+        return (absVal >= minVal && absVal <= maxVal);
+    }
+
+    public RegistroTS registrarConstanteNegativa(String lexemaPositivo, int nroLinea, double valorNum) {
+        String lexemaNegativo = "-" + lexemaPositivo;
+        tabla.remove(lexemaPositivo);
+        RegistroTS regNeg = new RegistroTS(lexemaNegativo, 259 /* DOUBLEF_VAL */, nroLinea, valorNum);
+        tabla.put(lexemaNegativo, regNeg);
+        return regNeg;
+    }
+
     public void imprimirTabla() {
         String lineaSeparadora = "-----------------------------------------------------------------------------------";
         String lineaEncabezado  = "===================================================================================";
@@ -72,17 +102,14 @@ public class TablaDeSimbolos {
             // Valor numérico (solo para constantes)
             String valorStr = "-";
 
-            if (reg.getTipoToken() == 258 || reg.getTipoToken() == 259) {
-                if (reg.getValorNum() != 0.0) {
-                    valorStr = String.format("%.2f", reg.getValorNum());
+            if (reg.getTipoToken() == 258) {
+                valorStr = String.valueOf((int) reg.getValorNum());
+            } else if (reg.getTipoToken() == 259) {
+                double v = reg.getValorNum();
+                if (Math.abs(v) >= 1e6 || (Math.abs(v) < 1e-3 && v != 0.0)) {
+                    valorStr = String.format("%e", v);
                 } else {
-                    try {
-                        String numPart = lexemaLimpio.split("\\$")[0]; // Extrae la parte numérica antes del '$'
-                        double val = Double.parseDouble(numPart);
-                        valorStr = String.format("%.2f", val);
-                    } catch (Exception e) {
-                        valorStr = String.format("%.2f", reg.getValorNum());
-                    }
+                    valorStr = String.valueOf(v);
                 }
             }
 

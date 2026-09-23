@@ -1,0 +1,68 @@
+{{
+    ========================================================================
+    UNIVERSIDAD NACIONAL DEL CENTRO DE LA PROVINCIA DE BUENOS AIRES
+    Compiladores e Intérpretes - 2026
+    Grupo 34: Caso de Prueba con Errores y Warnings (prueba_errores_g34.txt)
+    Verificación de:
+    - Warning Léxico: Identificador truncado por superar 22 caracteres.
+    - Error Léxico: Constante entera fuera de rango (0 a 255).
+    - Error Léxico: Constante flotante fuera de rango (64 bits).
+    - Error Léxico: Carácter inválido no reconocido.
+    - Error Sintáctico: Sentencia declarativa mal formada y recuperación con ';'.
+    - Error Sintáctico: Sentencia ejecutable mal formada y recuperación con ';'.
+    - Continuación del parsing y análisis del resto del código fuente.
+    ========================================================================
+}}
+
+programa_errores_grupo34;
+
+{{ 1. Declaración válida inicial }}
+ushortint variableCorrecta1;
+doublef variableCorrecta2;
+
+{{ 2. Warning Léxico: Identificador que supera 22 caracteres }}
+ushortint identificadorSuperLargoExcedidoDeVeintidosCaracteres;
+
+{{ 3. Error Sintáctico en Declaración: Falta identificador antes del ';' }}
+ushortint ;
+
+{{ 4. Declaración válida posterior para demostrar recuperación }}
+ushortint variableRecuperada1;
+
+{{ 5. Error Sintáctico en Declaración: Declaración sin tipo ni nombre válido }}
+:= 100$us;
+
+{{ 6. Declaración válida posterior }}
+doublef factorAjustado;
+
+begin
+    {{ Asignaciones válidas }}
+    variableCorrecta1 := 10$us;
+    factorAjustado := 2.5d0;
+
+    {{ 7. Error Léxico: Constante entera fuera de rango (350 excede 255) }}
+    variableCorrecta1 := 350$us;
+
+    {{ 8. Error Léxico: Constante flotante fuera de rango de 64 bits }}
+    factorAjustado := 1.99d+400;
+
+    {{ 9. Error Léxico: Carácter no esperado / inválido }}
+    variableCorrecta1 := 5$us @ ;
+
+    {{ 10. Error Sintáctico en Ejecutable: Asignación sin lado derecho válido }}
+    variableCorrecta1 := ;
+
+    {{ 11. Sentencia válida posterior demostrando recuperación en ejecutable }}
+    variableCorrecta1 := 50$us;
+    pout({Recuperacion sintactica exitosa tras sentencia invalida});
+
+    {{ 12. Error Sintáctico en Ejecutable: Estructura de control mal formada }}
+    if ( ) then
+        variableCorrecta1 := 1$us;
+    end_if;
+
+    {{ 13. Sentencia válida final }}
+    factorAjustado := 10.0;
+    pout({Fin del programa de errores y recuperacion});
+    ret (variableCorrecta1);
+end;
