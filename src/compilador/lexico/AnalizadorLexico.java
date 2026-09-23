@@ -339,6 +339,10 @@ public class AnalizadorLexico {
 
             estadoActual = TE_mat[estadoActual][columna];
 
+            if (estadoActual == F) {
+                estadoActual = 0; 
+            }
+
             if (tokenDevuelto != -1) {
                 return tokenDevuelto;
             }

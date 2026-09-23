@@ -1,6 +1,5 @@
-import lexico.AnalizadorLexico; 
-import lexico.TablaDeSimbolos; 
-
+import lexico.AnalizadorLexico; // Importa la clase del Analizador Léxico generado por JFlex
+import lexico.TablaDeSimbolos; // Importa la clase
 import java.io.File; // Importa la clase File para verificar la existencia del archivo de código fuente
 
 public class Main {
