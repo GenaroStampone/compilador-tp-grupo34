@@ -53,8 +53,6 @@ public class Token {
             case AnalizadorLexico.PRIVATE:       return "PR_PRIVATE";
             case AnalizadorLexico.FRIEND:        return "PR_FRIEND";
             case AnalizadorLexico.EXTENDS:       return "PR_EXTENDS";
-            case AnalizadorLexico.TODF:          return "PR_TODF";
-            case AnalizadorLexico.TOUS:          return "PR_TOUS";
             default:
                 if (token > 0 && token < 256) {
                     return "LITERAL '" + (char) token + "'";

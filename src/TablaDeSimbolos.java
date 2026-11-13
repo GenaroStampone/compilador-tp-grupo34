@@ -14,31 +14,33 @@ public class TablaDeSimbolos {
     private void cargarPalabrasReservadas() {
         // Palabras reservadas generales del lenguaje
         palabrasReservadas.add("if");
-        palabrasReservadas.add("then");
         palabrasReservadas.add("else");
-        palabrasReservadas.add("end_if");
+        palabrasReservadas.add("END_if");
         palabrasReservadas.add("begin");
-        palabrasReservadas.add("end");
-        palabrasReservadas.add("pout");
-        palabrasReservadas.add("ret");
+        palabrasReservadas.add("END");
+        palabrasReservadas.add("POUT");
         palabrasReservadas.add("class");
         palabrasReservadas.add("function");
+        // Palabras reservadas generales del lenguaje Tp2
+        palabrasReservadas.add("pout");
 
-        // Tipos de datos correspondientes al Grupo 34
+        // Tipos de datos correspondientes al Grupo 34 (TP1)
+        // Tema 2
         palabrasReservadas.add("ushortint");
+        // Tema 8
         palabrasReservadas.add("doublef");
 
         // Control y temas particulares asignados al Grupo 34 (TP2)
+        // Tema 11
         palabrasReservadas.add("while");
         palabrasReservadas.add("repeat");
+        // Tema 23
         palabrasReservadas.add("typedef");
+        // Tema 27
         palabrasReservadas.add("private");
-        palabrasReservadas.add("friend");
+        palabrasReservadas.add("Friend");
+        // Tema 30
         palabrasReservadas.add("extends");
-
-        // Conversiones explícitas correspondientes al Grupo 34 (Temas 8 y 2)
-        palabrasReservadas.add("todf");
-        palabrasReservadas.add("tous");
     }
 
     public boolean esPalabraReservada(String lexema) {
@@ -72,6 +74,16 @@ public class TablaDeSimbolos {
         return (absVal >= minVal && absVal <= maxVal);
     }
 
+    public boolean verificarRangoUshortint(String lexema) { 
+        try { // Removemos el sufijo "$us" para obtener solo la parte numérica 
+            String numeroLimpio = lexema.toLowerCase().replace("$us", "").trim(); 
+            long val = Long.parseLong(numeroLimpio); 
+            return val >=0 && val <= 255; } 
+        catch (NumberFormatException e) { 
+            return false; // Si no es un número válido o excede los límites de parseo 
+            } 
+    }
+
     public RegistroTS registrarConstanteNegativa(String lexemaPositivo, int nroLinea, double valorNum) {
         String lexemaNegativo = "-" + lexemaPositivo;
         tabla.remove(lexemaPositivo);
@@ -88,38 +100,48 @@ public class TablaDeSimbolos {
         System.out.println("                         CONTENIDO DE LA TABLA DE SÍMBOLOS                         ");
         System.out.println(lineaEncabezado);
         
-        System.out.printf("%-25s | %-10s | %-6s | %-6s | %-12s%n", "LEXEMA", "TIPO TOKEN", "LÍNEA", "LONG", "VALOR");
+        System.out.printf("%-30s | %-10s | %-6s | %-6s | %-12s | %-10s | %-10s%n", "LEXEMA", "TOKEN", "LÍNEA", "LONG", "VALOR", "TIPO", "USO"); 
         System.out.println(lineaSeparadora);
 
-        for (RegistroTS reg : tabla.values()) {
-            String lexemaLimpio = reg.getLexema()
-                                    .replaceAll("\r?\n", "\\\\n")
-                                    .replaceAll("\t", "\\\\t");
+        for (RegistroTS reg : tabla.values()) { 
+            // 1. Limpieza de saltos de línea y tabulaciones en cadenas/lexemas 
+            String lexemaLimpio = (reg.getLexema() != null) 
+                ? reg.getLexema().replaceAll("\\r?\\n", "\\\\\\\\n").replaceAll("\\t", "\\\\\\\\t") : "";
 
-            // Longitud del lexema (para todos los registros)
-            int longitud = reg.getLexema().length();
-            
-            // Valor numérico (solo para constantes)
+            // Longitud del lexema 
+            int longitud = reg.getLexema() != null ? reg.getLexema().length() : 0; 
             String valorStr = "-";
-
-            if (reg.getTipoToken() == 258) {
-                valorStr = String.valueOf((int) reg.getValorNum());
-            } else if (reg.getTipoToken() == 259) {
-                double v = reg.getValorNum();
-                if (Math.abs(v) >= 1e6 || (Math.abs(v) < 1e-3 && v != 0.0)) {
-                    valorStr = String.format("%e", v);
-                } else {
-                    valorStr = String.valueOf(v);
-                }
+            
+            // 2. Extracción segura del valor numérico 
+            Object valorObj = reg.getValorNum(); 
+            if (valorObj != null) { 
+                if (valorObj instanceof Number) { 
+                    Number num = (Number) valorObj; 
+                    if (num instanceof Double || num instanceof Float) { 
+                        double v = num.doubleValue(); // Notación científica para reales muy grandes o pequeños 
+                        if (Math.abs(v) &gt;= 1e6 || (Math.abs(v) &lt; 1e-3 &amp;&amp; v != 0.0)) { 
+                            valorStr = String.format("%e", v); 
+                        } 
+                        else { 
+                            valorStr = String.valueOf(v); 
+                        } 
+                    } 
+                    else { 
+                        valorStr = String.valueOf(num.longValue()); 
+                    } 
+                } 
+                else { 
+                    valorStr = valorObj.toString(); 
+                } 
             }
+            
+            // 3. Atributos semánticos asignados en TP2 
+            String tipoStr = (reg.getTipo() != null) ? reg.getTipo() : "-"; 
+            String usoStr = (reg.getUso() != null) ? reg.getUso() : "-";
 
-            System.out.printf("%-25.25s | %-10d | %-6d | %-6d | %-12s%n", 
-                    lexemaLimpio, 
-                    reg.getTipoToken(), 
-                    reg.getNroLinea(), 
-                    longitud,
-                    valorStr);
-        }
-        System.out.println(lineaEncabezado + "\n");
+            // 4. Impresión formateada  
+            System.out.printf("%-30s | %-10d | %-6d | %-6d | %-12s | %-10s | %-10s%n", lexemaLimpio, reg.getIdToken(), reg.getNroLinea(), longitud, valorStr, tipoStr, usoStr); 
+        } 
+        System.out.println(lineaEncabezado + "\\n"); 
     }
 }
