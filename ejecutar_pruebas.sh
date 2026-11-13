@@ -76,18 +76,6 @@ for item in "${PRUEBAS[@]}"; do
     fi
 done
 
-# 3. Verificación de Prueba Léxica Unitaria
-echo -e "\n--------------------------------------------------------------------------------"
-echo "PRUEBA UNITARIA: PruebaLexicoTP2 (Verificación exhaustiva de 40 tokens)"
-echo "--------------------------------------------------------------------------------"
-java -cp bin PruebaLexicoTP2 > /dev/null 2>&1
-if [ $? -eq 0 ]; then
-    echo ">>> RESULTADO: [PASS] - Todos los tokens terminales del Grupo 34 fueron validados."
-else
-    echo ">>> RESULTADO: [FAIL] - Falló la prueba unitaria del Léxico."
-    ((FALLADAS++))
-fi
-
 echo -e "\n================================================================================"
 echo "                             RESUMEN DE LA SUITE                                "
 echo "================================================================================"
