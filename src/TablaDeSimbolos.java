@@ -52,14 +52,14 @@ public class TablaDeSimbolos {
     }
 
     //Alta para ID, Cadenas y Tokens sin valor numérico inicial
-    public RegistroTS alta(String lexema, int tipoToken, int nroLinea) {
-        return alta(lexema, tipoToken, nroLinea, 0.0);
+    public RegistroTS alta(String lexema,int idToken, String tipoToken, int nroLinea) {
+        return alta(lexema, idToken, tipoToken, nroLinea, 0.0);
     }
 
     //Alta para constantes numericas
-    public RegistroTS alta(String lexema, int tipoToken, int nroLinea, double valorNum) {
+    public RegistroTS alta(String lexema, int idToken, String tipoToken, int nroLinea, double valorNum) {
         if (!tabla.containsKey(lexema)) {
-            RegistroTS registro = new RegistroTS(lexema, tipoToken, nroLinea, valorNum);
+            RegistroTS registro = new RegistroTS(lexema, idToken, tipoToken, nroLinea, valorNum);
             tabla.put(lexema, registro);
             return registro;
         }
@@ -87,7 +87,7 @@ public class TablaDeSimbolos {
     public RegistroTS registrarConstanteNegativa(String lexemaPositivo, int nroLinea, double valorNum) {
         String lexemaNegativo = "-" + lexemaPositivo;
         tabla.remove(lexemaPositivo);
-        RegistroTS regNeg = new RegistroTS(lexemaNegativo, 259 /* DOUBLEF_VAL */, nroLinea, valorNum);
+        RegistroTS regNeg = new RegistroTS(lexemaNegativo, 259, "DOUBLEF_VAL", nroLinea, valorNum);
         tabla.put(lexemaNegativo, regNeg);
         return regNeg;
     }
@@ -104,43 +104,26 @@ public class TablaDeSimbolos {
         System.out.println(lineaSeparadora);
 
         for (RegistroTS reg : tabla.values()) { 
-            // 1. Limpieza de saltos de línea y tabulaciones en cadenas/lexemas 
-            String lexemaLimpio = (reg.getLexema() != null) 
-                ? reg.getLexema().replaceAll("\\r?\\n", "\\\\\\\\n").replaceAll("\\t", "\\\\\\\\t") : "";
-
-            // Longitud del lexema 
-            int longitud = reg.getLexema() != null ? reg.getLexema().length() : 0; 
-            String valorStr = "-";
-            
-            // 2. Extracción segura del valor numérico 
-            Object valorObj = reg.getValorNum(); 
-            if (valorObj != null) { 
-                if (valorObj instanceof Number) { 
-                    Number num = (Number) valorObj; 
-                    if (num instanceof Double || num instanceof Float) { 
-                        double v = num.doubleValue(); // Notación científica para reales muy grandes o pequeños 
-                        if (Math.abs(v) &gt;= 1e6 || (Math.abs(v) &lt; 1e-3 &amp;&amp; v != 0.0)) { 
-                            valorStr = String.format("%e", v); 
-                        } 
-                        else { 
-                            valorStr = String.valueOf(v); 
-                        } 
-                    } 
-                    else { 
-                        valorStr = String.valueOf(num.longValue()); 
-                    } 
+            // 1. Limpieza de saltos de línea y tabulaciones en el lexema 
+            String lexemaLimpio = (reg.getLexema() != null) ? reg.getLexema().replaceAll("\\r?\\n", "\\\\n").replaceAll("\\t", "\\\\t") : ""; 
+            // 2. Formateo del valor numérico (solo para constantes o cuando corresponda) 
+            String valorStr = "-"; 
+            if (reg.getTipoToken() != null && (reg.getTipoToken().contains("CTE") || reg.getValorNum() != 0.0)) { 
+                double v = reg.getValorNum(); 
+                if (Math.abs(v) >= 1e6 || (Math.abs(v) < 1e-3 && v != 0.0)) { 
+                    valorStr = String.format("%e", v); 
                 } 
                 else { 
-                    valorStr = valorObj.toString(); 
+                    valorStr = String.valueOf(v); 
                 } 
             }
             
             // 3. Atributos semánticos asignados en TP2 
-            String tipoStr = (reg.getTipo() != null) ? reg.getTipo() : "-"; 
+            String tipoStr = (reg.getTipoToken() != null) ? reg.getTipoToken() : "-"; 
             String usoStr = (reg.getUso() != null) ? reg.getUso() : "-";
 
             // 4. Impresión formateada  
-            System.out.printf("%-30s | %-10d | %-6d | %-6d | %-12s | %-10s | %-10s%n", lexemaLimpio, reg.getIdToken(), reg.getNroLinea(), longitud, valorStr, tipoStr, usoStr); 
+            System.out.printf("%-30s | %-10d | %-6d | %-6d | %-12s | %-10s | %-10s%n", lexemaLimpio, reg.getIdToken(), reg.getNroLinea(), reg.getLongitud(), valorStr, tipoStr, usoStr); 
         } 
         System.out.println(lineaEncabezado + "\\n"); 
     }
