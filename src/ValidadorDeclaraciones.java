@@ -1,30 +1,67 @@
+import java.util.List;
+
 public class ValidadorDeclaraciones {
     public static void main(String[] args) { 
-        String archivo = (args.length &gt; 0) ? args[0] : "casos_de_pruebatest_declaraciones.txt";
-        String lineaEncabezado  = "==============================================================="
+        String archivo = (args.length > 0) ? args[0] : "casos_de_prueba/test_declaraciones.txt";
+        String lineaEncabezado  = "===============================================================";
+        
         System.out.println(lineaEncabezado); 
         System.out.println(" COMPILACIÓN Y ANÁLISIS SINTÁCTICO: " + archivo); 
         System.out.println(lineaEncabezado); 
         
-        // 1. Instanciación de componentes 
+        // Instanciación de componentes 
         TablaDeSimbolos ts = new TablaDeSimbolos(); 
         AnalizadorLexico lexico = new AnalizadorLexico(archivo, ts); 
         Parser parser = new Parser(lexico, ts); 
         
-        // 2. Invocación al motor del analizador sintáctico (YACC) 
+        // Invocación al motor del analizador sintáctico (YACC) 
         int resultado = parser.yyparse(); 
+
+        // Cierre del lector de archivos
+        lexico.cerrar();
         
-        // 3. Reporte de resultado del análisis 
-        System.out.println("\\n" + lineaEncabezado); 
-        if (resultado == 0 &amp;&amp; !parser.huboError()) { 
-            System.out.println(" RESULTADO: ANÁLISIS SINTÁCTICO COMPLETADO CON ÉXITO (0 ERRORES)"); 
-        } 
-        else { 
-            System.out.println(" RESULTADO: ANÁLISIS SINTÁCTICO FINALIZADO CON ERRORES"); 
-        } 
-        System.out.println(lineaEncabezado); 
-        
-        // 4. Impresión obligatoria de la Tabla de Símbolos acumulada 
+        // Recolección de advertencias y errores (léxicos y sintácticos)
+        List<String> warningsLexicos = lexico.getWarnings();
+        List<String> erroresLexicos = lexico.getErrores();
+        List<String> erroresSintacticos = parser.getErroresSintacticos();
+
+        if (!warningsLexicos.isEmpty()) {
+            System.out.println("\n--- ADVERTENCIAS LÉXICAS (" + warningsLexicos.size() + ") ---");
+            for (String w : warningsLexicos) {
+                System.out.println(" [ADVERTENCIA] " + w);
+            }
+        }
+
+        if (!erroresLexicos.isEmpty()) {
+            System.out.println("\n--- ERRORES LÉXICOS (" + erroresLexicos.size() + ") ---");
+            for (String e : erroresLexicos) {
+                System.out.println(" [ERROR LÉXICO] " + e);
+            }
+        }
+
+        if (!erroresSintacticos.isEmpty()) {
+            System.out.println("\n--- ERRORES SINTÁCTICOS (" + erroresSintacticos.size() + ") ---");
+            for (String s : erroresSintacticos) {
+                System.out.println(" [ERROR SINTÁCTICO] " + s);
+            }
+        }
+
+        // Reporte de resultado del análisis
+        boolean sinErrores = (resultado == 0) && !parser.huboError() && erroresLexicos.isEmpty();
+
+        System.out.println("\n" + lineaEncabezado);
+        if (sinErrores) {
+            System.out.println(" RESULTADO: ANÁLISIS COMPLETADO CON ÉXITO (0 ERRORES)");
+        } else {
+            System.out.println(" RESULTADO: ANÁLISIS FINALIZADO CON ERRORES ("
+                    + erroresLexicos.size() + " léxico(s), "
+                    + erroresSintacticos.size() + " sintáctico(s))");
+        }
+        System.out.println(lineaEncabezado);
+
+        // Impresión obligatoria de la Tabla de Símbolos acumulada
         ts.imprimirTabla(); 
+
+        System.exit(sinErrores ? 0 : 1);
     } 
 }
