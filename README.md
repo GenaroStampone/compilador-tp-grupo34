@@ -24,31 +24,36 @@ Para correr la batería completa de pruebas (Casos 01 al 09) y verificar los res
 ./ejecutar_pruebas.sh
 ```
 
+Aquí tenés el bloque en Markdown perfectamente formateado e identado dentro de un bloque de código listo para copiar y pegar directamente en tu **`README.md`**:
+
 ## Estructura de Directorios
-`compilador-tp-grupo34/
-├── `casos_de_prueba/`         # Archivos `.txt` con los casos de prueba unitarios e integrales.
-│   ├── `01_prueba_correcto.txt`
-│   ├── `02_prueba_warnings_id.txt`
-│   ├── `03_prueba_errores_constantes.txt`
-│   ├── `04_prueba_errores_simbolos.txt`
-│   ├── `05_prueba_cadenas_y_comentarios.txt`
-│   ├── `06_prueba_errores_sintacticos_base.txt`
-│   ├── `07_programa_integral_valido.txt`
-│   ├── `08_programa_complejo_errores.txt`
-│   └── `09_prueba_declaraciones_y_poo.txt`
-├── `src/`                     #Código fuente Java del Analizador Léxico, Parser (BYACC), Tabla de Símbolos, etc...
-│   ├── `AccionSemantica.java`
-│   ├── `AnalizadorLexico.java`
-│   ├── `Main.java`
-│   ├── `Parser.java`
-│   ├── `ParserVal.java`
-│   ├── `RegistroTS.java`
-│   ├── `TablaDeSimbolos.java`
-│   ├── `Token.java`
-│   ├── `ValidadorDeclaraciones.java`
-├── `compilador`               # Script ejecutable principal.
-├── `ejecutar_pruebas.sh`      # Script ejecutable de pruebas automatizadas.
-├── `gramatica.y`              # Especificación gramatical del parser en YACC.
-├── `README.md`                # Requisitos del sistema, Permisos de Ejecucion y Modo de Uso del proyecto.
-└── `y.output`                 # Informe de estados y verificación de 0 conflictos Shift/Reduce.
+
+```text
+compilador-tp-grupo34/
+├── casos_de_prueba/           # Archivos .txt con los casos de prueba unitarios e integrales
+│   ├── 01_prueba_correcto.txt
+│   ├── 02_prueba_warnings_id.txt
+│   ├── 03_prueba_errores_constantes.txt
+│   ├── 04_prueba_errores_simbolos.txt
+│   ├── 05_prueba_cadenas_y_comentarios.txt
+│   ├── 06_prueba_errores_sintacticos_base.txt
+│   ├── 07_programa_integral_valido.txt
+│   ├── 08_programa_complejo_errores.txt
+│   └── 09_prueba_declaraciones_y_poo.txt
+├── src/                       # Código fuente Java del Analizador Léxico, Parser (BYACC), Tabla de Símbolos, etc.
+│   ├── AccionSemantica.java
+│   ├── AnalizadorLexico.java
+│   ├── Main.java
+│   ├── Parser.java
+│   ├── ParserVal.java
+│   ├── RegistroTS.java
+│   ├── TablaDeSimbolos.java
+│   ├── Token.java
+│   └── ValidadorDeclaraciones.java
+├── compilador                 # Script ejecutable principal
+├── ejecutar_pruebas.sh        # Script ejecutable de pruebas automatizadas
+├── gramatica.y                # Especificación gramatical del parser en YACC
+├── README.md                  # Requisitos del sistema, permisos de ejecución y modo de uso
+└── y.output                   # Informe de estados y verificación de 0 conflictos Shift/Reduce
+```
 
