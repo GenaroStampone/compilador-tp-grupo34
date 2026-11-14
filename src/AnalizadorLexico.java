@@ -54,6 +54,7 @@ public class AnalizadorLexico {
     private BufferedReader lectorFuente;
     private TablaDeSimbolos tablaSimbolos;
     private int estadoActual;
+    private int nroLinea = 1; // Contador de líneas para reportes de errores/warnings
     public int yylineno; // Contador estándar de líneas para interfaz con Parser / Yacc
     private StringBuilder buffer;
     private int ultimoCaracter; // Control de lookahead / ungetc
