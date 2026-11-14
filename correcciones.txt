@@ -1,0 +1,24 @@
+OBSERVACIONES
+
+Pocos casos de prueba. Para entregar los casos de prueba se deben hacer hasta 3 y 5 pruebas fáciles para cada punto requerido en los TP y 3 más para cada punto implementado en programas complejos. De esta manera cada prueba consistirá en código fuente, salida esperada y salida obtenida. Los programas complejos deberían contener  válidas y diferentes tipos de errores para demostrar que el compilador todavía analiza y encuentra errores más adelante. No se muestran suficientes resultados pconstruccionesara demostrar que el trabajo cumple con los requisitos. Los casos de prueba se muestran como ejecutados pero no se entregan los programas con sus respectivas salidas.
+
+La descripción gramatical contiene desviaciones significativas del idioma solicitado. Primero se dice que las funciones pueden tener una lista vacía de parámetros pero siempre necesitan al menos uno. Además se proporcionan la construcción opcional  ENTONCES  y las conversiones  TODF  y  TOUS  las cuales no se ajustan al tema 35 asignado. Esto necesita ser corregido o explicado. Finalmente el uso de  opt_semicolon  debería aclararse para evitar el final opcional de las oraciones.
+
+La sintaxis para acceder a una expresión en el tema 29 se proporciona mediante  ID[expresión] , sin embargo tanto los índices constantes como variables son aceptables de acuerdo al prompt. También se permite acceder al atributo  ID.ID  mientras que el grupo solo debería soportar el acceso por posición. Ten en cuenta que esta operación no debe confundirse con la invocación de un método donde se utiliza el operador de punto.
+
+En el tema 18 es necesario proporcionar la información de que la asignación interna solo se permite a identificadores y constantes y no toma toda la expresión como un valor. Hay contradicciones en el control numérico.
+
+El valor del límite superior de  DOUBLEF  en AS6 está escrito como 1e-308 mientras que debería ser 1e+308. La siguiente sección utiliza límites inclusivos en vez de la desigualdad estricta establecida en el prompt. La documentación debería ser corregida y el código debería ser probado usando valores límite, cero y constantes negativas. También es importante explicar cómo el actual analizador cambia la tabla de símbolos y valida el rango después de aplicar el signo.
+
+Hay cambios que hacer en las matrices para el TP2 porque los corchetes requeridos no están representados correctamente. Además algunas celdas son difíciles de conectar a las acciones. La validación que prohíbe las letras mayúsculas para los identificadores comunes no se discute en AS3 mientras se discute el reconocimiento de las palabras reservadas pero sin tomar en cuenta su caso. La resolución de conflictos se presenta en términos generales sin proporcionar reglas antes y después del conflicto y el resultado final de BYacc/J. Se debería verificar si quedan algún otro conflicto de desplazamiento/reducción o reducción/reducción. La recuperación usando el  error;   tiene que ser probada usando varios errores, expresiones sin cerrar y el final de archivo. La parte llamada “errores léxicos y sintácticos considerados” se enfoca en los primeros pero dice poco acerca de los segundos.
+
+Para realizar la evaluación es necesario proporcionar pruebas reproducibles sobre todos los temas que incluyen funciones, enumeraciones, clases amigas, herencia, ordenamiento de argumentos opcionales y acceso por posición. Sería útil combinar tareas simples con programas grandes que puedan ser utilizados para comprobar la recuperación. También hacen falta instrucciones sobre cómo compilar y ejecutar estos programas.
+
+Dónde se genera el archivo fuente con líneas numeradas?
+
+Hay un sobre uso de la IA, lo cual NO es recomendable.
+
+EJECUCIÓN COMPILADOR: No hay indicaciones en el informe o a nivel del código claras sobre cómo ejecutar el compilador.
+
+El archivo ejecutar_pruebas.sh parece ser un intento de ejecución de los casos de prueba que no funciona como se espera.
+
