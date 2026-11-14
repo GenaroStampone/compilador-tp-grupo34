@@ -23,7 +23,6 @@ public class ValidadorDeclaraciones {
         // Recolección de advertencias y errores (léxicos y sintácticos)
         List<String> warningsLexicos = lexico.getWarnings();
         List<String> erroresLexicos = lexico.getErrores();
-        List<String> erroresSintacticos = parser.getErroresSintacticos();
 
         if (!warningsLexicos.isEmpty()) {
             System.out.println("\n--- ADVERTENCIAS LÉXICAS (" + warningsLexicos.size() + ") ---");
@@ -39,15 +38,9 @@ public class ValidadorDeclaraciones {
             }
         }
 
-        if (!erroresSintacticos.isEmpty()) {
-            System.out.println("\n--- ERRORES SINTÁCTICOS (" + erroresSintacticos.size() + ") ---");
-            for (String s : erroresSintacticos) {
-                System.out.println(" [ERROR SINTÁCTICO] " + s);
-            }
-        }
-
         // Reporte de resultado del análisis
-        boolean sinErrores = (resultado == 0) && !parser.huboError() && erroresLexicos.isEmpty();
+        boolean huboErrorSintactico = (resultado != 0) || parser.huboError();
+        boolean sinErrores = !huboErrorSintactico && erroresLexicos.isEmpty();
 
         System.out.println("\n" + lineaEncabezado);
         if (sinErrores) {
@@ -55,7 +48,7 @@ public class ValidadorDeclaraciones {
         } else {
             System.out.println(" RESULTADO: ANÁLISIS FINALIZADO CON ERRORES ("
                     + erroresLexicos.size() + " léxico(s), "
-                    + erroresSintacticos.size() + " sintáctico(s))");
+                    + " | Sintácticos: " + (huboErrorSintactico ? "SÍ" : "NO") + ")");
         }
         System.out.println(lineaEncabezado);
 
