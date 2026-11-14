@@ -1,21 +1,15 @@
 public class RegistroTS {
     private String lexema;
     private int idToken;
-    private String uso; // Indica el rol del lexema (ej: "VARIABLE", "CONSTANTE")
-    private String tipoToken;
+    private String uso; // Indica el rol del lexema (ej: "VARIABLE", "FUNCION", "CLASE", "PARAMETRO", "TYPEDEF")
+    private String tipoToken; // Categoría léxica en TP1 o tipo de dato en TP2 ("USHORTINT", "DOUBLEF", etc.
     private int nroLinea;
     private double valorNum;
     private int longitud;
 
     // Constructor para ID, Cadenas y Tokens sin valor numérico inicial
     public RegistroTS(String lexema, int idToken, String tipoToken, int nroLinea) {
-        this.lexema = lexema;
-        this.idToken = idToken;
-        this.tipoToken = tipoToken;
-        this.nroLinea = nroLinea;
-        this.valorNum = 0.0;
-        this.longitud = (lexema != null) ? lexema.length() : 0;
-        this.uso = null;
+        this(lexema, idToken, tipoToken, nroLinea, 0.0);
     }
 
     // Constructor para constantes numéricas
@@ -86,5 +80,11 @@ public class RegistroTS {
 
     public void setLongitud(int longitud) {
         this.longitud = longitud;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("RegistroTS [lexema='%s', idToken=%d, tipo='%s', uso='%s', linea=%d, valor=%s]",
+                lexema, idToken, tipoToken, uso, nroLinea, valorNum);
     }
 }

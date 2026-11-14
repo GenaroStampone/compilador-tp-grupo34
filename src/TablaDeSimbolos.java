@@ -124,12 +124,13 @@ public class TablaDeSimbolos {
         String valorStr = "-"; 
         if (reg.getTipoToken() != null && (reg.getTipoToken().contains("CTE") || reg.getValorNum() != 0.0)) { 
             double v = reg.getValorNum(); 
-            if (Math.abs(v) >= 1e6 || (Math.abs(v) < 1e-3 && v != 0.0)) { 
-                valorStr = String.format("%e", v); 
-            } 
-            else { 
-                valorStr = String.valueOf(v); 
-            } 
+            if (reg.getTipoToken().equals("CTE_ENTERA") || reg.getTipoToken().equals("USHORTINT")) {
+                valorStr = String.valueOf((long) v); // Imprime "250" sin ".0"
+            } else if (Math.abs(v) >= 1e6 || (Math.abs(v) < 1e-3 && v != 0.0)) {
+                valorStr = String.format("%e", v);
+            } else {
+                valorStr = String.valueOf(v);
+            }
         }
         
         // Atributos semánticos asignados en TP2 
