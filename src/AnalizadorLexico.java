@@ -772,7 +772,6 @@ public class AnalizadorLexico {
     private int obtenerTokenPalabraReservada(String lexema) {
         switch (lexema.toLowerCase()) {
             case "if": return IF;
-            case "then": return THEN;
             case "else": return ELSE;
             case "end_if": return END_IF;
             case "begin": return BEGIN;
@@ -789,8 +788,6 @@ public class AnalizadorLexico {
             case "private": return PRIVATE;
             case "friend": return FRIEND;
             case "extends": return EXTENDS;
-            case "todf": return TODF;
-            case "tous": return TOUS;
             default: return ID;
         }
     }
