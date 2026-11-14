@@ -31,15 +31,12 @@ public class AnalizadorLexico {
     public static final int FUNCTION = 278;
     public static final int USHORTINT = 279;
     public static final int DOUBLEF = 280;
-    public static final int THEN = 281;
     public static final int WHILE = 282;
     public static final int REPEAT = 283;
     public static final int TYPEDEF = 284;
     public static final int PRIVATE = 285;
     public static final int FRIEND = 286;
     public static final int EXTENDS = 287;
-    public static final int TODF = 288;
-    public static final int TOUS = 289;
     public static final int Token_EOF = 0; // Constante para compatibilidad con pruebas y clientes de EOF
 
     // Símbolos con valor ASCII directo (referencias opcionales)
@@ -57,7 +54,6 @@ public class AnalizadorLexico {
     private BufferedReader lectorFuente;
     private TablaDeSimbolos tablaSimbolos;
     private int estadoActual;
-    private int nroLinea;
     public int yylineno; // Contador estándar de líneas para interfaz con Parser / Yacc
     private StringBuilder buffer;
     private int ultimoCaracter; // Control de lookahead / ungetc
@@ -82,16 +78,10 @@ public class AnalizadorLexico {
     private static final int F = -1; // Estado Final / Emisión de token
     private static final int LARGO_MAX_ID = 22; // Límite de 22 caracteres
 
-    public AnalizadorLexico(String rutaArchivo, TablaDeSimbolos tablaSimbolos) {
-        try {
-            this.lectorFuente = new BufferedReader(new FileReader(rutaArchivo));
-        } catch (FileNotFoundException e) {
-            System.err.println("Error: No se encontró el archivo fuente en " + rutaArchivo);
-        }
-
+    public AnalizadorLexico(String rutaArchivo, TablaDeSimbolos tablaSimbolos) throws FileNotFoundException {
+        this.lectorFuente = new BufferedReader(new FileReader(rutaArchivo));
         this.tablaSimbolos = tablaSimbolos;
-        this.nroLinea = 1; // La numeración de líneas comienza en 1
-        this.yylineno = 1;
+        this.yylineno = 1; // La numeración de líneas comienza en 1
         this.estadoActual = 0;
         this.buffer = new StringBuilder();
         this.ultimoCaracter = -1;
@@ -262,12 +252,12 @@ public class AnalizadorLexico {
 
         for (int col = 0; col < CANT_COLUMNAS; col++) {
             if (col != 18) {
-                TE_mat[5][col] = F;
+                TE_mat[5][col] = 0;
                 AS_mat[5][col] = this::AS_Punto;
             }
             if (col != 9) {
-                TE_mat[6][col] = F;
-                AS_mat[6][col] = this::AS_DosPuntos;
+                TE_mat[6][col] = 0;
+                AS_mat[6][col] = this::AS_ErrorLexico;
             }
         }
 
@@ -279,6 +269,7 @@ public class AnalizadorLexico {
 
         for (int col = 0; col < CANT_COLUMNAS; col++) {
             if (col != 7 && col != 18) {
+                TE_mat[7][col] = 0;
                 AS_mat[7][col] = this::AS6;
             }
         }
@@ -297,6 +288,7 @@ public class AnalizadorLexico {
             if (col != 18) {
                 TE_mat[9][col] = 0;
                 AS_mat[9][col] = this::AS_ErrorLexico;
+                TE_mat[10][col] = 0;
                 AS_mat[10][col] = this::AS6;
             }
         }
@@ -353,6 +345,7 @@ public class AnalizadorLexico {
         while (true) {
             int caracterLeido = obtenerSiguienteCaracter();
 
+            // Fin del archivo fuente: EOF
             if (caracterLeido == -1) {
                 if (estadoActual == 1) { // Finalizar identificador o palabra reservada en EOF
                     char delimitador = ' ';
@@ -509,7 +502,7 @@ public class AnalizadorLexico {
             double minVal = 2.2250738585072014e-308; // Límite inferior positivo para punto flotante de 64 bits
             double maxVal = 1.7976931348623157e+308; // Límite superior máximo para punto flotante de 64 bits
             
-            if (val == 0.0 || (absVal >= minVal && absVal <= maxVal)) { // Verifica que el valor esté dentro del rango permitido o sea 0.0
+            if (val == 0.0 || (absVal > minVal && absVal < maxVal)) { // Verifica que el valor esté dentro del rango permitido o sea 0.0
                 RegistroTS reg = tablaSimbolos.alta(lexema, DOUBLEF_VAL, nroLinea, val); // Registra la constante en la Tabla de Símbolos
                 this.yylval = new ParserVal(reg);                               // Pasa la referencia del RegistroTS en yylval para Yacc
                 this.yylval.sval = reg.getLexema();
@@ -738,12 +731,6 @@ public class AnalizadorLexico {
     }
 
     // --- ACCIONES AUXILIARES Y SÍMBOLOS NUEVOS ---
-
-    // AS_DosPuntos: Devolver el último carácter leído y retornar el token ':'
-    private int AS_DosPuntos(char c) {
-        ungetc(c);
-        return (int) ':';
-    }
 
     // AS_Punto: Devolver el último carácter leído. Si el buffer contenía solo '.',
     // retornar el token literal '.', de lo contrario emitir error léxico por float mal formado.
