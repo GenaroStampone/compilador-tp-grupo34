@@ -6,7 +6,7 @@ import java.util.*;
 /* DECLARACIONES Y CONFIGURACIÓN DE TOKENS */
 
 %token ID CTE_USHORT CTE_DOUBLEF CADENA
-%token IF THEN ELSE END_IF BEGIN END POUT
+%token IF ELSE END_IF BEGIN END POUT
 %token WHILE REPEAT TYPEDEF PRIVATE FRIEND EXTENDS CLASS FUNCTION RET
 %token USHORTINT DOUBLEF 
 %token ASIGNACION ASIG_EXPR COMP_IGUAL COMP_DIST CORCHETE_IZQ CORCHETE_DER
@@ -25,12 +25,12 @@ import java.util.*;
 /* REGLAS GRAMATICALES Y ACCIONES SINTÁCTICAS */
 
 programa
-    : ID ';' bloque_declarativo BEGIN bloque_ejecutable END ';'
+    : ID ';' bloque_declarativo cuerpo_ejecutable ';'
       {
         registrarEstructura("Programa");
         System.out.println("Programa estructurado correctamente.");
       }
-    | ID bloque_declarativo BEGIN bloque_ejecutable END ';'
+    | ID bloque_declarativo cuerpo_ejecutable ';'
       {
         registrarEstructura("Programa");
         System.out.println("Programa estructurado correctamente.");
@@ -114,7 +114,7 @@ visibilidad
     ;
 
 declaracion_funcion
-    : type_specifier FUNCTION ID '(' parametros ')' bloque_declarativo BEGIN bloque_ejecutable retorno_opcional END ';'
+    : type_specifier FUNCTION ID '(' parametros ')' bloque_declarativo BEGIN lista_sentencias retorno_opcional END ';'
       { registrarEstructura("Declaración de función"); }
     ;
 
@@ -124,13 +124,22 @@ parametros
     ;
 
 retorno_opcional
-    : RET '(' expresion ')' ';'
-      { registrarEstructura("Sentencia RET"); }
+    : PR_RET '(' expresion ')' ';'
+      { registrarEstructura("Sentencia PR_RET"); }
     | /* vacio */
     ;
 
-bloque_ejecutable
-    : bloque_ejecutable sentencia
+cuerpo_ejecutable
+    : sentencia
+    | bloque_compuesto
+    ;
+
+bloque_compuesto
+    : BEGIN lista_sentencias END 
+    ;
+
+lista_sentencias
+    : lista_sentencias sentencia
     | /* vacio */
     ;
 
@@ -155,7 +164,7 @@ asignacion
 
 /* Tema 11: Sentencia WHILE-REPEAT */
 sentencia_while
-    : WHILE '(' condicion ')' REPEAT bloque_ejecutable END
+    : WHILE '(' condicion ')' REPEAT cuerpo_ejecutable ';'
       {
         System.out.println("Linea " + lexico.getNroLinea() + ": Sentencia WHILE-REPEAT reconocida");
         registrarEstructura("Sentencia WHILE-REPEAT");
@@ -163,12 +172,12 @@ sentencia_while
     ;
 
 sentencia_if
-    : IF '(' condicion ')' bloque_ejecutable rama_else END_IF
+    : IF '(' condicion ')' cuerpo_ejecutable rama_else END_IF
       { registrarEstructura("Sentencia IF"); }
     ;
 
 rama_else
-    : ELSE bloque_ejecutable
+    : ELSE cuerpo_ejecutable
     | /* vacio */
     ;
 
