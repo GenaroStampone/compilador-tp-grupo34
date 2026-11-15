@@ -1,14 +1,34 @@
 #!/bin/bash
-# Wrapper ejecutable para el Compilador Grupo 34 (TP2)
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Ejecucion automatica de prueba para el Compilador
 
-# Localizar classpath del compilador
-if [ -d "$SCRIPT_DIR/bin" ]; then
-    CP="$SCRIPT_DIR/bin:$SCRIPT_DIR/src"
-elif [ -d "$SCRIPT_DIR/compilador-tp-grupo34/bin" ]; then
-    CP="$SCRIPT_DIR/compilador-tp-grupo34/bin:$SCRIPT_DIR/compilador-tp-grupo34/src"
+# 1. Obtener la ruta absoluta del directorio del script
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE}")" && pwd)"
+
+# 2. Localizar el directorio raíz del proyecto
+if [ -d "$SCRIPT_DIR/src" ]; then
+    PROJ_DIR="$SCRIPT_DIR"
+elif [ -d "$SCRIPT_DIR/compilador-tp-grupo34/src" ]; then
+    PROJ_DIR="$SCRIPT_DIR/compilador-tp-grupo34"
 else
-    CP="."
+    PROJ_DIR="$SCRIPT_DIR"
 fi
 
-java -cp "$CP" Main "$@"
+# 3. Posicionarse en el directorio del proyecto
+cd "$PROJ_DIR" || exit 1
+
+# 4. Si los .class no existen o falta Main.class, crear bin/ y compilar allí
+if [ ! -f "bin/Main.class" ]; then
+    mkdir -p bin
+    javac -d bin src/*.java
+    if [ $? -ne 0 ]; then
+        echo "[ERROR CRÍTICO] Falló la compilación de los archivos Java en src/." >&2
+        exit 1
+    fi
+fi
+
+# 5. Ejecutar la clase Main buscando las clases en la carpeta bin/
+java -cp bin Main "$@"
+EXIT_CODE=$?
+
+# 6. Retornar el mismo código de salida que devuelva Java
+exit $EXIT_CODE

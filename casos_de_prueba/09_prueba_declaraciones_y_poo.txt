@@ -1,33 +1,29 @@
 {{
-    ============================================================================
-    CASO DE PRUEBA: test_declaraciones.txt (GRUPO 34 - PASO 3 TP2)
-    Verificación integral del bloque declarativo:
-    1. Variables básicas: ushortint ($us) y doublef (d).
-    2. Enumeraciones (Tema 23): Typedef ID = [ <lista_valores> ] e instanciación.
-    3. Funciones: <tipo> FUNCTION ID (...) <declarativas> BEGIN <ejecutables> END.
-    4. Clases y Objetos (Temas 27 y 30):
-       - CLASS ID BEGIN ... END;
-       - Herencia múltiple: extends cb, cc;
-       - Modificador private en atributos y métodos.
-       - Declaración friend ID;
-       - Instanciación de objetos de las clases.
-    ============================================================================
+    CASO DE PRUEBA EXHAUSTIVO DE BLOQUE DECLARATIVO Y ORIENTACIÓN A OBJETOS 
+    Verificación de: 
+    - Declaración de Variables: Instanciación de variables primitivas USHORTINT y DOUBLEF. 
+    - Enumeraciones (TYPEDEF): Definición de listas de valores [val1, val2] y declaración de tipos derivados. 
+    - Orientación a Objetos (CLASS): Definición de clases con miembros públicos y privados. 
+    - Herencia Múltiple (EXTENDS): Extensión simultánea a partir de múltiples clases base (EXTENDS ComponenteA, ComponenteB). 
+    - Encapsulamiento y Amistad: Modificador PRIVATE en atributos/métodos y cláusulas FRIEND para clases y funciones. 
+    - Firmas de Funciones y Métodos: Declaración formal de funciones locales, globales y métodos con retorno (RET). 
+    - Análisis Sintáctico Exitoso: Validación del bloque declarativo completo con 0 errores sintácticos.
 }}
 
 programa_declaraciones;
 
-{{ 1. Declaración de variables básicas del Grupo 34 }}
+{{ Declaración de variables básicas }}
 ushortint contador, limite, indice;
 doublef factor, precision, resultado;
 
-{{ 2. Enumeraciones (Tema 23) e instanciación de variables }}
+{{ Enumeraciones (Tema 23) e instanciación de variables }}
 typedef RangoSinSigno = [0$us, 64$us, 128$us, 255$us];
 typedef Factores = [0.1, 0.5, 1.0, 2.5d0];
 
 RangoSinSigno estadoInicial, estadoFinal;
 Factores factorEscala;
 
-{{ 4. Clases y Objetos (Temas 27 y 30) }}
+{{ Clases y Objetos (Temas 27 y 30) }}
 class ComponenteA begin
     ushortint idComponente;
     doublef voltaje;
@@ -69,7 +65,7 @@ end;
 ComponenteA sensorPrincipal;
 DispositivoAvanzado centralita, nodoRespaldo;
 
-{{ 3. Declaración de funciones generales }}
+{{ Declaración de funciones generales }}
 ushortint function calcularTotal(ushortint a, ushortint b)
     ushortint sumaParcial;
 begin
@@ -77,7 +73,7 @@ begin
     ret (sumaParcial);
 end;
 
-doublef function procesarDispositivo(doublef tasa, DispositivoAvanzado disp) begin
+function doublef procesarDispositivo(doublef tasa, DispositivoAvanzado disp) begin
     ret (tasa * 1.5);
 end;
 
@@ -87,5 +83,4 @@ begin
     factor := 2.5d0;
     resultado := procesarDispositivo(factor, centralita);
     pout {Fin de ejecucion del test de declaraciones};
-    ret (contador);
 end;

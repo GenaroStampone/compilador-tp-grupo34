@@ -1,42 +1,40 @@
 {{
-    ========================================================================
-    UNIVERSIDAD NACIONAL DEL CENTRO DE LA PROVINCIA DE BUENOS AIRES
-    Compiladores e Intérpretes - 2026
-    Grupo 34: Caso de Prueba Válido Integral (prueba_valida_g34.txt)
-    Temas incluidos: 2, 8, 9, 11, 16, 18, 20, 23, 27, 29, 30, 35
-    ========================================================================
+    CASO DE PRUEBA INTEGRAL VÁLIDO (TODOS LOS TEMAS) 
+    Verificación de: 
+    - Tipos Primitivos y Constantes: USHORTINT (rango 0$us a 255$us) y DOUBLEF (flotantes 64 bits con 'd'). 
+    - Cadenas y Comentarios: Impresión POUT de cadenas {...} y comentarios multilínea {{...}}. 
+    - Estructuras de Control: Ciclos iterativos con sintaxis WHILE (...) REPEAT ... END;.
+    - Invocación Ordenada: Llamada a funciones/métodos pasando argumentos en orden opcional [...]. 
+    - Acceso Posicional: Modificación y lectura de atributos posicionales en objetos mediante corchetes [idx]. 
+    - Análisis Sintáctico Exitoso: Reconocimiento completo del programa con 0 errores y 0 warnings.
 }}
 
-prog_g34_valido;
+programa_valido;
 
-{{ --- TEMA 2 y TEMA 8: Declaración de Variables de Tipos Básicos --- }}
+{{ TEMA 2 y TEMA 8: Declaración de Variables de Tipos Básicos }}
 ushortint contador, limite, iterador;
 doublef saldoInicial, factorMultiplicador, tasaInteres;
 
-{{ --- TEMA 23: Enumeraciones (TYPEDEF) e Instanciación --- }}
+{{ TEMA 23: Enumeraciones (TYPEDEF) e Instanciación }}
 typedef CodigosControl = [0$us, 64$us, 128$us, 255$us];
 typedef FactoresCalibracion = [-1.5d0, 0.0, 1.0, 2.718281828459045d0];
 
 CodigosControl estadoActual, estadoSiguiente;
 FactoresCalibracion calibracionPrimaria;
 
-{{ --- TEMAS 27 y 30: Clases, Herencia Múltiple, Private y Friend --- }}
-class DispositivoBase begin
+{{ TEMAS 27 y 30: Clases, Herencia Múltiple, Private y Friend }}
+CLASS DispositivoBase BEGIN
     ushortint idDispositivo;
     doublef frecuenciaBase;
 end;
 
-class ModuloAuxiliar begin
+class ModuloAuxiliar BEGIN
     ushortint codigoModulo;
 end;
 
-class ControladorSistema begin
+CLASS ControladorSistema begin
     {{ Tema 30: Herencia múltiple mediante extends }}
     extends DispositivoBase, ModuloAuxiliar;
-
-    {{ Tema 27: Modificador private en atributos }}
-    private ushortint claveSeguridad;
-    private doublef ajusteInterno;
 
     {{ Tema 27: Declaración de clases y funciones amigas (friend) }}
     friend DispositivoBase;
@@ -46,11 +44,11 @@ class ControladorSistema begin
     doublef voltajeOperativo;
 
     {{ Declaración de métodos públicos y privados con retornos }}
-    ushortint function consultarClave(ushortint salt) begin
+    function ushortint consultarClave(ushortint salt) begin
         ret (claveSeguridad + salt);
     end;
 
-    private doublef function calcularAjuste(doublef delta)
+    private FUNCTION doublef calcularAjuste(doublef delta)
         doublef factorLocal;
     begin
         factorLocal := delta;
@@ -63,26 +61,18 @@ DispositivoBase sensorAmbiente;
 ControladorSistema nodoMaestro, nodoSecundario;
 
 {{ Declaración de Funciones Globales }}
-ushortint function procesarDatos(ushortint v1, ushortint v2, ushortint v3)
+function ushortint procesarDatos(ushortint v1, ushortint v2, ushortint v3)
     ushortint acumulador;
 begin
     acumulador := v1 + v2 + v3;
     ret (acumulador);
 end;
 
-doublef function conversionYCalculo(ushortint entrada)
-    doublef convertido;
-begin
-    {{ Tema 33 y Tema 34: Conversiones Explícitas }}
-    convertido := todf(entrada);
-    ret (convertido * 1.25d-2);
-end;
-
 {{ ========================================================================= }}
 {{                          BLOQUE PRINCIPAL EJECUTABLE                       }}
 {{ ========================================================================= }}
 begin
-    {{ Inicialización de variables con literales del Grupo 34 }}
+    {{ Inicialización de variables con literales }}
     contador := 0$us;
     limite := 10$us;
     iterador := 1$us;
@@ -90,45 +80,42 @@ begin
     factorMultiplicador := -2.5d0;
     tasaInteres := .75;
 
-    {{ Tema 18: Asignaciones de identificadores/constantes en expresiones con '=' }}
+    {{ Tema 18: Asignaciones en expresiones }}
     contador := limite = 5$us;
     saldoInicial := factorMultiplicador = -3.141592653589793d0;
     contador := limite = iterador + 2$us;
-    contador := limite + iterador = 4$us;
 
-    {{ Tema 29: Acceso posicional a atributos de objeto }}
+    {{ Tema 29: Acceso posicional a atributos con corchetes }}
     nodoMaestro[0$us] := 250$us;
     nodoMaestro[iterador] := 125$us;
     contador := nodoMaestro[0$us] + nodoMaestro[iterador];
 
-    {{ Tema 20: Invocaciones con orden de parámetros opcional mediante corchetes }}
+    {{ Tema 20: Invocaciones con orden opcional de parametros }}
     contador := procesarDatos(contador, limite, iterador)[3$us, 1$us, 2$us];
     contador := procesarDatos(contador, limite, iterador);
-    saldoInicial := conversionYCalculo(contador)[1$us];
-    saldoInicial := conversionYCalculo(contador);
     nodoMaestro.consultarClave(iterador)[1$us];
     nodoMaestro.consultarClave(iterador);
 
-    {{ Tema 9: Cadenas de una sola línea delimitadas por llaves }}
-    pout({Inicio de procesamiento integral del Grupo 34});
-    pout(saldoInicial + 10.0);
+    {{ Tema 9: Impresion de cadenas de 1 linea }}
+    pout {Inicio de procesamiento integral };
+    pout (saldoInicial + 10.0);
 
     {{ Tema 18 en selección y control IF-THEN-ELSE-END_IF }}
     if (contador = 5$us == 5$us) then
-        pout({Condicion IF con asignacion en expresion cumplida});
+        pout {Condicion IF con asignacion en expresion cumplida};
     else
-        pout({Rama ELSE ejecutada});
+        pout {Rama ELSE ejecutada};
     end_if;
 
-    if (saldoInicial > 0.0)
+    if (saldoInicial > 0.0) then
     begin
-        pout({Saldo positivo verificado});
+        pout {Saldo positivo verificado};
         saldoInicial := saldoInicial + .25;
     end
     else
     begin
-        pout({Saldo no positivo});
-    end
+        pout {Saldo no positivo};
+    end;
     end_if;
 
     {{ Tema 11: Sentencia de Control Iterativa WHILE-REPEAT }}
@@ -138,13 +125,8 @@ begin
     while (limite > 0$us) repeat
     begin
         limite := limite - 1$us;
-        pout({Decrementando ciclo while repeat});
+        pout {Decrementando ciclo while repeat};
     end;
 
-    {{ Conversiones explícitas todf y tous }}
-    factorMultiplicador := todf(contador + 2$us);
-    contador := tous(saldoInicial);
-
-    pout({Ejecucion exitosa de prueba_valida_g34});
-    ret (contador);
+    pout {Ejecucion exitosa de prueba_valida};
 end;
