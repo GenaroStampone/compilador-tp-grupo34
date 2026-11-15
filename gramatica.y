@@ -25,16 +25,8 @@ import java.util.*;
 /* REGLAS GRAMATICALES Y ACCIONES SINTÁCTICAS */
 
 programa
-    : ID ';' bloque_declarativo BEGIN bloque_ejecutable END ';'
-      {
-        registrarEstructura("Programa");
-        System.out.println("Programa estructurado correctamente.");
-      }
-    | ID bloque_declarativo BEGIN bloque_ejecutable END ';'
-      {
-        registrarEstructura("Programa");
-        System.out.println("Programa estructurado correctamente.");
-      }
+    : ID bloque_declarativo BEGIN bloque_ejecutable END ';'
+      { System.out.println("Programa estructurado correctamente."); }
     ;
 
 bloque_declarativo
@@ -44,7 +36,6 @@ bloque_declarativo
 
 declaracion
     : type_specifier lista_variables ';'
-      { registrarEstructura("Declaración de variables"); }
     | declaracion_typedef
     | declaracion_clase
     | declaracion_funcion
@@ -65,10 +56,7 @@ lista_variables
 /* Tema 23: Enumeraciones */
 declaracion_typedef
     : TYPEDEF ID '=' CORCHETE_IZQ lista_valores CORCHETE_DER ';'
-     {
-       registrarEstructura("Enumeración (typedef)");
-       System.out.println("Línea " + lexico.getNroLinea() + ": Enumeración (typedef) declarada");
-     }
+     { System.out.println("Línea " + lexico.getNroLinea() + ": Enumeración (typedef) declarada"); }
     ;
 
 lista_valores
@@ -84,14 +72,11 @@ valor_enum
 /* Temas 27 y 30: Clases, Visibilidad y Herencia Multiple */
 declaracion_clase
     : CLASS ID herencia_opcional BEGIN cuerpo_clase END ';'
-     {
-       registrarEstructura("Clase");
-       System.out.println("Línea " + lexico.getNroLinea() + ": Declaración de Clase reconocida");
-     }
+     { System.out.println("Línea " + lexico.getNroLinea() + ": Declaración de Clase reconocida"); } ;
     ;
 
 herencia_opcional
-    : EXTENDS lista_variables { registrarEstructura("Herencia"); }
+    : EXTENDS lista_variables
     | /* vacio */
     ;
 
@@ -104,9 +89,7 @@ miembro_clase
     : visibilidad declaracion
     | declaracion
     | FRIEND lista_variables ';'   /* Tema 27: clases/funciones amigas */
-      { registrarEstructura("Declaración friend"); }
     | EXTENDS lista_variables ';'  /* Tema 30: herencia multiple dentro del cuerpo */
-      { registrarEstructura("Herencia dentro de clase"); }
     ;
 
 visibilidad
@@ -115,7 +98,6 @@ visibilidad
 
 declaracion_funcion
     : type_specifier FUNCTION ID '(' parametros ')' bloque_declarativo BEGIN bloque_ejecutable retorno_opcional END ';'
-      { registrarEstructura("Declaración de función"); }
     ;
 
 parametros
@@ -125,7 +107,6 @@ parametros
 
 retorno_opcional
     : RET '(' expresion ')' ';'
-      { registrarEstructura("Sentencia RET"); }
     | /* vacio */
     ;
 
@@ -145,26 +126,18 @@ sentencia
 /* Tema 29: Acceso posicional a atributos con corchetes */
 asignacion
     : ID ASIGNACION expresion
-      { registrarEstructura("Asignación"); }
     | ID CORCHETE_IZQ expresion CORCHETE_DER ASIGNACION expresion
-      {
-        System.out.println("Linea " + lexico.getNroLinea() + ": Asignacion a atributo opcional");
-        registrarEstructura("Asignación a atributo opcional");
-      }
+      { System.out.println("Linea " + lexico.getNroLinea() + ": Asignacion a atributo opcional"); }
     ;
 
 /* Tema 11: Sentencia WHILE-REPEAT */
 sentencia_while
     : WHILE '(' condicion ')' REPEAT bloque_ejecutable END
-      {
-        System.out.println("Linea " + lexico.getNroLinea() + ": Sentencia WHILE-REPEAT reconocida");
-        registrarEstructura("Sentencia WHILE-REPEAT");
-      }
+      { System.out.println("Linea " + lexico.getNroLinea() + ": Sentencia WHILE-REPEAT reconocida"); }
     ;
 
 sentencia_if
     : IF '(' condicion ')' bloque_ejecutable rama_else END_IF
-      { registrarEstructura("Sentencia IF"); }
     ;
 
 rama_else
@@ -174,14 +147,11 @@ rama_else
 
 salida_pout
     : POUT '(' CADENA ')'
-      { registrarEstructura("Sentencia POUT"); }
     | POUT '(' expresion ')'
-      { registrarEstructura("Sentencia POUT"); }
     ;
 
 condicion
     : expresion comparador expresion
-      { registrarEstructura("Condición"); }
     ;
 
 comparador
@@ -204,16 +174,13 @@ expresion
     | ID '=' expresion
     | ID invocacion_ordenada
     | ID CORCHETE_IZQ expresion CORCHETE_DER
-      { registrarEstructura("Acceso posicional"); }
     | ID
     | constante
     ;
 
 invocacion_ordenada
-    : '(' lista_expresiones ')' CORCHETE_IZQ lista_valores CORCHETE_DER
-      { registrarEstructura("Invocación ordenada con índices"); }
+    : '(' lista_expresiones ')' '[' lista_valores ']'
     | '(' lista_expresiones ')'
-      { registrarEstructura("Invocación ordenada"); }
     ;
 
 lista_expresiones
@@ -235,7 +202,6 @@ private AnalizadorLexico lexico;
 private TablaDeSimbolos ts;
 private boolean huboError = false;
 private List<String> erroresSintacticos = new ArrayList<>();
-private List<String> estructurasDetectadas = new ArrayList<>();
 
 public Parser(AnalizadorLexico lexico, TablaDeSimbolos ts) {
     this.lexico = lexico;
@@ -267,15 +233,6 @@ public List<String> getErroresSintacticos() {
     return erroresSintacticos;
 }
 
-public List<String> getEstructurasDetectadas() {
-    return estructurasDetectadas;
-}
-
-/* Registra una reduccion sintactica reconocida, con la linea actual del lexico. */
-private void registrarEstructura(String estructura) {
-    estructurasDetectadas.add("Línea " + lexico.getNroLinea() + ": " + estructura);
-}
-
 /* TP2 punto c: el lexico desconoce el signo. Al aplicar el '-' el Parser
    vuelve a validar el rango y actualiza la Tabla de Simbolos si corresponde. */
 private void aplicarSignoNegativo(ParserVal v) {
@@ -283,19 +240,11 @@ private void aplicarSignoNegativo(ParserVal v) {
         return;
     }
     RegistroTS reg = (RegistroTS) v.obj;
-<<<<<<< HEAD
     if (reg.getIdToken() == Parser.CTE_USHORT) {
         yyerror("La constante entera sin signo '" + reg.getLexema() + "' no admite valor negativo");
         return;
     }
     if (reg.getIdToken() != Parser.CTE_DOUBLEF) {
-=======
-    if (reg.getIdToken() == CTE_USHORT) {
-        yyerror("La constante entera sin signo '" + reg.getLexema() + "' no admite valor negativo");
-        return;
-    }
-    if (reg.getIdToken() != CTE_DOUBLEF) {
->>>>>>> 1261d8e096bbb03506abba8b6a547c5c51d8af5e
         return;
     }
     try {
