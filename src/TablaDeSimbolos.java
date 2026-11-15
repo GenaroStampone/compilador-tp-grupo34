@@ -2,8 +2,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 
 public class TablaDeSimbolos {
-    private HashMap<String, RegistroTS> tabla;
-    private HashSet<String> palabrasReservadas;
+    private final HashMap<String, RegistroTS> tabla;
+    private final HashSet<String> palabrasReservadas;
 
     public TablaDeSimbolos() {
         this.tabla = new HashMap<>();
@@ -24,6 +24,7 @@ public class TablaDeSimbolos {
         palabrasReservadas.add("function");
         // Palabras reservadas generales del lenguaje Tp2
         palabrasReservadas.add("pout");
+        palabrasReservadas.add("ret");
 
         // Tipos de datos del Grupo 34 (TP1)
         palabrasReservadas.add("ushortint"); // Tema 2
@@ -65,7 +66,8 @@ public class TablaDeSimbolos {
     // El lexico acepta ademas el limite positivo para que el parser pueda
     // aplicar el signo y volver a validar el valor definitivo (TP2, punto c).
     public boolean verificarRangoDoublef(double val) {
-        if (val == 0.0) return true;
+        if (val == 0.0) 
+            return true;
         double absVal = Math.abs(val);
         double minVal = 2.2250738585072014e-308;
         double maxVal = 1.7976931348623157e+308;
@@ -103,31 +105,41 @@ public class TablaDeSimbolos {
         System.out.println("                         CONTENIDO DE LA TABLA DE SÍMBOLOS                         ");
         System.out.println(lineaEncabezado);
         
-        System.out.printf("%-30s | %-10s | %-6s | %-6s | %-12s | %-10s | %-10s%n", "LEXEMA", "TOKEN", "LÍNEA", "LONG", "VALOR", "TIPO", "USO"); 
+        System.out.printf("%-30s | %-10s | %-6s | %-6s | %-12s | %-10s | %-10s%n", 
+                        "LEXEMA", "TOKEN", "LÍNEA", "LONG", "VALOR", "TIPO", "USO"); 
         System.out.println(lineaSeparadora);
 
         for (RegistroTS reg : tabla.values()) { 
-            // 1. Limpieza de saltos de línea y tabulaciones en el lexema 
-            String lexemaLimpio = (reg.getLexema() != null) ? reg.getLexema().replaceAll("\\r?\\n", "\\\\n").replaceAll("\\t", "\\\\t") : ""; 
-            // 2. Formateo del valor numérico (solo para constantes o cuando corresponda) 
-            String valorStr = "-"; 
-            if (reg.getTipoToken() != null && (reg.getTipoToken().contains("CTE") || reg.getValorNum() != 0.0)) { 
-                double v = reg.getValorNum(); 
-                if (Math.abs(v) >= 1e6 || (Math.abs(v) < 1e-3 && v != 0.0)) { 
-                    valorStr = String.format("%e", v); 
-                } 
-                else { 
-                    valorStr = String.valueOf(v); 
-                } 
-            }
-            
-            // 3. Atributos semánticos asignados en TP2 
-            String tipoStr = (reg.getTipoToken() != null) ? reg.getTipoToken() : "-"; 
-            String usoStr = (reg.getUso() != null) ? reg.getUso() : "-";
-
-            // 4. Impresión formateada  
-            System.out.printf("%-30s | %-10d | %-6d | %-6d | %-12s | %-10s | %-10s%n", lexemaLimpio, reg.getIdToken(), reg.getNroLinea(), reg.getLongitud(), valorStr, tipoStr, usoStr); 
+            imprimirRegistro(reg); 
         } 
-        System.out.println(lineaEncabezado + "\\n"); 
+        System.out.println(lineaEncabezado + "\n"); 
+    }
+
+    private void imprimirRegistro(RegistroTS reg) {
+        // Limpieza de saltos de línea y tabulaciones en el lexema 
+        String lexemaLimpio = (reg.getLexema() != null) 
+            ? reg.getLexema().replace("\r\n", "\\n").replace("\n", "\\n").replace("\t", "\\t")
+            : "";
+
+        // Formateo del valor numérico (solo para constantes o cuando corresponda) 
+        String valorStr = "-"; 
+        if (reg.getTipoToken() != null && (reg.getTipoToken().contains("CTE") || reg.getValorNum() != 0.0)) { 
+            double v = reg.getValorNum(); 
+            if (reg.getTipoToken().equals("CTE_ENTERA") || reg.getTipoToken().equals("USHORTINT")) {
+                valorStr = String.valueOf((long) v); // Imprime "250" sin ".0"
+            } else if (Math.abs(v) >= 1e6 || (Math.abs(v) < 1e-3 && v != 0.0)) {
+                valorStr = String.format("%e", v);
+            } else {
+                valorStr = String.valueOf(v);
+            }
+        }
+        
+        // Atributos semánticos asignados en TP2 
+        String tipoStr = (reg.getTipoToken() != null) ? reg.getTipoToken() : "-"; 
+        String usoStr = (reg.getUso() != null) ? reg.getUso() : "-";
+
+        // Impresión formateada  
+        System.out.printf("%-30s | %-10d | %-6d | %-6d | %-12s | %-10s | %-10s%n", 
+                    lexemaLimpio, reg.getIdToken(), reg.getNroLinea(), reg.getLongitud(), valorStr, tipoStr, usoStr);
     }
 }

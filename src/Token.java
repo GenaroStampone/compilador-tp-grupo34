@@ -1,13 +1,15 @@
 public class Token {
-    private int idToken;
-    private RegistroTS punteroTS;
+    private final int idToken;
+    private final RegistroTS punteroTS;
 
-    public Token(int idToken, RegistroTS punteroTS) { // Constructor para tokens que representan multiples lexemas con atributo, por ejemplo para identificadores y literales.
+    // Constructor para tokens que representan multiples lexemas con atributo, por ejemplo para identificadores y literales.
+    public Token(int idToken, RegistroTS punteroTS) { 
         this.idToken = idToken;
         this.punteroTS = punteroTS;
     }
 
-    public Token(int idToken) { // Constructor para tokens que representan un unico lexema (sin atributo), por ejemplo para palabras reservadas.
+    // Constructor para tokens que representan un unico lexema (sin atributo), por ejemplo para palabras reservadas.
+    public Token(int idToken) { 
         this.idToken = idToken;
         this.punteroTS = null;
     }
@@ -26,6 +28,7 @@ public class Token {
 
     public static String obtenerNombre(int token) {
         switch (token) {
+            case 0:                         return "EOF";
             case Parser.ID:                 return "ID";
             case Parser.CTE_USHORT:         return "CTE_USHORT";
             case Parser.CTE_DOUBLEF:        return "CTE_DOUBLEF";
