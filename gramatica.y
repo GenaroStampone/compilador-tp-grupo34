@@ -240,11 +240,11 @@ private void aplicarSignoNegativo(ParserVal v) {
         return;
     }
     RegistroTS reg = (RegistroTS) v.obj;
-    if (reg.getIdToken() == AnalizadorLexico.CTE_USHORT) {
+    if (reg.getIdToken() == Parser.CTE_USHORT) {
         yyerror("La constante entera sin signo '" + reg.getLexema() + "' no admite valor negativo");
         return;
     }
-    if (reg.getIdToken() != AnalizadorLexico.CTE_DOUBLEF) {
+    if (reg.getIdToken() != Parser.CTE_DOUBLEF) {
         return;
     }
     try {
