@@ -28,33 +28,34 @@ public class Token {
 
     public static String obtenerNombre(int token) {
         switch (token) {
-            case 0:                              return "EOF";
-            case AnalizadorLexico.ID:            return "ID";
-            case AnalizadorLexico.CTE_ENTERA:    return "CTE_ENTERA";
-            case AnalizadorLexico.DOUBLEF_VAL:   return "DOUBLEF_VAL";
-            case AnalizadorLexico.CADENA:        return "CADENA";
-            case AnalizadorLexico.MAYOR_IGUAL:   return "MAYOR_IGUAL (>=)";
-            case AnalizadorLexico.MENOR_IGUAL:   return "MENOR_IGUAL (<=)";
-            case AnalizadorLexico.IGUAL_IGUAL:   return "IGUAL_IGUAL (==)";
-            case AnalizadorLexico.DISTINTO:      return "DISTINTO (!=)";
-            case AnalizadorLexico.ASIGNACION:    return "ASIGNACION (:=)";
-            case AnalizadorLexico.IF:            return "PR_IF";
-            case AnalizadorLexico.ELSE:          return "PR_ELSE";
-            case AnalizadorLexico.END_IF:        return "PR_END_IF";
-            case AnalizadorLexico.BEGIN:         return "PR_BEGIN";
-            case AnalizadorLexico.END:           return "PR_END";
-            case AnalizadorLexico.POUT:          return "PR_POUT";
-            case AnalizadorLexico.RET:           return "PR_RET";
-            case AnalizadorLexico.CLASS:         return "PR_CLASS";
-            case AnalizadorLexico.FUNCTION:      return "PR_FUNCTION";
-            case AnalizadorLexico.USHORTINT:     return "PR_USHORTINT";
-            case AnalizadorLexico.DOUBLEF:       return "PR_DOUBLEF";
-            case AnalizadorLexico.WHILE:         return "PR_WHILE";
-            case AnalizadorLexico.REPEAT:        return "PR_REPEAT";
-            case AnalizadorLexico.TYPEDEF:       return "PR_TYPEDEF";
-            case AnalizadorLexico.PRIVATE:       return "PR_PRIVATE";
-            case AnalizadorLexico.FRIEND:        return "PR_FRIEND";
-            case AnalizadorLexico.EXTENDS:       return "PR_EXTENDS";
+            case Parser.ID:                 return "ID";
+            case Parser.CTE_USHORT:         return "CTE_USHORT";
+            case Parser.CTE_DOUBLEF:        return "CTE_DOUBLEF";
+            case Parser.CADENA:             return "CADENA";
+            case Parser.COMP_MAYOR_IGUAL:   return "COMP_MAYOR_IGUAL (>=)";
+            case Parser.COMP_MENOR_IGUAL:   return "COMP_MENOR_IGUAL (<=)";
+            case Parser.COMP_IGUAL:         return "COMP_IGUAL (==)";
+            case Parser.COMP_DIST:          return "COMP_DIST (!=)";
+            case Parser.ASIGNACION:         return "ASIGNACION (:=)";
+            case Parser.CORCHETE_IZQ:       return "CORCHETE_IZQ ([)";
+            case Parser.CORCHETE_DER:       return "CORCHETE_DER (])";
+            case Parser.IF:                 return "PR_IF";
+            case Parser.ELSE:               return "PR_ELSE";
+            case Parser.END_IF:             return "PR_END_IF";
+            case Parser.BEGIN:              return "PR_BEGIN";
+            case Parser.END:                return "PR_END";
+            case Parser.POUT:               return "PR_POUT";
+            case Parser.RET:                return "PR_RET";
+            case Parser.CLASS:              return "PR_CLASS";
+            case Parser.FUNCTION:           return "PR_FUNCTION";
+            case Parser.USHORTINT:          return "PR_USHORTINT";
+            case Parser.DOUBLEF:            return "PR_DOUBLEF";
+            case Parser.WHILE:              return "PR_WHILE";
+            case Parser.REPEAT:             return "PR_REPEAT";
+            case Parser.TYPEDEF:            return "PR_TYPEDEF";
+            case Parser.PRIVATE:            return "PR_PRIVATE";
+            case Parser.FRIEND:             return "PR_FRIEND";
+            case Parser.EXTENDS:            return "PR_EXTENDS";
             default:
                 if (token > 0 && token < 256) {
                     return "LITERAL '" + (char) token + "'";

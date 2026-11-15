@@ -1,7 +1,7 @@
 import java.util.List;
 
 public class ValidadorDeclaraciones {
-    public static void main(String[] args) { 
+    public static void main(String[] args) throws Exception { 
         String archivo = (args.length > 0) ? args[0] : "casos_de_prueba/test_declaraciones.txt";
         String lineaEncabezado  = "===============================================================";
         

@@ -12,42 +12,35 @@ public class TablaDeSimbolos {
     }
 
     private void cargarPalabrasReservadas() {
-        // Palabras reservadas generales del lenguaje
+        // TP1: palabras reservadas generales (se reconocen sin distinguir mayúsculas/minúsculas)
         palabrasReservadas.add("if");
         palabrasReservadas.add("else");
         palabrasReservadas.add("end_if");
         palabrasReservadas.add("begin");
         palabrasReservadas.add("end");
         palabrasReservadas.add("pout");
+        palabrasReservadas.add("ret");
         palabrasReservadas.add("class");
         palabrasReservadas.add("function");
         // Palabras reservadas generales del lenguaje Tp2
         palabrasReservadas.add("pout");
         palabrasReservadas.add("ret");
 
-        // Tipos de datos correspondientes al Grupo 34 (TP1)
-        // Tema 2
-        palabrasReservadas.add("ushortint");
-        // Tema 8
-        palabrasReservadas.add("doublef");
+        // Tipos de datos del Grupo 34 (TP1)
+        palabrasReservadas.add("ushortint"); // Tema 2
+        palabrasReservadas.add("doublef");   // Tema 8
 
-        // Control y temas particulares asignados al Grupo 34 (TP2)
-        // Tema 11
-        palabrasReservadas.add("while");
-        palabrasReservadas.add("repeat");
-        // Tema 23
-        palabrasReservadas.add("typedef");
-        // Tema 27
-        palabrasReservadas.add("private");
-        palabrasReservadas.add("friend");
-        // Tema 30
-        palabrasReservadas.add("extends");
+        // Temas particulares del Grupo 34 (TP2)
+        palabrasReservadas.add("while");     // Tema 11
+        palabrasReservadas.add("repeat");    // Tema 11
+        palabrasReservadas.add("typedef");   // Tema 23
+        palabrasReservadas.add("private");   // Tema 27
+        palabrasReservadas.add("friend");    // Tema 27
+        palabrasReservadas.add("extends");   // Tema 30
     }
 
     public boolean esPalabraReservada(String lexema) {
-        if (lexema == null) 
-            return false;
-        return palabrasReservadas.contains(lexema.toLowerCase());
+        return lexema != null && palabrasReservadas.contains(lexema.toLowerCase(java.util.Locale.ROOT));
     }
 
     public RegistroTS buscar(String lexema) {
@@ -69,29 +62,37 @@ public class TablaDeSimbolos {
         return tabla.get(lexema);
     }
 
+    // Rango final de DOUBLEF segun TP1: min < |x| < max, admitiendo 0.0.
+    // El lexico acepta ademas el limite positivo para que el parser pueda
+    // aplicar el signo y volver a validar el valor definitivo (TP2, punto c).
     public boolean verificarRangoDoublef(double val) {
         if (val == 0.0) 
             return true;
         double absVal = Math.abs(val);
         double minVal = 2.2250738585072014e-308;
         double maxVal = 1.7976931348623157e+308;
-        return (absVal >= minVal && absVal <= maxVal);
+        return (absVal > minVal && absVal < maxVal);
     }
 
-    public boolean verificarRangoUshortint(String lexema) { 
-        try { // Removemos el sufijo "$us" para obtener solo la parte numérica 
-            String numeroLimpio = lexema.toLowerCase().replace("$us", "").trim(); 
-            long val = Long.parseLong(numeroLimpio); 
-            return val >=0 && val <= 255; } 
-        catch (NumberFormatException _) { 
-            return false; // Si no es un número válido o excede los límites de parseo 
-            } 
+    public boolean verificarRangoUshortint(double val) {
+        return val >= 0.0 && val <= 255.0;
+    }
+
+    public boolean verificarRangoUshortint(String lexema) {
+        try { // Removemos el sufijo "$us" para obtener solo la parte numérica
+            String numeroLimpio = lexema.toLowerCase(java.util.Locale.ROOT).replace("$us", "").trim();
+            long val = Long.parseLong(numeroLimpio);
+            return val >= 0 && val <= 255;
+        }
+        catch (NumberFormatException e) {
+            return false; // Si no es un número válido o excede los límites de parseo
+        }
     }
 
     public RegistroTS registrarConstanteNegativa(String lexemaPositivo, int nroLinea, double valorNum) {
         String lexemaNegativo = "-" + lexemaPositivo;
-        tabla.remove(lexemaPositivo);
-        RegistroTS regNeg = new RegistroTS(lexemaNegativo, 259, "DOUBLEF_VAL", nroLinea, valorNum);
+        RegistroTS regNeg = new RegistroTS(lexemaNegativo, Parser.CTE_DOUBLEF,
+                "CTE_DOUBLEF", nroLinea, valorNum);
         tabla.put(lexemaNegativo, regNeg);
         return regNeg;
     }
