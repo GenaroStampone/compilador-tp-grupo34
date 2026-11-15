@@ -22,7 +22,7 @@ CLASS Derivada BEGIN
     typedef ListaValores = [0$us, 128$us, 255$us];
 
     FUNCTION ushortint calcular(ushortint a, doublef b) begin
-        IF (a >= 10$us)
+        IF (a >= 10$us) then
             ret (a + 1$us);
         else
             ret (0$us);

@@ -124,8 +124,8 @@ parametros
     ;
 
 retorno_opcional
-    : PR_RET '(' expresion ')' ';'
-      { registrarEstructura("Sentencia PR_RET"); }
+    : RET '(' expresion ')' ';'
+      { registrarEstructura("Sentencia RET"); }
     | /* vacio */
     ;
 
@@ -164,7 +164,7 @@ asignacion
 
 /* Tema 11: Sentencia WHILE-REPEAT */
 sentencia_while
-    : WHILE '(' condicion ')' REPEAT cuerpo_ejecutable ';'
+    : WHILE '(' condicion ')' REPEAT cuerpo_ejecutable
       {
         System.out.println("Linea " + lexico.getNroLinea() + ": Sentencia WHILE-REPEAT reconocida");
         registrarEstructura("Sentencia WHILE-REPEAT");
