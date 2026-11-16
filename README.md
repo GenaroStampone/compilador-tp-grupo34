@@ -16,13 +16,29 @@ chmod +x compilador ejecutar_pruebas.sh
 Para probar un archivo fuente específico y ver el resultado completo en consola (reglas reconocidas, warnings y Tabla de Símbolos):
 ```bash
 ./compilador casos_de_prueba/01_prueba_correcto.txt
+```
+```bash
 ./compilador casos_de_prueba/02_prueba_warnings_id.txt
+```
+```bash
 ./compilador casos_de_prueba/03_prueba_errores_constantes.txt
+```
+```bash
 ./compilador casos_de_prueba/04_prueba_errores_simbolos.txt
+```
+```bash
 ./compilador casos_de_prueba/05_prueba_cadenas_y_comentarios.txt
+```
+```bash
 ./compilador casos_de_prueba/06_prueba_errores_sintacticos_base.txt
+```
+```bash
 ./compilador casos_de_prueba/07_programa_integral_valido.txt
+```
+```bash
 ./compilador casos_de_prueba/08_programa_complejo_errores.txt
+```
+```bash
 ./compilador casos_de_prueba/09_prueba_declaraciones_y_poo.txt
 ```
 
