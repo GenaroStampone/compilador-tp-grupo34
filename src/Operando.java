@@ -3,4 +3,6 @@ public interface Operando {
 
     //Retorna la representación en formato String del operando para la impresión del Terceto.
     String getRepresentacion();
+
+    String getTipoToken();
 }

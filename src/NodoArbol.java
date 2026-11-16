@@ -2,16 +2,14 @@
 /**
  * Representa un nodo dentro del Árbol Sintáctico Abstracto (AST) para el TP3.
  */
-public class NodoArbol {
+public class NodoArbol implements Operando{
     private String etiqueta; // Operador, palabra reservada o valor (ej: "+", ":=", "IF", "var1")
     private final RegistroTS ptrTS; // Referencia a la Tabla de Símbolos (sólo si es nodo hoja)
     private NodoArbol hijoIzq; // Subárbol o expresión izquierda
     private NodoArbol hijoDer; // Subárbol o expresión derecha
     private String tipoToken; // Tipo de dato resultante ("ushortint", "doublef", "VOID", "ERROR")
 
-    /**
-     * Constructor para Nodos Internos (Operadores, Sentencias de Control, Conversiones)
-     */
+    //Constructor para Nodos Internos (Operadores, Sentencias de Control, Conversiones)
     public NodoArbol(String etiqueta, NodoArbol hijoIzq, NodoArbol hijoDer) {
         this.etiqueta = etiqueta;
         this.hijoIzq = hijoIzq;
@@ -20,9 +18,7 @@ public class NodoArbol {
         this.tipoToken = null;
     }
 
-    /**
-     * Constructor para Nodos Hoja (Variables, Constantes desde la Tabla de Símbolos)
-     */
+    //Constructor para Nodos Hoja (Variables, Constantes desde la Tabla de Símbolos)
     public NodoArbol(RegistroTS ptrTS) {
         if (ptrTS != null) {
             this.etiqueta = ptrTS.getLexema();
@@ -37,8 +33,9 @@ public class NodoArbol {
     }
 
     // --- GETTERS Y SETTERS ---
-    public String getEtiqueta() {
-        return etiqueta;
+    @Override 
+    public String getRepresentacion() { 
+        return etiqueta; 
     }
 
     public void setEtiqueta(String etiqueta) {
@@ -65,6 +62,7 @@ public class NodoArbol {
         this.hijoDer = hijoDer;
     }
 
+    @Override 
     public String getTipoToken() {
         return tipoToken;
     }
@@ -77,9 +75,7 @@ public class NodoArbol {
         return hijoIzq == null && hijoDer == null;
     }
 
-    /**
-     * Recorre e imprime el árbol en consola con formato jerárquico.
-     */
+    //Recorre e imprime el árbol en consola con formato jerárquico.
     public void imprimir(String prefijo, boolean esUltimo) {
         String infoTipo = (tipoToken != null) ? " [" + tipoToken + "]" : "";
         System.out.println(prefijo + (esUltimo ? "└── " : "├── ") + etiqueta + infoTipo);
@@ -93,4 +89,5 @@ public class NodoArbol {
             hijoDer.imprimir(nuevoPrefijo, true);
         }
     }
+
 }

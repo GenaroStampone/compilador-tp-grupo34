@@ -329,6 +329,7 @@ public class AnalizadorLexico {
                 estadoActual = 0;
             }
         }
+        
     }
 
     // Registra y devuelve un token completo para el Parser.

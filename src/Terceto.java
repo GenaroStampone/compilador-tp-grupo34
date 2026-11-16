@@ -52,6 +52,11 @@ public class Terceto implements Operando {
         return "[" + numero + "]";
     }
 
+    @Override 
+    public String getTipoToken() { 
+        return "TERCETO"; // O el tipo de retorno si lo manejaras 
+    }
+
     //Auxiliar para formatear la salida legible de cada operando.
     private String formatearOperando(Operando op) {
         return (op != null) ? op.getRepresentacion() : "-";
