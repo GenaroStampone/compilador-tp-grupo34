@@ -38,7 +38,7 @@ class DispositivoAvanzado begin
     extends ComponenteA, ComponenteB;
 
     {{ Modificador private antes de atributos (Tema 27) }}
-    private ushortint claveSeguridad;
+    private ushortint clave_seguridad;
     private doublef calibracionInterna;
 
     {{ Clases y funciones amigas (Tema 27) }}
@@ -50,7 +50,7 @@ class DispositivoAvanzado begin
 
     {{ Métodos públicos y privados }}
     ushortint function obtenerClave(ushortint semilla) begin
-        ret (claveSeguridad + semilla);
+        ret (clave_seguridad + semilla);
     end;
 
     private doublef function ajustarCalibracion(doublef delta)
