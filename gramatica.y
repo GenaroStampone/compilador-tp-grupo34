@@ -125,7 +125,7 @@ parametros
 
 retorno_opcional
     : RET '(' expresion ')' ';'
-      { registrarEstructura("Sentencia PR_RET"); }
+      { registrarEstructura("Sentencia RET"); }
     | /* vacio */
     ;
 
