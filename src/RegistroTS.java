@@ -1,4 +1,4 @@
-public class RegistroTS {
+public class RegistroTS implements Operando{
     private String lexema;
     private int idToken;
     private String uso; // Indica el rol del lexema (ej: "VARIABLE", "CONSTANTE")
@@ -86,5 +86,10 @@ public class RegistroTS {
 
     public void setLongitud(int longitud) {
         this.longitud = longitud;
+    }
+
+
+    public String getRepresentacion() {
+        return getLexema();
     }
 }
