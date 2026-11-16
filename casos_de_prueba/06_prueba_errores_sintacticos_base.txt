@@ -22,7 +22,7 @@ CLASS Derivada BEGIN
     typedef ListaValores = [0$us, 128$us, 255$us];
 
     FUNCTION ushortint calcular(ushortint a, doublef b) begin
-        IF (a >= 10$us)
+        IF (a >= 10$us) then
             ret (a + 1$us);
         else
             ret (0$us);
@@ -30,15 +30,27 @@ CLASS Derivada BEGIN
     END;
 end;
 
+ushortint x;
+doublef y;
+
 begin
     {{ Comentario multilínea intermedio (Tema 16)}}
     
-    ushortint x;
-    doublef y;
+    
     x := 50$us;
     y := 1.25d+2;
 
+    if (x <= 10$us) 
+        begin
+            x := 50$us;
+        end;
+    END_IF;
+
     {{ Estructura iterativa WHILE-REPEAT (Tema 11)}}
+
+    while (x <= 100$us) repeat
+        x := x + 1$us;
+        
 
     while (x <= 100$us) repeat
     begin
