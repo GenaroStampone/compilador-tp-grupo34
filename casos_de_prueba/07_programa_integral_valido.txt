@@ -40,6 +40,8 @@ CLASS controlador_sistema begin
     friend dispositivo_base;
     friend auditoria_externa;
 
+    private ushortint clave_seguridad;
+
     {{ Atributo público }}
     doublef voltaje_operativo;
 
@@ -94,12 +96,10 @@ begin
     {{ Tema 20: Invocaciones }}
     contador := procesar_datos(contador, limite, iterador)[3$us, 1$us, 2$us];
     contador := procesar_datos(contador, limite, iterador);
-    nodo_maestro.consultar_clave(iterador)[1$us];
-    nodo_maestro.consultar_clave(iterador);
 
     {{ Tema 9: Impresion de cadenas de 1 linea }}
-    pout {Inicio de procesamiento integral };
-    pout (saldo_inicial + 10.0);
+    pout({Inicio de procesamiento integral });
+    pout({saldo_inicial + 10.0});
 
     {{ Tema 18 en selección y control IF-ELSE-END_IF }}
     if (contador = 5$us == 5$us)

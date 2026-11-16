@@ -130,7 +130,7 @@ retorno_opcional
     ;
 
 sentencia_simple 
-    : asignacion ';' 
+    : asignacion
     | salida_pout ';' 
     | error ';' { System.out.println("Error sintáctico en sentencia ejecutable: resincronizado en ';'"); } 
     ;
@@ -153,9 +153,9 @@ sentencia
 
 /* Tema 29: Acceso posicional a atributos con corchetes */
 asignacion
-    : ID ASIGNACION expresion
+    : ID ASIGNACION expresion ';'
       { registrarEstructura("Asignación"); }
-    | ID CORCHETE_IZQ expresion CORCHETE_DER ASIGNACION expresion
+    | ID CORCHETE_IZQ expresion CORCHETE_DER ASIGNACION expresion ';'
       {
         System.out.println("Linea " + lexico.getNroLinea() + ": Asignacion a atributo opcional");
         registrarEstructura("Asignación a atributo opcional");

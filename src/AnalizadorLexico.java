@@ -11,7 +11,7 @@ public class AnalizadorLexico {
     // --- Atributos del Autómata y Lectura ---
     private BufferedReader lectorFuente;
     private TablaDeSimbolos tablaSimbolos;
-    private int estadoActual;
+    private int estado_actual;
     private int nroLinea = 1; // Contador de líneas para reportes de errores/warnings
     public int yylineno; // Contador estándar de líneas para interfaz con Parser / Yacc
     private StringBuilder buffer;
@@ -43,7 +43,7 @@ public class AnalizadorLexico {
         this.lectorFuente = new BufferedReader(new FileReader(rutaArchivo));
         this.tablaSimbolos = tablaSimbolos;
         this.yylineno = 1; // La numeración de líneas comienza en 1
-        this.estadoActual = 0;
+        this.estado_actual = 0;
         this.buffer = new StringBuilder();
         this.ultimoCaracter = -1;
 
@@ -300,7 +300,7 @@ public class AnalizadorLexico {
 
     public int yylex() {
         this.yylval = null; // Evita arrastrar atributos de tokens anteriores
-        estadoActual = 0;
+        estado_actual = 0;
         buffer.setLength(0);
 
         while (true) {
@@ -315,18 +315,18 @@ public class AnalizadorLexico {
             int columna = mapearColumna(c);
 
             int tokenDevuelto = -1;
-            if (AS_mat[estadoActual][columna] != null) {
-                tokenDevuelto = AS_mat[estadoActual][columna].ejecutar(c);
+            if (AS_mat[estado_actual][columna] != null) {
+                tokenDevuelto = AS_mat[estado_actual][columna].ejecutar(c);
             }
 
-            estadoActual = TE_mat[estadoActual][columna];
+            estado_actual = TE_mat[estado_actual][columna];
 
             if (tokenDevuelto != -1) {
                 return emitirToken(tokenDevuelto);
             }
 
-            if (estadoActual == F || estadoActual < 0) {
-                estadoActual = 0;
+            if (estado_actual == F || estado_actual < 0) {
+                estado_actual = 0;
             }
         }
         
@@ -347,8 +347,8 @@ public class AnalizadorLexico {
     // Resuelve el token pendiente cuando se alcanza EOF. Nunca consume un
     // caracter inexistente ni deja el automata en un estado distinto de 0.
     private int finalizarEnEOF() {
-        int estado = estadoActual;
-        estadoActual = 0;
+        int estado = estado_actual;
+        estado_actual = 0;
 
         switch (estado) {
             case 0:
