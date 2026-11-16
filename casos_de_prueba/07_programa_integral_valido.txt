@@ -94,7 +94,7 @@ begin
     contador := nodo_maestro[0$us] + nodo_maestro[iterador];
 
     {{ Tema 20: Invocaciones con parametros opcionales}}
-    contador := procesar_datos(contador, limite, iterador)[3$us, 1$us, 2$us];
+    contador := procesar_datos(contador, limite, iterador)[2$us, 1$us, 2$us] + 5$us;
     contador := procesar_datos(contador, limite, iterador);
 
     {{ Tema 9: Impresion de cadenas de 1 linea }}
