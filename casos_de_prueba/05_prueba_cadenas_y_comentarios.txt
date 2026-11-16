@@ -9,8 +9,7 @@ begin
     {{Cadena valida de 1 linea.}}
     pout ({ ¡Hola Mundo! });
     {{Error Lexico: Cadena de una linea que intenta ocupar mas de una linea.}}
-    pout ({ Hola
-    Mundo });
+    pout({ Hola Mundo });
     {{Error Lexico: Comentario multilinea que no cierra al llegar al final del archivo.}}
     {{ Este comentario multilinea nunca se cierra...
 end

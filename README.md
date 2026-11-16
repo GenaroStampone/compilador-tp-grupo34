@@ -16,9 +16,17 @@ chmod +x compilador ejecutar_pruebas.sh
 Para probar un archivo fuente específico y ver el resultado completo en consola (reglas reconocidas, warnings y Tabla de Símbolos):
 ```bash
 ./compilador casos_de_prueba/01_prueba_correcto.txt
+./compilador casos_de_prueba/02_prueba_warnings_id.txt
+./compilador casos_de_prueba/03_prueba_errores_constantes.txt
+./compilador casos_de_prueba/04_prueba_errores_simbolos.txt
+./compilador casos_de_prueba/05_prueba_cadenas_y_comentarios.txt
+./compilador casos_de_prueba/06_prueba_errores_sintacticos_base.txt
+./compilador casos_de_prueba/07_programa_integral_valido.txt
+./compilador casos_de_prueba/08_programa_complejo_errores.txt
+./compilador casos_de_prueba/09_prueba_declaraciones_y_poo.txt
 ```
 
-### 2. Ejecutar la Suite de Pruebas Automatizada
+### 3. Ejecutar la Suite de Pruebas Automatizada
 Para correr la batería completa de pruebas (Casos 01 al 09) y verificar los resultados de éxito/fallo:
 ```bash
 ./ejecutar_pruebas.sh
