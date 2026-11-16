@@ -30,7 +30,7 @@ declare -a PRUEBAS=(
     "casos_de_prueba/02_prueba_warnings_id.txt:VALIDO:Prueba facil de truncado de identificadores"
     "casos_de_prueba/03_prueba_errores_constantes.txt:INVALIDO:Prueba facil de errores de rango numerico"
     "casos_de_prueba/04_prueba_errores_simbolos.txt:INVALIDO:Prueba de caracteres invalidos"
-    "casos_de_prueba/05_prueba_cadenas_y_comentarios.txt:VALIDO:Prueba de cadenas POUT y comentarios multilinea"
+    "casos_de_prueba/05_prueba_cadenas_y_comentarios.txt:VALIDO:Prueba de cadenas POUT y comentarios multilinea, RESULTADO: FAIL por no cerrar el comentario multilinea"
     "casos_de_prueba/06_prueba_errores_sintacticos_base.txt:INVALIDO:Prueba de errores sintacticos simples y recuperacion con ';'"
     "casos_de_prueba/07_programa_integral_valido.txt:VALIDO:Programa complejo integral con los 12 temas"
     "casos_de_prueba/08_programa_complejo_errores.txt:INVALIDO:Programa complejo con errores sintacticos resincronizados"
