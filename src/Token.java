@@ -28,6 +28,7 @@ public class Token {
 
     public static String obtenerNombre(int token) {
         switch (token) {
+            case 0:                         return "EOF";
             case Parser.ID:                 return "ID";
             case Parser.CTE_USHORT:         return "CTE_USHORT";
             case Parser.CTE_DOUBLEF:        return "CTE_DOUBLEF";
