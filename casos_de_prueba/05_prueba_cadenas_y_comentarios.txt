@@ -12,4 +12,5 @@ begin
     pout({ Hola Mundo });
     {{Error Lexico: Comentario multilinea que no cierra al llegar al final del archivo.}}
     {{ Este comentario multilinea nunca se cierra...
-end
+    pout({ Hola Mundo 2 });
+end;

@@ -483,11 +483,24 @@ private int yylex() {
     return token;
 }
 
-public void yyerror(String msg) {
+public void yyerror(String msg) { 
     this.huboError = true;
-    String err = "Error sintactico en línea " + lexico.getNroLinea() + " (token: " + yyname[yychar] + "): " + msg;
-    erroresSintacticos.add(err);
-    System.err.println(err);
+    String lexema = ""; 
+    if (yylval != null && yylval.obj instanceof RegistroTS) { 
+        RegistroTS reg = (RegistroTS) yylval.obj; 
+        lexema = reg.getLexema(); 
+    }
+    String tokenNombre; 
+    if (yychar >= 0 && yychar < yyname.length && yyname[yychar] != null) { 
+        tokenNombre = yyname[yychar]; 
+    } else if (!lexema.isEmpty()) { 
+        tokenNombre = lexema; 
+    } else { 
+        tokenNombre = "TOKEN_INESPERADO"; 
+    } 
+    String err = "Error sintáctico/semántico en línea " + lexico.getNroLinea() + " (token: " + tokenNombre + "): " + msg; 
+    erroresSintacticos.add(err); 
+    System.err.println(err); 
 }
 
 public boolean huboError() {
@@ -552,7 +565,7 @@ private void validarConstanteDoublef(ParserVal v) {
         yyerror("Constante doublef mal formada: " + reg.getLexema());
     }
 }
-//#line 484 "Parser.java"
+//#line 497 "Parser.java"
 //###############################################################
 // method: yylexdebug : check lexer state
 //###############################################################
@@ -821,7 +834,7 @@ case 76:
 //#line 233 "gramatica.y"
 { validarConstanteDoublef(val_peek(0)); yyval = val_peek(0); }
 break;
-//#line 748 "Parser.java"
+//#line 761 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####

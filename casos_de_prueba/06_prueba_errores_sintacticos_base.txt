@@ -10,16 +10,16 @@
 
 programa_complejo;
 
-CLASS MiClaseBase BEGIN
+CLASS mi_clase_base BEGIN
     private ushortint contador;
-    private doublef valorReal;
-    friend FuncionAmiga;
+    private doublef valor_real;
+    friend funcion_amiga;
 END
 
-CLASS Derivada BEGIN
-    extends MiClaseBase, OtraClase
+CLASS derivada BEGIN
+    extends mi_clase_base, otra_clase
     
-    typedef ListaValores = [0$us, 128$us, 255$us];
+    typedef lista_valores = [0$us, 128$us, 255$us];
 
     FUNCTION ushortint calcular(ushortint a, doublef b) begin
         IF (a >= 10$us) then
@@ -60,8 +60,8 @@ begin
     end;
 
     {{ Asignación en expresión (Tema 18) y acceso a atributo }}
-    Derivada obj;
-    obj.valorReal := 3.141592653589793d0;
+    derivada obj;
+    obj.valor_real := 3.141592653589793d0;
     
     {{ Acceso posicional a atributos con corchetes (Tema 29) }}
     obj[0$us] := 200$us;
