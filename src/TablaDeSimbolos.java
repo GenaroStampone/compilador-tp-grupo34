@@ -1,5 +1,9 @@
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class TablaDeSimbolos {
     private final HashMap<String, RegistroTS> tabla;
@@ -84,7 +88,7 @@ public class TablaDeSimbolos {
             long val = Long.parseLong(numeroLimpio);
             return val >= 0 && val <= 255;
         }
-        catch (NumberFormatException e) {
+        catch (NumberFormatException _) {
             return false; // Si no es un número válido o excede los límites de parseo
         }
     }
@@ -96,6 +100,64 @@ public class TablaDeSimbolos {
         tabla.put(lexemaNegativo, regNeg);
         return regNeg;
     }
+
+    // ==========================================
+    // METODOS SEMANTICOS TP3 (TEMAS 29 Y 30)
+    // ==========================================
+
+    // TEMA 30: Herencia Múltiple con Desambiguado Opción 1.
+    // Busca un miembro navegando en el orden de 'clasesHeredadas'.
+    public RegistroTS buscarEnHerencia(String nombreClase, String nombreMiembro) {
+        RegistroTS regClase = buscar(nombreClase);
+        if (regClase == null) {
+            return null;
+        }
+        for (RegistroTS atrib : regClase.getListaAtributos()) {
+            if (atrib.getLexema().equals(nombreMiembro) || atrib.getLexema().endsWith("@" + nombreMiembro)) {
+                return atrib;
+            }
+        }
+        for (String clasePadre : regClase.getClasesHeredadas()) {
+            RegistroTS hallado = buscarEnHerencia(clasePadre, nombreMiembro);
+            if (hallado != null) {
+                return hallado;
+            }
+        }
+        return null;
+    }
+
+    // TEMA 29: Acceso Posicional a Atributos obj[i].
+    public RegistroTS obtenerAtributoPosicional(String nombreClase, int indice) {
+        RegistroTS regClase = buscar(nombreClase);
+        if (regClase == null) {
+            return null;
+        }
+        List<RegistroTS> todosLosAtributos = obtenerTodosLosAtributosHeredados(nombreClase);
+        if (indice >= 0 && indice < todosLosAtributos.size()) {
+            return todosLosAtributos.get(indice);
+        }
+        return null;
+    }
+
+    private List<RegistroTS> obtenerTodosLosAtributosHeredados(String nombreClase) {
+        List<RegistroTS> lista = new ArrayList<>();
+        RegistroTS regClase = buscar(nombreClase);
+        if (regClase != null) {
+            for (String padre : regClase.getClasesHeredadas()) {
+                lista.addAll(obtenerTodosLosAtributosHeredados(padre));
+            }
+            lista.addAll(regClase.getListaAtributos());
+        }
+        return lista;
+    }
+
+    public Map<String, RegistroTS> getTabla() {
+        return new HashMap<>(tabla);
+    }
+
+    // ==========================================
+    // INFORMES Y VISUALIZACION
+    // ==========================================
 
     public void imprimirTabla() {
         String lineaSeparadora = "-----------------------------------------------------------------------------------";

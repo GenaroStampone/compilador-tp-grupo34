@@ -1686,8 +1686,11 @@ state 158
 	retorno_opcional : RET . '(' expresion ')' ';'  (33)
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	'('  shift 161
 =======
+=======
+>>>>>>> 9d201873c581d4ce8b0a2da40af3e18e6ce7967a
 	'('  shift 159
 	.  error
 
@@ -1703,7 +1706,10 @@ state 158
 	declaracion_funcion : type_specifier FUNCTION ID '(' parametros ')' bloque_declarativo BEGIN lista_sentencias retorno_opcional . END ';'  (30)
 
 	END  shift 161
+<<<<<<< HEAD
 >>>>>>> 2976d992e92ce87707ccfc86097073e5143b7c7c
+=======
+>>>>>>> 9d201873c581d4ce8b0a2da40af3e18e6ce7967a
 	.  error
 
 
@@ -1730,6 +1736,7 @@ state 161
 	.  error
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	constante  goto 64
 	expresion  goto 163
 
@@ -1743,6 +1750,8 @@ state 162
 
 state 163
 =======
+=======
+>>>>>>> 9d201873c581d4ce8b0a2da40af3e18e6ce7967a
 	constante  goto 65
 	expresion  goto 162
 
@@ -1755,7 +1764,10 @@ state 160
 
 
 state 161
+<<<<<<< HEAD
 >>>>>>> 2976d992e92ce87707ccfc86097073e5143b7c7c
+=======
+>>>>>>> 9d201873c581d4ce8b0a2da40af3e18e6ce7967a
 	retorno_opcional : RET '(' expresion . ')' ';'  (33)
 	expresion : expresion . '+' expresion  (60)
 	expresion : expresion . '-' expresion  (61)
@@ -1771,15 +1783,20 @@ state 161
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 state 164
 =======
 state 162
 >>>>>>> 2976d992e92ce87707ccfc86097073e5143b7c7c
+=======
+state 162
+>>>>>>> 9d201873c581d4ce8b0a2da40af3e18e6ce7967a
 	declaracion_funcion : type_specifier FUNCTION ID '(' parametros ')' bloque_declarativo BEGIN lista_sentencias retorno_opcional END ';' .  (30)
 
 	.  reduce 30
 
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 state 165
 	retorno_opcional : RET '(' expresion ')' . ';'  (33)
@@ -1790,6 +1807,8 @@ state 165
 
 state 166
 =======
+=======
+>>>>>>> 9d201873c581d4ce8b0a2da40af3e18e6ce7967a
 state 163
 	retorno_opcional : RET '(' expresion ')' . ';'  (33)
 
@@ -1798,7 +1817,10 @@ state 163
 
 
 state 164
+<<<<<<< HEAD
 >>>>>>> 2976d992e92ce87707ccfc86097073e5143b7c7c
+=======
+>>>>>>> 9d201873c581d4ce8b0a2da40af3e18e6ce7967a
 	retorno_opcional : RET '(' expresion ')' ';' .  (33)
 
 	.  reduce 33
