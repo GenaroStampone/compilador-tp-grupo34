@@ -43,7 +43,7 @@ Para probar un archivo fuente específico y ver el resultado completo en consola
 ```
 
 ### 3. Ejecutar la Suite de Pruebas Automatizada
-Para correr la batería completa de pruebas (Casos 01 al 09) y verificar los resultados de éxito/fallo:
+Para correr la tanda completa de pruebas (Casos 01 al 09) y verificar los resultados de éxito/fallo:
 ```bash
 ./ejecutar_pruebas.sh
 ```
