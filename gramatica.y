@@ -233,6 +233,23 @@ constante
     | CTE_DOUBLEF { validarConstanteDoublef($1); $$ = $1; }
     ;
 
+encabezado_funcion 
+    : TIPO FUNCTION ID { 
+        // 1. Abrir nuevo ámbito con el nombre de la función 
+        controlAmbitos.abrirAmbito($3.getLexema()); 
+        // 2. Registrar la función en la Tabla de Símbolos (en el ámbito padre) 
+        String nombreMangled = $3.getLexema() + ":" + controlAmbitos.getAmbitoPadre(); 
+        ts.registrarSimbolo(nombreMangled, $1.getTipo(), "nombre\_funcion"); 
+        } 
+    ; 
+
+cuerpo_funcion 
+    : encabezado_funcion '(' parametros ')' BEGIN lista_sentencias END ';' { 
+        // Al terminar el bloque de la función, se cierra el ámbito 
+        controlAmbitos.cerrarAmbito(); 
+        } 
+    ;
+
 %%
 
 /* CÓDIGO JAVA DE SOPORTE */
