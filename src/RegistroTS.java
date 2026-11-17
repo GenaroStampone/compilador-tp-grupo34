@@ -1,11 +1,11 @@
 import java.util.ArrayList;
 import java.util.List;
 
-public class RegistroTS implements Operando{
+public class RegistroTS {
     private String lexema;
     private int idToken;
-    private String uso; // Indica el rol del lexema (ej: "VARIABLE", "CONSTANTE")
-    private String tipoToken;
+    private String uso;                 // Ej: "VARIABLE", "CONSTANTE", "CLASE", "FUNCION", "ATRIBUTO"
+    private String tipoToken;           // Ej: "USHORTINT", "DOUBLEF", "VOID"
     private int nroLinea;
     private double valorNum;
     private int longitud;
@@ -43,17 +43,6 @@ public class RegistroTS implements Operando{
         this.clasesHeredadas = new ArrayList<>();
     }
 
-    // --- IMPLEMENTACIÓN DE LA INTERFAZ OPERANDO ---
-    @Override 
-    public String getRepresentacion() {
-        return getLexema();
-    }
-
-    @Override
-    public String getTipoToken() {
-        return tipoToken;
-    }
-
     // --- GETTERS Y SETTERS ---
     public String getLexema() {
         return lexema;
@@ -78,6 +67,10 @@ public class RegistroTS implements Operando{
 
     public void setUso(String uso) {
         this.uso = uso;
+    }
+
+    public String getTipoToken() {
+        return tipoToken;
     }
 
     public void setTipoToken(String tipoToken) {
@@ -109,6 +102,7 @@ public class RegistroTS implements Operando{
     }
 
     // --- GETTERS Y MÉTODOS PARA ATRIBUTOS TP3 ---
+    
     public void agregarParametro(String tipoParam) {
         this.listaParametros.add(tipoParam);
     }

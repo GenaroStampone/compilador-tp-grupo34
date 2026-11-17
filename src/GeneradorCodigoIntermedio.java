@@ -1,16 +1,10 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Stack;
 
 // Administrador central para la Generación de Código Intermedio y Análisis Semántico (TP3).
 public class GeneradorCodigoIntermedio {
-    private final List<Terceto> listaTercetos;
-    private final PolacaInversa polacaInversa;
-    private NodoArbol raizAST;
 
-    // Pilas para el Rellenado Diferido (Backpatching)
-    private final Stack<Integer> pilaSaltosTercetos;
-    private final Stack<Integer> pilaSaltosPolaca;
+    private NodoArbol raizAST;
 
     // Reporte consolidado de errores semánticos
     private final List<String> erroresSemanticos;
@@ -19,77 +13,9 @@ public class GeneradorCodigoIntermedio {
     private final TablaDeSimbolos tablaSimbolos;
 
     public GeneradorCodigoIntermedio(TablaDeSimbolos tablaSimbolos) {
-        this.listaTercetos = new ArrayList<>();
-        this.polacaInversa = new PolacaInversa();
         this.raizAST = null;
-        this.pilaSaltosTercetos = new Stack<>();
-        this.pilaSaltosPolaca = new Stack<>();
         this.erroresSemanticos = new ArrayList<>();
         this.tablaSimbolos = tablaSimbolos;
-    }
-
-    // ==========================================
-    // GESTIÓN DE TERCETOS
-    // ==========================================
-
-    // Crea y almacena un nuevo Terceto.
-    public Terceto crearTerceto(String operador, Operando op1, Operando op2) {
-        int num = listaTercetos.size();
-        Terceto t = new Terceto(num, operador, op1, op2);
-        listaTercetos.add(t);
-        return t;
-    }
-
-    public int getIndiceActualTercetos() {
-        return listaTercetos.size();
-    }
-
-    public void apilarSaltoTerceto(int indice) {
-        pilaSaltosTercetos.push(indice);
-    }
-
-    public int desapilarSaltoTerceto() {
-        return pilaSaltosTercetos.isEmpty() ? -1 : pilaSaltosTercetos.pop();
-    }
-
-    public List<Terceto> getListaTercetos() {
-        return new ArrayList<>(listaTercetos);
-    }
-    
-    // Realiza Backpatching en un Terceto incompleto (ej: para 'BF' o 'BI').
-    public void backpatchTerceto(int indiceTerceto, Operando destino) {
-        if (indiceTerceto >= 0 && indiceTerceto < listaTercetos.size()) {
-            Terceto t = listaTercetos.get(indiceTerceto);
-            if (t.getOperando2() == null) {
-                t.setOperando2(destino);
-            } else if (t.getOperando1() == null) {
-                t.setOperando1(destino);
-            }
-        }
-    }
-
-    // ==========================================
-    // GESTIÓN DE POLACA INVERSA
-    // ==========================================
-
-    public int emitirPolaca(Operando elem) {
-        return polacaInversa.agregar(elem);
-    }
-
-    public int emitirLiteralPolaca(String valor) {
-        return polacaInversa.agregarLiteral(valor);
-    }
-
-    public void apilarSaltoPolaca(int indice) {
-        pilaSaltosPolaca.push(indice);
-    }
-
-    public int desapilarSaltoPolaca() {
-        return pilaSaltosPolaca.isEmpty() ? -1 : pilaSaltosPolaca.pop();
-    }
-
-    public void backpatchPolaca(int indicePolaca, Operando destino) {
-        polacaInversa.setElemento(indicePolaca, destino);
     }
 
     // ==========================================
@@ -116,69 +42,73 @@ public class GeneradorCodigoIntermedio {
     // ANÁLISIS SEMÁNTICO Y TEMA 35 (CONVERSIONES)
     // ==========================================
 
-    //Obtiene el tipo de dato de un operando ("ushortint", "doublef", "DESCONOCIDO", "TERCETO", "LITERAL").
-    public String obtenerTipoDato(Operando op) { 
-        if (op == null || op.getTipoToken() == null) { 
+    //Obtiene el tipo de dato de un nodo ("ushortint", "doublef", "DESCONOCIDO", "TERCETO", "LITERAL").
+    public String obtenerTipoDato(NodoArbol nodo) { 
+        if (nodo == null || nodo.getTipoToken() == null) { 
             return "DESCONOCIDO"; 
         } 
-        return op.getTipoToken(); 
+        return nodo.getTipoToken(); 
     }
 
     // Valida compatibilidad entre tipos e inserta conversión implícita (ItoD) si aplica.
     // Retorna el tipo de dato resultante ("ushortint", "doublef" o "ERROR").
-    public String verificarYConvertirTipos(Operando op1, Operando op2, int nroLinea) {
-        String t1 = obtenerTipoDato(op1);
-        String t2 = obtenerTipoDato(op2);
+    public NodoArbol verificarYConvertirTipos(String operador, NodoArbol izq, NodoArbol der, int nroLinea) {
+        String t1 = obtenerTipoDato(izq);
+        String t2 = obtenerTipoDato(der);
 
-        if (t1.equals("DESCONOCIDO") || t2.equals("DESCONOCIDO")) {
-            return "DESCONOCIDO";
-        }
-
-        // Caso 1: Mismo tipo (ushortint con ushortint, o doublef con doublef)
+        // Mismo tipo: no requiere conversión
         if (t1.equalsIgnoreCase(t2)) {
-            return t1;
+            NodoArbol nodoOp = crearNodoAST(operador, izq, der);
+            nodoOp.setTipoToken(t1);
+            return nodoOp;
         }
 
-        // Caso 2: Mezcla de ushortint y doublef (Tema 35: Conversión Implícita a doublef)
-        if ((t1.equalsIgnoreCase("USHORTINT") && t2.equalsIgnoreCase("DOUBLEF")) ||
-            (t1.equalsIgnoreCase("DOUBLEF") && t2.equalsIgnoreCase("USHORTINT"))) {
-
-            // Generar terceto de conversión para el operando ushortint
-            if (t1.equalsIgnoreCase("USHORTINT")) {
-                crearTerceto("ItoD", op1, null);
-            } else {
-                crearTerceto("ItoD", op2, null);
-            }
-            return "DOUBLEF"; // La operación resulta en flotante
+        // Tema 35: Conversión implícita de ushortint a doublef
+        if (t1.equalsIgnoreCase("USHORTINT") && t2.equalsIgnoreCase("DOUBLEF")) {
+            NodoArbol nodoConv = crearNodoAST("ItoD", izq, null);
+            nodoConv.setTipoToken("DOUBLEF");
+            NodoArbol nodoOp = crearNodoAST(operador, nodoConv, der);
+            nodoOp.setTipoToken("DOUBLEF");
+            return nodoOp;
         }
 
-        // Si los tipos son incompatibles
-        registrarErrorSemantico(nroLinea, "Tipos incompatibles para la operación: " + t1 + " y " + t2);
-        return "ERROR";
+        if (t1.equalsIgnoreCase("DOUBLEF") && t2.equalsIgnoreCase("USHORTINT")) {
+            NodoArbol nodoConv = crearNodoAST("ItoD", der, null);
+            nodoConv.setTipoToken("DOUBLEF");
+            NodoArbol nodoOp = crearNodoAST(operador, izq, nodoConv);
+            nodoOp.setTipoToken("DOUBLEF");
+            return nodoOp;
+        }
+
+        // Incompatibilidad de tipos
+        registrarErrorSemantico(nroLinea, "Tipos incompatibles para '" + operador + "': " + t1 + " y " + t2);
+        NodoArbol nodoError = crearNodoAST(operador, izq, der);
+        nodoError.setTipoToken("ERROR");
+        return nodoError;
     }
 
-    // Valida una asignación entre variable izquierda y expresión derecha.
-    public boolean verificarAsignacion(Operando izq, Operando der, int nroLinea) {
+    // Valida la compatibilidad en asignaciones.
+    public NodoArbol verificarAsignacion(NodoArbol izq, NodoArbol der, int nroLinea) {
         String tIzq = obtenerTipoDato(izq);
         String tDer = obtenerTipoDato(der);
 
         if (tIzq.equalsIgnoreCase(tDer)) {
-            return true;
+            return crearNodoAST(":=", izq, der);
         }
 
-        // Asignación válida con conversión: doublef := ushortint
+        // doublef := ushortint (válido con conversión implícita)
         if (tIzq.equalsIgnoreCase("DOUBLEF") && tDer.equalsIgnoreCase("USHORTINT")) {
-            crearTerceto("ItoD", der, null);
-            return true;
+            NodoArbol nodoConv = crearNodoAST("ItoD", der, null);
+            nodoConv.setTipoToken("DOUBLEF");
+            return crearNodoAST(":=", izq, nodoConv);
         }
 
-        // Asignación inválida: ushortint := doublef
+        // ushortint := doublef (inválido)
         if (tIzq.equalsIgnoreCase("USHORTINT") && tDer.equalsIgnoreCase("DOUBLEF")) {
-            registrarErrorSemantico(nroLinea, "Error de tipo: No se puede asignar una expresión de tipo 'doublef' a una variable de tipo 'ushortint' sin conversión explícita.");
-            return false;
+            registrarErrorSemantico(nroLinea, "Error de tipo: No se puede asignar 'doublef' a 'ushortint' sin conversión explícita.");
         }
 
-        return true;
+        return crearNodoAST(":=", izq, der);
     }
 
     public void registrarErrorSemantico(int nroLinea, String mensaje) {
@@ -192,21 +122,6 @@ public class GeneradorCodigoIntermedio {
     // ==========================================
     // VISUALIZACIÓN / INFORMES
     // ==========================================
-
-    public void imprimirTercetos() {
-        System.out.println("=== TERCETOS GENERADOS ===");
-        if (listaTercetos.isEmpty()) {
-            System.out.println("(No se generaron tercetos)");
-            return;
-        }
-        for (Terceto t : listaTercetos) {
-            System.out.println(t);
-        }
-    }
-
-    public void imprimirPolaca() {
-        polacaInversa.imprimir();
-    }
 
     public void imprimirAST() {
         System.out.println("=== ÁRBOL SINTÁCTICO ABSTRACTO (AST) ===");
