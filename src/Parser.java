@@ -777,7 +777,7 @@ case 30:
 break;
 case 33:
 //#line 128 "gramatica.y"
-{ registrarEstructura("Sentencia PR_RET"); }
+{ registrarEstructura("Sentencia RET"); }
 break;
 case 37:
 //#line 135 "gramatica.y"
