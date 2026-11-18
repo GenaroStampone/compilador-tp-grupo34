@@ -151,8 +151,86 @@ public class TablaDeSimbolos {
         return lista;
     }
 
+    public boolean esHerenciaCircular(String clavePadre, String claveActual) { 
+        if (clavePadre == null || claveActual == null) { 
+            return false; 
+        } 
+        // Caso 1: Herencia directa (ej. CLASS A EXTENDS A) 
+        if (clavePadre.equals(claveActual)) { 
+            return true; 
+        } 
+        // Caso 2: Herencia indirecta (ej. CLASS B EXTENDS A, y luego CLASS A EXTENDS B) 
+        RegistroTS regPadre = buscar(clavePadre); 
+        if (regPadre != null) { 
+            for (String claveAncestral : regPadre.getClasesHeredadas()) { 
+                if (esHerenciaCircular(claveAncestral, claveActual)) { 
+                    return true; // Se encontró un ciclo en la jerarquía 
+                } 
+            } 
+        } 
+        return false; 
+    }
+
     public Map<String, RegistroTS> getTabla() {
         return new HashMap<>(tabla);
+    }
+
+    public boolean existeSimbolo(String claveMangled) { 
+        return buscar(claveMangled) != null; 
+    }
+   
+    public RegistroTS registrarVariable(String claveMangled, String tipoDato, String uso) { 
+        RegistroTS reg = buscar(claveMangled); 
+        if (reg == null) { 
+            reg = new RegistroTS(claveMangled); 
+            tabla.put(claveMangled, reg); 
+        } 
+        reg.setTipoToken(tipoDato); // ej. "ushortint", "doublef", etc. 
+        reg.setUso(uso); // "variable" o "parametro" 
+        return reg;
+    }
+
+    public RegistroTS registrarClase(String claveMangled, String uso) { 
+        RegistroTS reg = buscar(claveMangled); 
+        if (reg == null) { 
+            reg = new RegistroTS(claveMangled); 
+            tabla.put(claveMangled, reg); 
+        } 
+        reg.setTipoToken("CLASS"); 
+        reg.setUso(uso); // "nombre_clase" 
+        return reg; 
+    }
+
+    public RegistroTS registrarFuncion(String claveMangled, String tipoRetorno, String uso, List<String> tiposParametros) {
+        RegistroTS reg = buscar(claveMangled);
+        if (reg == null) {
+            reg = new RegistroTS(claveMangled);
+            tabla.put(claveMangled, reg);
+        }
+        reg.setTipoToken(tipoRetorno);
+        reg.setUso(uso);         // "nombre_funcion" o "metodo"
+        if (tiposParametros != null){
+            for (String tipo : tiposParametros){
+                reg.agregarParametro(tipo);
+            }
+        }
+        return reg;
+    }
+
+    public RegistroTS registrarTipoPersonalizado(String claveMangled, String uso, List<RegistroTS> valoresPermitidos) {
+        RegistroTS reg = buscar(claveMangled);
+        if (reg == null) {
+            reg = new RegistroTS(claveMangled);
+            tabla.put(claveMangled, reg);
+        }
+        reg.setTipoToken("typedef");
+        reg.setUso(uso);         // "nombre_tipo"
+        if (valoresPermitidos != null){
+            for (RegistroTS val : valoresPermitidos){
+                reg.agregarAtributo(val);
+            }
+        }
+        return reg;
     }
 
     // ==========================================
