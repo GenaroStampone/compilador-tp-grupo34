@@ -27,13 +27,17 @@ import java.util.*;
 programa
     : ID ';' bloque_declarativo BEGIN lista_sentencias END ';'
       {
-        registrarEstructura("Programa");
-        System.out.println("Programa estructurado correctamente.");
+        NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) $1.obj);
+        NodoArbol cuerpoProg = (NodoArbol) $5.obj;
+        NodoArbol nodoProg = GeneradorCodigoIntermedio.crearNodoAST("PROGRAMA", hojaID, cuerpoProg);
+        $$ = new ParserVal(nodoProg);
       }
     | ID bloque_declarativo BEGIN lista_sentencias END ';'
       {
-        registrarEstructura("Programa");
-        System.out.println("Programa estructurado correctamente.");
+        NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) $1.obj);
+        NodoArbol cuerpoProg = (NodoArbol) $4.obj;
+        NodoArbol nodoProg = GeneradorCodigoIntermedio.crearNodoAST("PROGRAMA", hojaID, cuerpoProg);
+        $$ = new ParserVal(nodoProg);
       }
     ;
 
@@ -113,9 +117,18 @@ visibilidad
     : PRIVATE
     ;
 
+// VER EL RETORNO POR DEFECTO EN CASO DE SER NULO
 declaracion_funcion
     : type_specifier FUNCTION ID '(' parametros ')' bloque_declarativo BEGIN lista_sentencias retorno_opcional END ';'
-      { registrarEstructura("Declaración de función"); }
+      {
+        NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) $3.obj);
+        NodoArbol cuerpoFunc = (NodoArbol) $9.obj;
+        NodoArbol retFunc = (NodoArbol) $10.obj;
+
+        NodoArbol cuerpoCompleto = GeneradorCodigoIntermedio.crearNodoAST(";", cuerpoFunc, retFunc);
+        NodoArbol nodoFunc = GeneradorCodigoIntermedio.crearNodoAST("FUNCTION", hojaID, cuerpoCompleto);
+        $$ = new ParserVal(nodoFunc);
+      }
     ;
 
 parametros
@@ -125,112 +138,257 @@ parametros
 
 retorno_opcional
     : RET '(' expresion ')' ';'
-      { registrarEstructura("Sentencia RET"); }
+      {
+        NodoArbol expr = (NodoArbol) $3.obj;
+        NodoArbol nodoRet = GeneradorCodigoIntermedio.crearNodoAST("RET", expr, null);
+        $$ = new ParserVal(nodoRet);
+      }
     | /* vacio */
+      {
+        $$ = new ParserVal((Object) null);
+      }
     ;
 
-sentencia_simple 
-    : asignacion
-    | salida_pout ';' 
-    | error ';' { System.out.println("Error sintáctico en sentencia ejecutable: resincronizado en ';'"); } 
-    ;
-
-bloque_compuesto 
+bloque_compuesto
     : sentencia
-    | BEGIN lista_sentencias END ';' 
+      { $$ = $1; }
+    | BEGIN lista_sentencias END ';'
+      { $$ = $2; }
+    ;
+
+sentencia_simple
+    : asignacion       { $$ = $1; }
+    | salida_pout ';'  { $$ = $1; }
+    | error ';'        { $$ = new ParserVal((Object) null); }
     ;
 
 lista_sentencias
     : lista_sentencias sentencia
+      {
+        NodoArbol izq = (NodoArbol) $1.obj;
+        NodoArbol der = (NodoArbol) $2.obj;
+        if (izq == null) {
+            $$ = $2;
+        } else if (der == null) {
+            $$ = $1;
+        } else {
+            NodoArbol seq = GeneradorCodigoIntermedio.crearNodoAST(";", izq, der);
+            $$ = new ParserVal(seq);
+        }
+      }
     | /* vacio */
+      {
+        $$ = new ParserVal((Object) null);
+      }
     ;
 
-sentencia 
-    : sentencia_simple 
-    | sentencia_while 
-    | sentencia_if 
+sentencia
+    : sentencia_simple { $$ = $1; }
+    | sentencia_while  { $$ = $1; }
+    | sentencia_if     { $$ = $1; }
     ;
 
-/* Tema 29: Acceso posicional a atributos con corchetes */
+/* Tema 29: Acceso posicional a atributos con corchetes y asignación */
 asignacion
     : ID ASIGNACION expresion ';'
-      { registrarEstructura("Asignación"); }
+      {
+        NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) $1.obj);
+        NodoArbol expr = (NodoArbol) $3.obj;
+        NodoArbol nodoAsig = GeneradorCodigoIntermedio.verificarYConvertirTipos(":=", hojaID, expr, lexico.getNroLinea());
+        $$ = new ParserVal(nodoAsig);
+      }
     | ID CORCHETE_IZQ expresion CORCHETE_DER ASIGNACION expresion ';'
       {
-        System.out.println("Linea " + lexico.getNroLinea() + ": Asignacion a atributo opcional");
-        registrarEstructura("Asignación a atributo opcional");
+        NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) $1.obj);
+        NodoArbol indice = (NodoArbol) $3.obj;
+        NodoArbol nodoAcceso = GeneradorCodigoIntermedio.crearNodoAST("[]", hojaID, indice);
+        NodoArbol expr = (NodoArbol) $6.obj;
+        NodoArbol nodoAsig = GeneradorCodigoIntermedio.verificarYConvertirTipos(":=", nodoAcceso, expr, lexico.getNroLinea());
+        $$ = new ParserVal(nodoAsig);
       }
     ;
 
 /* Tema 11: Sentencia WHILE-REPEAT */
-sentencia_while 
+sentencia_while
     : WHILE '(' condicion ')' REPEAT bloque_compuesto
-        { registrarEstructura("Sentencia WHILE-REPEAT"); } 
+      {
+        NodoArbol condNode = GeneradorCodigoIntermedio.crearNodoAST("cond", (NodoArbol) $3.obj, null);
+        NodoArbol cuerpoNode = GeneradorCodigoIntermedio.crearNodoAST("cuerpo", (NodoArbol) $6.obj, null);
+        NodoArbol whileNode = GeneradorCodigoIntermedio.crearNodoAST("WHILE", condNode, cuerpoNode);
+        $$ = new ParserVal(whileNode);
+      }
     ;
 
-sentencia_if 
+sentencia_if
     : IF '(' condicion ')' bloque_compuesto rama_else END_IF ';'
-        { registrarEstructura("Sentencia IF"); } 
+      {
+        NodoArbol condNode = GeneradorCodigoIntermedio.crearNodoAST("cond", (NodoArbol) $3.obj, null);
+        NodoArbol bloqThen = (NodoArbol) $5.obj; // Subárbol directo de sentencias
+        NodoArbol bloqElse = (NodoArbol) $6.obj; // Subárbol de la rama else (o null)
+
+        NodoArbol cuerpoNode = GeneradorCodigoIntermedio.crearNodoAST("cuerpo", bloqThen, bloqElse);
+        NodoArbol ifNode = GeneradorCodigoIntermedio.crearNodoAST("IF", condNode, cuerpoNode);
+
+        $$ = new ParserVal(ifNode);
+      }
     ;
 
-rama_else 
-    : ELSE bloque_compuesto 
-    | /* vacio */ 
+rama_else
+    : ELSE bloque_compuesto
+      {
+        NodoArbol elseBlock = (NodoArbol) $2.obj;
+        NodoArbol elseNode = GeneradorCodigoIntermedio.crearNodoAST("else", elseBlock, null);
+        $$ = new ParserVal(elseNode);
+      }
+    | /* vacio */
+      {
+        $$ = new ParserVal((Object) null);
+      }
     ;
 
 salida_pout
     : POUT '(' CADENA ')'
-      { registrarEstructura("Sentencia POUT"); }
+      {
+        NodoArbol hojaCadena = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) $3.obj);
+        NodoArbol nodoPout = GeneradorCodigoIntermedio.crearNodoAST("POUT", hojaCadena, null);
+        $$ = new ParserVal(nodoPout);
+      }
     | POUT '(' expresion ')'
-      { registrarEstructura("Sentencia POUT"); }
+      {
+        NodoArbol expr = (NodoArbol) $3.obj;
+        NodoArbol nodoPout = GeneradorCodigoIntermedio.crearNodoAST("POUT", expr, null);
+        $$ = new ParserVal(nodoPout);
+      }
     ;
 
 condicion
     : expresion comparador expresion
-      { registrarEstructura("Condición"); }
+      {
+        NodoArbol izq = (NodoArbol) $1.obj;
+        String op = (String) $2.obj;
+        NodoArbol der = (NodoArbol) $3.obj;
+        NodoArbol nodoComp = GeneradorCodigoIntermedio.verificarYConvertirTipos(op, izq, der, lexico.getNroLinea());
+        $$ = new ParserVal(nodoComp);
+      }
     ;
 
 comparador
-    : COMP_IGUAL
-    | COMP_DIST
-    | COMP_MAYOR_IGUAL
-    | COMP_MENOR_IGUAL
-    | '>'
-    | '<'
+    : COMP_IGUAL        { $$ = new ParserVal("=="); }
+    | COMP_DIST         { $$ = new ParserVal("!="); }
+    | COMP_MAYOR_IGUAL  { $$ = new ParserVal(">="); }
+    | COMP_MENOR_IGUAL  { $$ = new ParserVal("<="); }
+    | '>'               { $$ = new ParserVal(">"); }
+    | '<'               { $$ = new ParserVal("<"); }
     ;
 
 /* Tema 18: Asignaciones dentro de expresiones y conversiones (Tema 2 y 8) */
 expresion
     : expresion '+' expresion
+      {
+        NodoArbol izq = (NodoArbol) $1.obj;
+        NodoArbol der = (NodoArbol) $3.obj;
+        NodoArbol nodo = GeneradorCodigoIntermedio.verificarYConvertirTipos("+", izq, der, lexico.getNroLinea());
+        $$ = new ParserVal(nodo);
+      }
     | expresion '-' expresion
+      {
+        NodoArbol izq = (NodoArbol) $1.obj;
+        NodoArbol der = (NodoArbol) $3.obj;
+        NodoArbol nodo = GeneradorCodigoIntermedio.verificarYConvertirTipos("-", izq, der, lexico.getNroLinea());
+        $$ = new ParserVal(nodo);
+      }
     | expresion '*' expresion
+      {
+        NodoArbol izq = (NodoArbol) $1.obj;
+        NodoArbol der = (NodoArbol) $3.obj;
+        NodoArbol nodo = GeneradorCodigoIntermedio.verificarYConvertirTipos("*", izq, der, lexico.getNroLinea());
+        $$ = new ParserVal(nodo);
+      }
     | expresion '/' expresion
+      {
+        NodoArbol izq = (NodoArbol) $1.obj;
+        NodoArbol der = (NodoArbol) $3.obj;
+        NodoArbol nodo = GeneradorCodigoIntermedio.verificarYConvertirTipos("/", izq, der, lexico.getNroLinea());
+        $$ = new ParserVal(nodo);
+      }
     | '-' expresion %prec UMINUS
-      { aplicarSignoNegativo($2); $$ = $2; }
+      {
+        aplicarSignoNegativo($2);
+        NodoArbol expr = (NodoArbol) $2.obj;
+        // Usamos una etiqueta explícita "UMINUS" para no confundirlo con la resta binaria
+        NodoArbol nodo = GeneradorCodigoIntermedio.crearNodoAST("UMINUS", expr, null);
+        $$ = new ParserVal(nodo);
+      }
     | ID '=' expresion
+      {
+        NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) $1.obj);
+        NodoArbol expr = (NodoArbol) $3.obj;
+        NodoArbol nodoAsig = GeneradorCodigoIntermedio.verificarYConvertirTipos("=", hojaID, expr, lexico.getNroLinea());
+        $$ = new ParserVal(nodoAsig);
+      }
     | ID invocacion_ordenada
+      {
+        NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) $1.obj);
+        NodoArbol args = (NodoArbol) $2.obj;
+        NodoArbol nodoCall = GeneradorCodigoIntermedio.crearNodoAST("CALL", hojaID, args);
+        $$ = new ParserVal(nodoCall);
+      }
     | ID CORCHETE_IZQ expresion CORCHETE_DER
-      { registrarEstructura("Acceso posicional"); }
+      {
+        NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) $1.obj);
+        NodoArbol indice = (NodoArbol) $3.obj;
+        NodoArbol nodoAcceso = GeneradorCodigoIntermedio.crearNodoAST("[]", hojaID, indice);
+        $$ = new ParserVal(nodoAcceso);
+      }
     | ID
+      {
+        NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) $1.obj);
+        $$ = new ParserVal(hojaID);
+      }
     | constante
+      {
+        /* $$ hereda directamente el ParserVal con el NodoArbol producido en la regla constante */
+        $$ = $1;
+      }
     ;
 
 invocacion_ordenada
     : '(' lista_expresiones ')' CORCHETE_IZQ lista_valores CORCHETE_DER
-      { registrarEstructura("Invocación ordenada con índices"); }
+      {
+        NodoArbol args = (NodoArbol) $2.obj;
+        NodoArbol indices = (NodoArbol) $5.obj;
+        NodoArbol inv = GeneradorCodigoIntermedio.crearNodoAST("INVOC", args, indices);
+        $$ = new ParserVal(inv);
+      }
     | '(' lista_expresiones ')'
-      { registrarEstructura("Invocación ordenada"); }
+      {
+        $$ = $2;
+      }
     ;
 
 lista_expresiones
     : expresion
+      { $$ = $1; }
     | lista_expresiones ',' expresion
-    | /* vacio */
-    ;
+      {
+        NodoArbol izq = (NodoArbol) $1.obj;
+        NodoArbol der = (NodoArbol) $3.obj;
+        NodoArbol list = GeneradorCodigoIntermedio.crearNodoAST(",", izq, der);
+        $$ = new ParserVal(list);
+      }
 
 constante
     : CTE_USHORT
-    | CTE_DOUBLEF { validarConstanteDoublef($1); $$ = $1; }
+      {
+        NodoArbol hojaCte = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) $1.obj);
+        $$ = new ParserVal(hojaCte);
+      }
+    | CTE_DOUBLEF
+      {
+        validarConstanteDoublef($1);
+        NodoArbol hojaCte = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) $1.obj);
+        $$ = new ParserVal(hojaCte);
+      }
     ;
 
 %%

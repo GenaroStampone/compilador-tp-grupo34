@@ -1685,21 +1685,7 @@ state 157
 state 158
 	retorno_opcional : RET . '(' expresion ')' ';'  (33)
 
-	'('  shift 159
-	.  error
-
-
-state 158
-	declaracion_funcion : type_specifier FUNCTION ID '(' parametros ')' bloque_declarativo BEGIN lista_sentencias retorno_opcional . END ';'  (30)
-
-	END  shift 160
-	.  error
-
-
-state 158
-	declaracion_funcion : type_specifier FUNCTION ID '(' parametros ')' bloque_declarativo BEGIN lista_sentencias retorno_opcional . END ';'  (30)
-
-	END  shift 161
+	'('  shift 161
 	.  error
 
 
@@ -1725,18 +1711,18 @@ state 161
 	'-'  shift 63
 	.  error
 
-	constante  goto 65
-	expresion  goto 162
+	constante  goto 64
+	expresion  goto 163
 
 
-state 160
+state 162
 	declaracion_funcion : type_specifier FUNCTION ID '(' parametros ')' bloque_declarativo BEGIN lista_sentencias retorno_opcional END . ';'  (30)
 
-	';'  shift 162
+	';'  shift 164
 	.  error
 
 
-state 161
+state 163
 	retorno_opcional : RET '(' expresion . ')' ';'  (33)
 	expresion : expresion . '+' expresion  (60)
 	expresion : expresion . '-' expresion  (61)
@@ -1751,20 +1737,20 @@ state 161
 	.  error
 
 
-state 162
+state 164
 	declaracion_funcion : type_specifier FUNCTION ID '(' parametros ')' bloque_declarativo BEGIN lista_sentencias retorno_opcional END ';' .  (30)
 
 	.  reduce 30
 
 
-state 163
+state 165
 	retorno_opcional : RET '(' expresion ')' . ';'  (33)
 
-	';'  shift 164
+	';'  shift 166
 	.  error
 
 
-state 164
+state 166
 	retorno_opcional : RET '(' expresion ')' ';' .  (33)
 
 	.  reduce 33
