@@ -43,6 +43,19 @@ public class RegistroTS {
         this.clasesHeredadas = new ArrayList<>();
     }
 
+    public RegistroTS(String nombreMangled){
+        this.lexema = nombreMangled;
+        this.idToken = -1;
+        this.uso = null;
+        this.tipoToken = null;
+        this.nroLinea = -1;
+        this.valorNum = 0.0;
+        this.longitud = (nombreMangled != null) ? nombreMangled.length() : 0;
+        this.listaParametros = new ArrayList<>();
+        this.listaAtributos = new ArrayList<>();
+        this.clasesHeredadas = new ArrayList<>();
+    }
+
     // --- GETTERS Y SETTERS ---
     public String getLexema() {
         return lexema;

@@ -1685,7 +1685,35 @@ state 157
 state 158
 	retorno_opcional : RET . '(' expresion ')' ';'  (33)
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
 	'('  shift 161
+=======
+=======
+>>>>>>> 9d201873c581d4ce8b0a2da40af3e18e6ce7967a
+	'('  shift 159
+	.  error
+
+
+state 158
+	declaracion_funcion : type_specifier FUNCTION ID '(' parametros ')' bloque_declarativo BEGIN lista_sentencias retorno_opcional . END ';'  (30)
+
+	END  shift 160
+	.  error
+
+
+state 158
+	declaracion_funcion : type_specifier FUNCTION ID '(' parametros ')' bloque_declarativo BEGIN lista_sentencias retorno_opcional . END ';'  (30)
+
+	END  shift 161
+<<<<<<< HEAD
+>>>>>>> 2976d992e92ce87707ccfc86097073e5143b7c7c
+=======
+>>>>>>> 9d201873c581d4ce8b0a2da40af3e18e6ce7967a
+=======
+	'('  shift 161
+>>>>>>> ccf9711390ea877fdd080acd10c70c11c3f6c9f8
 	.  error
 
 
@@ -1711,6 +1739,9 @@ state 161
 	'-'  shift 63
 	.  error
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
 	constante  goto 64
 	expresion  goto 163
 
@@ -1723,6 +1754,33 @@ state 162
 
 
 state 163
+=======
+=======
+>>>>>>> 9d201873c581d4ce8b0a2da40af3e18e6ce7967a
+	constante  goto 65
+	expresion  goto 162
+=======
+	constante  goto 64
+	expresion  goto 163
+>>>>>>> ccf9711390ea877fdd080acd10c70c11c3f6c9f8
+
+
+state 162
+	declaracion_funcion : type_specifier FUNCTION ID '(' parametros ')' bloque_declarativo BEGIN lista_sentencias retorno_opcional END . ';'  (30)
+
+	';'  shift 164
+	.  error
+
+
+<<<<<<< HEAD
+state 161
+<<<<<<< HEAD
+>>>>>>> 2976d992e92ce87707ccfc86097073e5143b7c7c
+=======
+>>>>>>> 9d201873c581d4ce8b0a2da40af3e18e6ce7967a
+=======
+state 163
+>>>>>>> ccf9711390ea877fdd080acd10c70c11c3f6c9f8
 	retorno_opcional : RET '(' expresion . ')' ';'  (33)
 	expresion : expresion . '+' expresion  (60)
 	expresion : expresion . '-' expresion  (61)
@@ -1737,12 +1795,27 @@ state 163
 	.  error
 
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
 state 164
+=======
+state 162
+>>>>>>> 2976d992e92ce87707ccfc86097073e5143b7c7c
+=======
+state 162
+>>>>>>> 9d201873c581d4ce8b0a2da40af3e18e6ce7967a
+=======
+state 164
+>>>>>>> ccf9711390ea877fdd080acd10c70c11c3f6c9f8
 	declaracion_funcion : type_specifier FUNCTION ID '(' parametros ')' bloque_declarativo BEGIN lista_sentencias retorno_opcional END ';' .  (30)
 
 	.  reduce 30
 
 
+<<<<<<< HEAD
+<<<<<<< HEAD
+<<<<<<< HEAD
 state 165
 	retorno_opcional : RET '(' expresion ')' . ';'  (33)
 
@@ -1751,6 +1824,28 @@ state 165
 
 
 state 166
+=======
+=======
+>>>>>>> 9d201873c581d4ce8b0a2da40af3e18e6ce7967a
+state 163
+=======
+state 165
+>>>>>>> ccf9711390ea877fdd080acd10c70c11c3f6c9f8
+	retorno_opcional : RET '(' expresion ')' . ';'  (33)
+
+	';'  shift 166
+	.  error
+
+
+<<<<<<< HEAD
+state 164
+<<<<<<< HEAD
+>>>>>>> 2976d992e92ce87707ccfc86097073e5143b7c7c
+=======
+>>>>>>> 9d201873c581d4ce8b0a2da40af3e18e6ce7967a
+=======
+state 166
+>>>>>>> ccf9711390ea877fdd080acd10c70c11c3f6c9f8
 	retorno_opcional : RET '(' expresion ')' ';' .  (33)
 
 	.  reduce 33
