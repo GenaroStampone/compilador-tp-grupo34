@@ -101,7 +101,7 @@ public class TablaDeSimbolos {
     }
 
     // ==========================================
-    // METODOS SEMANTICOS TP3 (TEMAS 29 Y 30)
+    // METODOS SEMANTICOS TP3
     // ==========================================
 
     // TEMA 30: Herencia Múltiple con Desambiguado Opción 1.
@@ -229,6 +229,31 @@ public class TablaDeSimbolos {
                 reg.agregarAtributo(val);
             }
         }
+        return reg;
+    }
+
+        /**
+     * Busca o registra en la Tabla de Símbolos la constante por defecto
+     * correspondiente al tipo de retorno de una función.
+     */
+    public RegistroTS obtenerOCrearConstantePorDefecto(String tipoFuncion) {
+        String lexema;
+        int idToken;
+        String tipoToken;
+
+        if (tipoFuncion != null && ("DOUBLEF".equalsIgnoreCase(tipoFuncion) || "CTE_DOUBLEF".equalsIgnoreCase(tipoFuncion))) {
+            lexema = "0.0";
+            idToken = Parser.CTE_DOUBLEF;
+            tipoToken = "CTE_DOUBLEF";
+        } else { // ushortint por defecto
+            lexema = "0$us";
+            idToken = Parser.CTE_USHORT;
+            tipoToken = "CTE_USHORT";
+        }
+
+        // alta(...) ya consulta si existe en el HashMap antes de insertar
+        RegistroTS reg = alta(lexema, idToken, tipoToken, 0, 0.0);
+        reg.setUso("constante");
         return reg;
     }
 
