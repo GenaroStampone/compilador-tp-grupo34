@@ -151,6 +151,54 @@ public class GeneradorCodigoIntermedio {
     }
 
     // ==========================================
+    // TEMA 29: ASIGNACIÓN A ATRIBUTO POSICIONAL (obj[i] := expr)
+    // ==========================================
+
+    public NodoArbol verificarAsignacionAtributo(RegistroTS regObjeto, NodoArbol nodoIndice, NodoArbol nodoExpr, int nroLinea) {
+        if (regObjeto == null) {
+            registrarErrorSemantico(nroLinea, "Objeto no identificado en la asignación posicional.");
+            return null;
+        }
+        String tipoClase = regObjeto.getTipoToken(); // Tipo de la variable objeto (ej: "clasea")
+
+        // Validar que la variable corresponda a una Clase declarada en la TS
+        RegistroTS regClase = tablaSimbolos.buscar(tipoClase);
+        if (regClase == null && (regObjeto.getUso() == null || !"CLASE".equals(regObjeto.getUso()))) {
+            regClase = tablaSimbolos.buscar(regObjeto.getLexema());
+        }
+        if (regClase == null) {
+            registrarErrorSemantico(nroLinea, String.format("La variable '%s' (tipo '%s') no es una instancia de una clase válida.", regObjeto.getLexema(), tipoClase));
+        }
+
+        // Validar que el índice sea de tipo entero (USHORTINT)
+        if (nodoIndice != null && nodoIndice.getTipoToken() != null) {
+            String tInd = nodoIndice.getTipoToken();
+            if (!tInd.equalsIgnoreCase("USHORTINT")) {
+                registrarErrorSemantico(nroLinea, "El índice para el acceso posicional a un atributo debe ser de tipo entero (USHORTINT).");
+            }
+        }
+
+        // Chequeo de rango y mapeo de atributo con la Tabla de Símbolos (Tema 29 + Tema 30)
+        if (nodoIndice != null && nodoIndice.getRegTS() != null) {
+            int pos = (int) nodoIndice.getRegTS().getValorNum();
+            RegistroTS atributoTarget = tablaSimbolos.obtenerAtributoPosicional(tipoClase, pos);
+            if (atributoTarget == null) {
+                registrarErrorSemantico(nroLinea, String.format(
+                        "Error Semántico (Tema 29): La clase '%s' no posee ningún atributo en el índice %d.", tipoClase, pos));
+            } else {
+                // Verificar compatibilidad de tipo entre el atributo mapeado y la expresión a asignar
+                NodoArbol hojaAttr = crearHojaAST(atributoTarget);
+                verificarAsignacion(hojaAttr, nodoExpr, nroLinea);
+            }
+        }
+
+        // 4. Construcción del subárbol en el AST: := ( [](obj, i), expr )
+        NodoArbol hojaObj = crearHojaAST(regObjeto);
+        NodoArbol nodoAcceso = crearNodoAST("[]", hojaObj, nodoIndice);
+        return crearNodoAST(":=", nodoAcceso, nodoExpr);
+    }
+
+    // ==========================================
     // ANÁLISIS SEMÁNTICO Y TEMA 35 (CONVERSIONES)
     // ==========================================
 

@@ -319,11 +319,11 @@ asignacion
       }
     | ID CORCHETE_IZQ expresion CORCHETE_DER ASIGNACION expresion ';'
       {
-        NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) $1.obj);
+        RegistroTS regObjeto = (RegistroTS) $1.obj;
         NodoArbol indice = (NodoArbol) $3.obj;
-        NodoArbol nodoAcceso = GeneradorCodigoIntermedio.crearNodoAST("[]", hojaID, indice);
         NodoArbol expr = (NodoArbol) $6.obj;
-        NodoArbol nodoAsig = GeneradorCodigoIntermedio.verificarYConvertirTipos(":=", nodoAcceso, expr, lexico.getNroLinea());
+        
+        NodoArbol nodoAsig = GeneradorCodigoIntermedio.verificarAsignacionAtributo(regObjeto, indice, expr, lexico.getNroLinea());
         $$ = new ParserVal(nodoAsig);
       }
     ;
