@@ -331,12 +331,6 @@ public class GeneradorCodigoIntermedio {
     // VISUALIZACIÓN / INFORMES
     // ==========================================
 
-    
-
-    // ==========================================
-    // VISUALIZACIÓN / INFORMES
-    // ==========================================
-
     public void imprimirAST() {
         System.out.println("=== ÁRBOL SINTÁCTICO ABSTRACTO (AST) ===");
         if (raizAST != null) {
