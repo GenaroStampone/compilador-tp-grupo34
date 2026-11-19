@@ -346,16 +346,16 @@ asignacion
       {
         NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) $1.obj);
         NodoArbol expr = (NodoArbol) $3.obj;
-        NodoArbol nodoAsig = GeneradorCodigoIntermedio.verificarYConvertirTipos(":=", hojaID, expr, lexico.getNroLinea());
+        NodoArbol nodoAsig = GeneradorCodigoIntermedio.verificarAsignacion(hojaID, expr, lexico.getNroLinea());
         $$ = new ParserVal(nodoAsig);
       }
     | ID CORCHETE_IZQ expresion CORCHETE_DER ASIGNACION expresion ';'
       {
-        NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) $1.obj);
+        RegistroTS regObjeto = (RegistroTS) $1.obj;
         NodoArbol indice = (NodoArbol) $3.obj;
-        NodoArbol nodoAcceso = GeneradorCodigoIntermedio.crearNodoAST("[]", hojaID, indice);
         NodoArbol expr = (NodoArbol) $6.obj;
-        NodoArbol nodoAsig = GeneradorCodigoIntermedio.verificarYConvertirTipos(":=", nodoAcceso, expr, lexico.getNroLinea());
+        
+        NodoArbol nodoAsig = GeneradorCodigoIntermedio.verificarAsignacionAtributo(regObjeto, indice, expr, lexico.getNroLinea());
         $$ = new ParserVal(nodoAsig);
       }
     ;
@@ -480,9 +480,9 @@ expresion
       }
     | ID invocacion_ordenada
       {
-        NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) $1.obj);
-        NodoArbol args = (NodoArbol) $2.obj;
-        NodoArbol nodoCall = GeneradorCodigoIntermedio.crearNodoAST("CALL", hojaID, args);
+        RegistroTS regFunc = (RegistroTS) $1.obj;
+        NodoArbol infoInvoc = (NodoArbol) $2.obj;
+        NodoArbol nodoCall = GeneradorCodigoIntermedio.procesarInvocacion(regFunc, infoInvoc, lexico.getNroLinea());
         $$ = new ParserVal(nodoCall);
       }
     | ID CORCHETE_IZQ expresion CORCHETE_DER
@@ -512,8 +512,8 @@ invocacion_ordenada
     : '(' lista_expresiones ')' CORCHETE_IZQ lista_valores CORCHETE_DER
       {
         NodoArbol args = (NodoArbol) $2.obj;
-        NodoArbol indices = (NodoArbol) $5.obj;
-        NodoArbol inv = GeneradorCodigoIntermedio.crearNodoAST("INVOC", args, indices);
+        NodoArbol orden = (NodoArbol) $5.obj;
+        NodoArbol inv = GeneradorCodigoIntermedio.crearNodoAST("INVOC_ORDENADA", args, orden);
         $$ = new ParserVal(inv);
       }
     | '(' lista_expresiones ')'
