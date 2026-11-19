@@ -81,7 +81,16 @@ lista_variables
 
 lista_valores
     : valor_enum
+        {
+            $$ = $1;
+        }
     | lista_valores ',' valor_enum
+        {
+            NodoArbol izq = (NodoArbol) $1.obj;
+            NodoArbol der = (NodoArbol) $3.obj;
+            NodoArbol list = GeneradorCodigoIntermedio.crearNodoAST(",", izq, der);
+            $$ = new ParserVal(list);
+        }
     ;
 
 valor_enum
@@ -323,7 +332,7 @@ asignacion
         NodoArbol indice = (NodoArbol) $3.obj;
         NodoArbol expr = (NodoArbol) $6.obj;
         
-        NodoArbol nodoAsig = GeneradorCodigoIntermedio.verificarAsignacionAtributo(regObjeto, indice, expr, lexico.getNroLinea());
+        NodoArbol nodoAsig = GeneradorCodigoIntermedio.verificarEscrituraAtributo(regObjeto, indice, expr, lexico.getNroLinea());
         $$ = new ParserVal(nodoAsig);
       }
     ;
@@ -454,10 +463,12 @@ expresion
         $$ = new ParserVal(nodoCall);
       }
     | ID CORCHETE_IZQ expresion CORCHETE_DER
-      { registrarEstructura("Acceso posicional"); 
-        NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) $1.obj);
+      { 
+        registrarEstructura("Acceso posicional"); 
+        RegistroTS regObj = buscarVariableVisibilidad(((RegistroTS) $1.obj).getLexema());
         NodoArbol indice = (NodoArbol) $3.obj;
-        NodoArbol nodoAcceso = GeneradorCodigoIntermedio.crearNodoAST("[]", hojaID, indice);
+
+        NodoArbol nodoAcceso = GeneradorCodigoIntermedio.verificarLecturaAtributo(regObj, indice, lexico.getNroLinea());        
         $$ = new ParserVal(nodoAcceso);
       }
     | ID '.' ID

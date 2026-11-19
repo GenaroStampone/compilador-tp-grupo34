@@ -9,17 +9,17 @@ import java.util.List;
 public class AnalizadorLexico {
 
     // --- Atributos del Autómata y Lectura ---
-    private BufferedReader lectorFuente;
-    private TablaDeSimbolos tablaSimbolos;
+    private final BufferedReader lectorFuente;
+    private final TablaDeSimbolos tablaSimbolos;
     private int estado_actual;
     private int nroLinea = 1; // Contador de líneas para reportes de errores/warnings
     public int yylineno; // Contador estándar de líneas para interfaz con Parser / Yacc
-    private StringBuilder buffer;
+    private final StringBuilder buffer;
     private int ultimoCaracter; // Control de lookahead / ungetc
 
-    private List<String> errores = new ArrayList<>();
-    private List<String> warnings = new ArrayList<>();
-    private List<Token> tokensDetectados = new ArrayList<>();
+    private final List<String> errores = new ArrayList<>();
+    private final List<String> warnings = new ArrayList<>();
+    private final List<Token> tokensDetectados = new ArrayList<>();
 
     // Matrices del Autómata
     private int[][] TE_mat;

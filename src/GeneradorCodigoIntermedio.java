@@ -42,6 +42,8 @@ public class GeneradorCodigoIntermedio {
     // METODOS SEMANTICOS TP3 (TEMA 20)
     // ==========================================
 
+    // f(a, b, c) [1, 3, 2] 
+    // Valida la función en la TS, contrasta la cantidad de parámetros con la lista de orden, genera las asignaciones de copia en el AST y retorna el nodo "CALL"
     public NodoArbol generarInvocacionFuncionOrdenada(RegistroTS regFunc, List<NodoArbol> paramsReales, List<Integer> orden, int nroLinea) {
         // Buscar la declaración de la función en la TS
         RegistroTS funcDeclarada = tablaSimbolos.buscar(regFunc.getLexema());
@@ -101,7 +103,7 @@ public class GeneradorCodigoIntermedio {
             nodoCopias = crearNodoAST("COPIA_PARAM", nodoCopias, copia);
         }
 
-        // 5. Retornar el nodo final de llamada a función
+        // Retornar el nodo final de llamada a función
         NodoArbol nodoFunc = crearHojaAST(funcDeclarada);
         return crearNodoAST("CALL", nodoFunc, nodoCopias);
     }
@@ -151,10 +153,13 @@ public class GeneradorCodigoIntermedio {
     }
 
     // ==========================================
-    // TEMA 29: ASIGNACIÓN A ATRIBUTO POSICIONAL (obj[i] := expr)
+    // TEMA 29: ASIGNACIÓN A ATRIBUTO POSICIONAL 
     // ==========================================
 
-    public NodoArbol verificarAsignacionAtributo(RegistroTS regObjeto, NodoArbol nodoIndice, NodoArbol nodoExpr, int nroLinea) {
+    // obj[i] := expr
+    // Valida la existencia del objeto/clase, que el índice sea entero y esté dentro 
+        //  del rango de atributos (heredados + propios), chequea tipos y retorna el nodo ':=' para el AST.
+    public NodoArbol verificarEscrituraAtributo(RegistroTS regObjeto, NodoArbol nodoIndice, NodoArbol nodoExpr, int nroLinea) {
         if (regObjeto == null) {
             registrarErrorSemantico(nroLinea, "Objeto no identificado en la asignación posicional.");
             return null;
@@ -192,10 +197,53 @@ public class GeneradorCodigoIntermedio {
             }
         }
 
-        // 4. Construcción del subárbol en el AST: := ( [](obj, i), expr )
+        // Construcción del subárbol en el AST: := ( [](obj, i), expr )
         NodoArbol hojaObj = crearHojaAST(regObjeto);
         NodoArbol nodoAcceso = crearNodoAST("[]", hojaObj, nodoIndice);
         return crearNodoAST(":=", nodoAcceso, nodoExpr);
+    }
+
+    // expr := obj[i]
+    // verifica que la variable sea objeto, el índice entero y propaga el tipoToken del atributo.
+    public NodoArbol verificarLecturaAtributo(RegistroTS regObjeto, NodoArbol nodoIndice, int nroLinea) {
+        if (regObjeto == null) {
+            registrarErrorSemantico(nroLinea, "Objeto no identificado en el acceso posicional.");
+            return null;
+        }
+        String tipoClase = regObjeto.getTipoToken();
+
+        // Validar que la variable corresponda a una clase
+        RegistroTS regClase = tablaSimbolos.buscar(tipoClase);
+        if (regClase == null && (regObjeto.getUso() == null || !"CLASE".equals(regObjeto.getUso()))) {
+            regClase = tablaSimbolos.buscar(regObjeto.getLexema());
+        }
+        if (regClase == null) {
+            registrarErrorSemantico(nroLinea, String.format("La variable '%s' (tipo '%s') no es una instancia de una clase válida.", regObjeto.getLexema(), tipoClase));
+        }
+
+        // Validar que el índice sea de tipo entero (USHORTINT)
+        if (nodoIndice != null && nodoIndice.getTipoToken() != null) {
+            String tInd = nodoIndice.getTipoToken();
+            if (!tInd.equalsIgnoreCase("USHORTINT") && !tInd.equalsIgnoreCase("INTEGER")) {
+                registrarErrorSemantico(nroLinea, "El índice para el acceso posicional debe ser de tipo entero (USHORTINT).");
+            }
+        }
+
+        // Crear nodo "[]" y propagar el tipo de dato del atributo al nodo
+        NodoArbol hojaObj = crearHojaAST(regObjeto);
+        NodoArbol nodoAcceso = crearNodoAST("[]", hojaObj, nodoIndice);
+        if (nodoIndice != null && nodoIndice.getRegTS() != null) {
+            int pos = (int) nodoIndice.getRegTS().getValorNum();
+            RegistroTS attrTarget = tablaSimbolos.obtenerAtributoPosicional(tipoClase, pos);
+            if (attrTarget == null) {
+                registrarErrorSemantico(nroLinea, String.format(
+                        "Error Semántico (Tema 29): La clase '%s' no posee ningún atributo en el índice %d.", tipoClase, pos));
+            } else {
+                // Se le asigna al nodo el tipoToken del atributo mapeado
+                nodoAcceso.setTipoToken(attrTarget.getTipoToken());
+            }
+        }
+        return nodoAcceso;
     }
 
     // ==========================================
