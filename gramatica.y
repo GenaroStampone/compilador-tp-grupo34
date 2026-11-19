@@ -145,7 +145,7 @@ declaracion_typedef
 
 declaracion_funcion
     : encabezado_funcion cuerpo_funcion
-      { registrarEstructura("Declaración de función"); 
+      { 
         NodoArbol hojaID = (NodoArbol) $1.obj
         NodoArbol cuerpoCompleto = (NodoArbol) $2.obj
         NodoArbol nodoFunc = GeneradorCodigoIntermedio.crearNodoAST("FUNCTION", hojaID, cuerpoCompleto);
@@ -215,7 +215,6 @@ retorno_opcional
 declaracion_clase
     : encabezado_clase herencia_opcional cuerpo_clase
      {
-       registrarEstructura("Clase");
        System.out.println("Línea " + lexico.getNroLinea() + ": Declaración de Clase reconocida");
        RegistroTS regClaseActual = (RegistroTS) $1.obj;
        ArrayList<RegistroTS> listaPadres = (ArrayList<RegistroTS>) $2.obj;
@@ -264,7 +263,7 @@ cuerpo_clase
 
 herencia_opcional
     : EXTENDS lista_variables 
-     { registrarEstructura("Herencia"); 
+     { 
         // $2 contiene la lista de identificadores de las clases padre (ArrayList<RegistroTS>)
         $$ = $2; // Propagamos la lista de clases heredadas
      }
@@ -283,9 +282,7 @@ miembro_clase
     : visibilidad declaracion
     | declaracion
     | FRIEND lista_variables ';'   /* Tema 27: clases/funciones amigas */
-      { registrarEstructura("Declaración friend"); }
     | EXTENDS lista_variables ';'  /* Tema 30: herencia multiple dentro del cuerpo */
-      { registrarEstructura("Herencia dentro de clase"); }
     ;
 
 visibilidad
@@ -496,7 +493,6 @@ expresion
       }
     | ID CORCHETE_IZQ expresion CORCHETE_DER
       { 
-        registrarEstructura("Acceso posicional"); 
         RegistroTS regObj = buscarVariableVisibilidad(((RegistroTS) $1.obj).getLexema());
         NodoArbol indice = (NodoArbol) $3.obj;
 
@@ -615,10 +611,7 @@ public List<String> getEstructurasDetectadas() {
     return estructurasDetectadas;
 }
 
-/* Registra una reduccion sintactica reconocida, con la linea actual del lexico. */
-private void registrarEstructura(String estructura) {
-    estructurasDetectadas.add("Línea " + lexico.getNroLinea() + ": " + estructura);
-}
+
 
 /* TP2 punto c: el lexico desconoce el signo. Al aplicar el '-' el Parser
    vuelve a validar el rango y actualiza la Tabla de Simbolos si corresponde. */
