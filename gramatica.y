@@ -93,23 +93,23 @@ declaracion_variables
     : type_specifier lista_variables ';'
       {
         String tipoDato = ((RegistroTS) $1.obj).getLexema();
-        ArrayList<RegistroTS> lista = (ArrayList<RegistroTS>) $2.obj;
-        for (RegistroTS reg : lista) {
+        ArrayList<RegistroTS> listaVars = (ArrayList<RegistroTS>) $2.obj;
+        String ambitoActual = controlAmbitos.getAmbitoActual();
+        if (listaVars != null) {
+          for (RegistroTS reg : listaVars) {
             String lexemaOriginal = reg.getLexema();
-
-            // 1. Name Mangling según el ámbito actual (ej. "a:main" o "a:main:consultar_clave")
+            // Name Mangling según el ámbito actual (ej. "a:main" o "a:main:consultar_clave")
             String nameMangled = lexemaOriginal + ":" + controlAmbitos.getAmbitoActual();
-
-            // 2. Control de Redeclaración en el MISMO ámbito
-            if (ts.existeSimbolo(claveMangled)) {
-                yyerror("Error Semántico: Variable redeclarada '" + lexemaOriginal + 
-                        "' en el ámbito " + controlAmbitos.getAmbitoActual());
+            // Control de Redeclaración en el MISMO ámbito
+            if (ts.buscar(nameMangled)) {
+                yyerror("Error Semántico: Variable redeclarada '" + lexemaOriginal + "' en el ámbito " + controlAmbitos.getAmbitoActual());
             } else {
-                // 3. Registrar tipo y uso en la Tabla de Símbolos
-                ts.registrarVariable(nameMangled, tipoDato, "variable");
+                // Registrar tipo y uso en la Tabla de Símbolos
+                RegistroTS regNuevo = ts.registrarVariable(nameMangled, tipoDato, "variable");
             }
+          }
         }
-        declararListaVariables(listaVars, tipoDato);
+      
      }
     ;
 
@@ -136,31 +136,41 @@ declaracion_typedef
 
 declaracion_funcion
     : encabezado_funcion cuerpo_funcion
-      { registrarEstructura("Declaración de función"); 
-        NodoArbol hojaID = (NodoArbol) $1.obj
-        NodoArbol cuerpoCompleto = (NodoArbol) $2.obj
-        NodoArbol nodoFunc = GeneradorCodigoIntermedio.crearNodoAST("FUNCTION", hojaID, cuerpoCompleto);
-        $$ = new ParserVal(nodoFunc);
+      {
+        controlAmbitos.cerrarAmbito(); 
+        // Armamos el nodo del AST de la función conectando la hoja del encabezado con el subárbol del cuerpo 
+        NodoArbol hojaFunc = (NodoArbol) $1.obj; 
+        NodoArbol subArbolCuerpo = (NodoArbol) $2.obj; 
+        NodoArbol nodoFuncion = GeneradorCodigoIntermedio.crearNodoAST("FUNC", hojaFunc, subArbolCuerpo); 
+        $$ = new ParserVal(nodoFuncion); 
       }
     ;
 
 encabezado_funcion 
-    : type_specifier FUNCTION ID { 
-        // 1. Abrir nuevo ámbito con el nombre de la función 
-        controlAmbitos.abrirAmbito($3.getLexema()); 
-        // 2. Registrar la función en la Tabla de Símbolos (en el ámbito padre) 
-        String nameMangled = $3.getLexema() + ":" + controlAmbitos.getAmbitoPadre();
-        RegistroTS regID = (RegistroTS) $3.obj;
-        String lexemaFunc = regID.getLexema();
-        RegistroTS regFuncion = ts.registrarFuncion(nameMangled, $1.getTipo(), "nombre_funcion");
-        NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST(regFuncion != null ? regFuncion : regID);
-        $$ = new ParserVal(hojaID);
-        ts.registrarFuncion(nameMangled, $1.getTipo(), "nombre_funcion"); 
-        } 
+    : type_specifier FUNCTION ID '(' lista_parametros_formales ')'
+     { 
+        String lexemaFunc = ((RegistroTS) $3.obj).getLexema();
+        String ambitoPadre = controlAmbitos.getAmbitoActual();
+        String nameMangled = lexemaFunc + ":" + ambitoPadre;
+        List<String> tiposParametros = (List<String>) $5.obj;
+        if (ts.buscar(nameMangled) != null) { 
+          // Error semántico: Redeclaración en el mismo ámbito 
+          yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": La función o símbolo '" + lexemaFunc + "' ya fue declarado/a en el ámbito '" + ambitoPadre + "'"); 
+          controlAmbitos.abrirAmbito(lexemaFunc); 
+          $$ = new ParserVal(GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) $3.obj)); 
+        } else {
+          // Registrar la función en la Tabla de Símbolos (en el ámbito padre)
+
+          RegistroTS regFuncion = ts.registrarFuncion(nameMangled, $1.getTipo(), "nombre_funcion", tiposParametros);
+          controlAmbitos.abrirAmbito(lexemaFunc);
+          NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST(regFuncion);
+          $$ = new ParserVal(hojaID);
+        }
+      } 
     ; 
 
 cuerpo_funcion 
-    : '(' parametros ')' bloque_declarativo BEGIN lista_sentencias retorno_opcional END ';' { 
+    :   bloque_declarativo BEGIN lista_sentencias retorno_opcional END ';' { 
         NodoArbol cuerpoFunc = (NodoArbol) $6.obj; 
         NodoArbol retFunc = (NodoArbol) $7.obj;
         NodoArbol cuerpoCompleto = GeneradorCodigoIntermedio.crearNodoAST(";", cuerpoFunc, retFunc);
@@ -193,38 +203,41 @@ declaracion_clase
                 }
             }   
        }
+       $$ = new ParserVal(null);
      }
     ;
 
 encabezado_clase 
     : CLASS ID
-     { 
-        // 1. Abrir nuevo ámbito con el nombre de la clase
-        controlAmbitos.abrirAmbito($2.getLexema()); 
-        // 2. Registrar la clase en la Tabla de Símbolos (en el ámbito padre) 
-        String nameMangled = $2.getLexema() + ":" + controlAmbitos.getAmbitoPadre();
+     {  
         String nombreClase = ((RegistroTS) $2.obj).getLexema();
+        String ambitoPadre = controlAmbitos.getAmbitoActual();
+        String nameMangled = nombreClase + ":" + ambitoPadre;
         RegistroTS regClase = null; 
-        if (ts.existeSimbolo(claveMangled)) { 
-            yyerror("Error Semántico: La clase '" + nombreClase + "' ya fue declarada en el ámbito " + controlAmbitos.getAmbitoActual()); 
+        if (ts.buscar(nameMangled) != null) { 
+            yyerror("Error Semántico: La clase '" + nombreClase + "' ya fue declarada en el ámbito " + controlAmbitos.getAmbitoActual());
+            controlAmbitos.abrirAmbito(nombreClase); 
+            regClase = (RegistroTS) $2.obj;
         } else { 
-            // Registrar la clase en la TS 
-            regClase = ts.registrarClase(nameMangled, "nombre_clase"); 
+            regClase = ts.registrarClase(nameMangled, "nombre_clase");
+            controlAmbitos.abrirAmbito(nombreClase); 
         }
+        $$ = new ParserVal(regClase);
      }
     ; 
 
 cuerpo_clase
-    : BEGIN cuerpo_clase_definicion END ';' { 
+    : BEGIN cuerpo_clase_definicion END ';' 
+     { 
         // Al terminar el bloque de la clase, se cierra el ámbito 
         controlAmbitos.cerrarAmbito(); 
-        } 
+     } 
     ;
 
 herencia_opcional
     : EXTENDS lista_variables 
-     { registrarEstructura("Herencia"); 
-        // $2 contiene la lista de identificadores de las clases padre (ArrayList<RegistroTS>)
+     { 
+        registrarEstructura("Herencia");
         $$ = $2; // Propagamos la lista de clases heredadas
      }
     | /* vacio */
@@ -239,21 +252,51 @@ cuerpo_clase_deficion
     ;
 
 miembro_clase
-    : visibilidad declaracion
+    : visibilidad_opcional declaracion
     | declaracion
-    | FRIEND lista_variables ';'   /* Tema 27: clases/funciones amigas */
+    | declaracion_friend   /* Tema 27: clases/funciones amigas */
       { registrarEstructura("Declaración friend"); }
     | EXTENDS lista_variables ';'  /* Tema 30: herencia multiple dentro del cuerpo */
       { registrarEstructura("Herencia dentro de clase"); }
     ;
 
-visibilidad
-    : PRIVATE
+visibilidad_opcional
+    : PRIVATE 
+     { 
+      $$ = new ParserVal("private");
+     }
+    | /* vacío */ 
+     { 
+      $$ = new ParserVal("public"); 
+     }
     ;
 
-parametros
+declaracion_friend
+    : FRIEND ID ';'
+     { 
+      String nombreAmigo = ((RegistroTS) $2.obj).getLexema(); 
+      // Obtenemos el registro de la clase actual que está abierta en el ámbito 
+      String nombreClaseActual = controlAmbitos.getAmbitoActual(); 
+      RegistroTS regClaseActual = ts.buscar(nombreClaseActual + ":main"); 
+      if (regClaseActual != null) { 
+        // Registramos la clase o función como amiga de la clase actual 
+        regClaseActual.agregarAmigo(nombreAmigo); 
+        } 
+     }
+
+lista_parametros_formales
     : type_specifier ID
-    | parametros ',' type_specifier ID
+     {
+      List<String> lista = new ArrayList<>();
+        lista.add((String) $1.obj); // Agrega el tipo (ej: "USHORTINT")
+        $$ = new ParserVal(lista);
+     }
+    | lista_parametros_formales ',' type_specifier ID 
+     { 
+        List<String> lista = (List<String>) $1.obj;
+        lista.add((String) $3.obj);
+        $$ = new ParserVal(lista);
+     }
     ;
 
 retorno_opcional
@@ -312,19 +355,57 @@ sentencia
 asignacion
     : ID ASIGNACION expresion ';'
       {
-        NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) $1.obj);
-        NodoArbol expr = (NodoArbol) $3.obj;
-        NodoArbol nodoAsig = GeneradorCodigoIntermedio.verificarYConvertirTipos(":=", hojaID, expr, lexico.getNroLinea());
-        $$ = new ParserVal(nodoAsig);
+        registrarEstructura("Asignación");
+        String lexemaVar = ((RegistroTS) $1.obj).getLexema(); 
+        RegistroTS regVariable = buscarVariableVisibilidad(lexemaVar);
+        if (regVariable == null) { 
+          yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": La variable '" + lexemaVar + "' no está declarada o no es visible en este ámbito"); 
+          $$ = new ParserVal(null); 
+        } else if (!ts.esAsignable(regVariable)) { 
+          yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": Uso incorrecto de '" + lexemaVar + "'. No se puede asignar a un símbolo de uso '" + regVariable.getUso() + "'");
+          $$ = new ParserVal(null); 
+        } else {
+          NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST(regVariable);
+          NodoArbol expr = (NodoArbol) $3.obj;
+          NodoArbol nodoAsig = GeneradorCodigoIntermedio.verificarYConvertirTipos(":=", hojaID, expr, lexico.getNroLinea());
+          $$ = new ParserVal(nodoAsig);
+        }
       }
     | ID CORCHETE_IZQ expresion CORCHETE_DER ASIGNACION expresion ';'
       {
-        NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) $1.obj);
-        NodoArbol indice = (NodoArbol) $3.obj;
-        NodoArbol nodoAcceso = GeneradorCodigoIntermedio.crearNodoAST("[]", hojaID, indice);
-        NodoArbol expr = (NodoArbol) $6.obj;
-        NodoArbol nodoAsig = GeneradorCodigoIntermedio.verificarYConvertirTipos(":=", nodoAcceso, expr, lexico.getNroLinea());
-        $$ = new ParserVal(nodoAsig);
+        registrarEstructura("Asignación a atributo posicional"); 
+        // Extraer el lexema del objeto ($1.obj) 
+        String nombreObjeto = ((RegistroTS) $1.obj).getLexema(); 
+        // Resolver la visibilidad y ámbito del objeto (Local -> Clase -> Global) 
+        RegistroTS regObjeto = buscarVariableVisibilidad(nombreObjeto); 
+        if (regObjeto == null) { 
+          // Error semántico: Objeto o variable no declarada 
+          yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": El objeto o variable '" + nombreObjeto + "' no está declarado o no es visible"); 
+          $$ = new ParserVal(null);
+        } else if (!"objeto".equalsIgnoreCase(regObjeto.getUso())) { 
+          yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": El identificador '" + nombreObjeto + "' es de uso '" + regObjeto.getUso() + "' y no admite acceso posicional a atributos"); 
+          $$ = new ParserVal(null);
+        } else {
+          NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST(regObjeto);
+          NodoArbol indice = (NodoArbol) $3.obj;
+          if (indice != null && indice.getTipo() != null && !indice.getTipo().toLowerCase().contains("int")) { 
+            yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": El índice para el acceso posicional debe ser de tipo entero, pero se recibió '" + indice.getTipo() + "'"); 
+          }
+          String tipoClase = regObjeto.getTipo(); // Ej: "ca" 
+          RegistroTS regClaseDuenia = ts.buscar(tipoClase + ":main"); 
+          String tipoAtributo = ts.obtenerTipoAtributoPosicional(tipoClase, indice);
+          NodoArbol nodoAcceso = GeneradorCodigoIntermedio.crearNodoAST("[]", hojaID, indice);
+          nodoAcceso.setTipo(tipoAtributo);
+          RegistroTS regAtributo = ts.buscarAtributoPosicional(tipoClase, indice); 
+          if (regAtributo != null && !ts.tienePermisoAcceso(regClaseDuenia, regAtributo, controlAmbitos.getAmbitoActual())) { 
+            yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": Acceso Denegado. El atributo posicional en '" + tipoClase + "' es PRIVATE y el ámbito actual no es FRIEND"); 
+            $$ = new ParserVal(null); 
+          } else {
+            NodoArbol expr = (NodoArbol) $6.obj;
+            NodoArbol nodoAsig = GeneradorCodigoIntermedio.verificarYConvertirTipos(":=", nodoAcceso, expr, lexico.getNroLinea());
+            $$ = new ParserVal(nodoAsig);
+          }
+        }
       }
     ;
 
@@ -446,55 +527,94 @@ expresion
         NodoArbol nodoAsig = GeneradorCodigoIntermedio.verificarYConvertirTipos("=", hojaID, expr, lexico.getNroLinea());
         $$ = new ParserVal(nodoAsig);
       }
-    | ID invocacion_ordenada
-      {
-        NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) $1.obj);
-        NodoArbol args = (NodoArbol) $2.obj;
-        NodoArbol nodoCall = GeneradorCodigoIntermedio.crearNodoAST("CALL", hojaID, args);
-        $$ = new ParserVal(nodoCall);
-      }
-    | ID CORCHETE_IZQ expresion CORCHETE_DER
-      { registrarEstructura("Acceso posicional"); 
-        NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) $1.obj);
-        NodoArbol indice = (NodoArbol) $3.obj;
-        NodoArbol nodoAcceso = GeneradorCodigoIntermedio.crearNodoAST("[]", hojaID, indice);
-        $$ = new ParserVal(nodoAcceso);
-      }
-    | ID '.' ID
+    | ID '.' ID '(' lista_variables ')'
      {
         String nombreObjeto = ((RegistroTS) $1.obj).getLexema(); 
-        String nombreAtributo = ((RegistroTS) $3.obj).getLexema(); 
-        // Resolver el objeto a1 (obteniendo su RegistroTS) 
+        String nombreMetodo = ((RegistroTS) $3.obj).getLexema(); 
         RegistroTS regObjeto = buscarVariableVisibilidad(nombreObjeto); 
         if (regObjeto == null) { 
-            yyerror("Error Semántico: Objeto '" + nombreObjeto + "' no declarado"); 
-            $$ = new ParserVal(new NodoArbol((RegistroTS)null)); 
+          yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": El objeto '" + nombreObjeto + "' no está declarado o no es visible"); 
+          $$ = new ParserVal(GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) null)); 
         } else { 
-            String tipoClase = regObjeto.getTipo(); // Tipo del objeto (ej. "ca") 
-            // Buscar si el atributo está en la clase directa del objeto 
-            String claveAtributoDirecto = nombreAtributo + ":main:" + tipoClase; 
-            RegistroTS atributoResuelto = ts.buscar(claveAtributoDirecto); 
-            // Si no está en la clase directa, buscar en la Herencia 
-            if (atributoResuelto == null) { 
-                atributoResuelto = ts.buscarEnHerencia(tipoClase, nombreAtributo); 
-            } 
-            if (atributoResuelto == null) { 
-                yyerror("Error Semántico: El atributo '" + nombreAtributo + "' no pertenece a la clase '" + tipoClase + "' ni a sus clases heredadas"); 
-                $$ = new ParserVal(new NodoArbol((RegistroTS)null)); 
-            } else { 
-                // Generar hoja con el atributo resuelto en la clase/padre correspondiente 
-                $$ = new ParserVal(new NodoArbol(atributoResuelto)); 
-            } 
-        } 
+          String tipoClase = regObjeto.getTipo();
+          RegistroTS regClaseDuenia = ts.buscar(tipoClase + ":main");
+          String claveMetodoDirecto = nombreMetodo + ":main:" + tipoClase; RegistroTS regMetodo = ts.buscar(claveMetodoDirecto); 
+          if (regMetodo == null) { 
+            regMetodo = ts.buscarEnHerencia(tipoClase, nombreMetodo); 
+          } 
+          if (regMetodo == null) { 
+            yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": El método '" + nombreMetodo + "' no existe en la clase '" + tipoClase + "' ni en su herencia"); 
+            $$ = new ParserVal(GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) null)); 
+          } else if (!"metodo".equals(regMetodo.getUso()) && !"nombre_funcion".equals(regMetodo.getUso())) { 
+            yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": El identificador '" + nombreMetodo + "' no es un método de la clase '" + tipoClase + "'"); 
+            $$ = new ParserVal(GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) null)); 
+          } else if (!ts.tienePermisoAcceso(regClaseDuenia, regMetodo, controlAmbitos.getAmbitoActual())) { 
+            yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": Acceso Denegado. El método '" + nombreMetodo + "' es PRIVATE en '" + tipoClase + "'"); 
+            $$ = new ParserVal(GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) null)); 
+          } else { 
+            NodoArbol subArbolArgs = (NodoArbol) $5.obj; 
+            List<String> tiposFormales = regMetodo.getTiposParametros();
+            NodoArbol hojaMetodo = GeneradorCodigoIntermedio.crearHojaAST(regMetodo);
+            NodoArbol nodoCall = GeneradorCodigoIntermedio.crearNodoAST("CALL", hojaMetodo, subArbolArgs);
+            nodoCall.setTipo(regMetodo.getTipoToken());
+            $$ = new ParserVal(nodoCall);
+          }
+        }
      }
+    
+    | ID invocacion_ordenada
+      {
+        String lexemaFunc = ((RegistroTS) $1.obj).getLexema();
+        RegistroTS regFuncion = buscarVariableVisibilidad(lexemaFunc);
+        if (regFuncion == null) { 
+          // Error 1: No declarada o fuera de alcance 
+          yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": La función o método '" + lexemaFunc + "' no está declarado o no es visible en este ámbito"); 
+          $$ = new ParserVal(GeneradorCodigoIntermedio.crearHojaAST((RegistroTS)null)); 
+        } else if (!"nombre_funcion".equalsIgnoreCase(regFuncion.getUso()) && !"metodo".equalsIgnoreCase(regFuncion.getUso())) { 
+          // Error 2: El símbolo existe pero no es una función (ej: es una variable o clase) 
+          yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": El identificador '" + lexemaFunc + "' es de uso '" + regFuncion.getUso() + "' y no puede ser invocado como función"); 
+          $$ = new ParserVal(GeneradorCodigoIntermedio.crearHojaAST((RegistroTS)null)); 
+        } else { 
+          NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST(regFuncion);
+          NodoArbol args = (NodoArbol) $2.obj;
+          NodoArbol nodoCall = GeneradorCodigoIntermedio.crearNodoAST("CALL", hojaID, args);
+          nodoCall.setTipo(regFuncion.getTipoToken())
+          $$ = new ParserVal(nodoCall);
+        }
+      }
+    | ID CORCHETE_IZQ expresion CORCHETE_DER
+      { registrarEstructura("Acceso posicional");
+        String nombreObjeto = ((RegistroTS) $1.obj).getLexema();
+        RegistroTS regObjeto = buscarVariableVisibilidad(nombreObjeto);
+        if (regObjeto == null) { 
+          // Error semántico: el objeto o variable no está declarado 
+          yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": El objeto o variable '" + nombreObjeto + "' no está declarado o no es visible"); 
+          $$ = new ParserVal(GeneradorCodigoIntermedio.crearHojaAST((RegistroTS)null)); 
+        } else {
+          NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST(regObjeto);
+          NodoArbol indice = (NodoArbol) $3.obj;
+          NodoArbol nodoAcceso = GeneradorCodigoIntermedio.crearNodoAST("[]", hojaID, indice);
+          $$ = new ParserVal(nodoAcceso);
+        }
+      }
     | ID
      {
-        String lexemaOriginal = ((RegistroTS) $1.obj).getLexema(); 
+        String lexemaVar = ((RegistroTS) $1.obj).getLexema(); 
         // Resolver visibilidad de adentro hacia afuera usando Name Mangling 
-        RegistroTS simboloResuelto = buscarVariableVisibilidad(lexemaOriginal); 
-        // Crear el NodoArbol con el símbolo resuelto y asignarlo a $$ 
-        NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) $1.obj);
-        $$ = new ParserVal(hojaID);
+        RegistroTS regVariable = buscarVariableVisibilidad(lexemaVar); 
+        if (regVariable == null) { 
+          // Error 1: Variable no declarada o fuera de alcance 
+          yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": La variable '" + lexemaVar + "' no está declarada o no es visible en este ámbito"); 
+          $$ = new ParserVal(GeneradorCodigoIntermedio.crearHojaAST((RegistroTS)null)); 
+        } else if (!"variable".equalsIgnoreCase(regVariable.getUso()) && !"parametro".equalsIgnoreCase(regVariable.getUso()) && !"atributo".equalsIgnoreCase(regVariable.getUso()) && !"objeto".equalsIgnoreCase(regVariable.getUso())) { 
+          // Error 2: Uso incorrecto de contexto (ej. usar un nombre de función o clase como operando) 
+          yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": El identificador '" + lexemaVar + "' es de uso '" + regVariable.getUso() + "' y no puede ser utilizado como una variable"); 
+          $$ = new ParserVal(GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) null)); 
+        } else {
+          NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST(registrarVariable);
+          hojaID.setTipo(regVariable.getTipoToken());
+          $$ = new ParserVal(hojaID);
+        }
      }
     | constante
      { 
@@ -687,7 +807,7 @@ public RegistroTS buscarVariableVisibilidad(String lexemaOriginal) {
         }
     }
 
-    // 2\. Si estamos dentro de una clase y no se encontró localmente, buscar en la Herencia 
+    // Si estamos dentro de una clase y no se encontró localmente, buscar en la Herencia 
     String ambitoActual = controlAmbitos.getAmbitoActual(); // ej "main:ca:metodo1" 
     String[] partesScope = ambitoActual.split(":");
     if (partesScope.length >= 2){ 

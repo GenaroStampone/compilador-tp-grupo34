@@ -11,6 +11,8 @@ public class RegistroTS {
     private int longitud;
 
     // --- ATRIBUTOS SEMÁNTICOS NUEVOS PARA TP3 ---
+    private String visibilidad = "public"; // "public" o "private"
+    private List<String> listaAmigos = new ArrayList<>(); // Clases o funciones amigas
     private final List<String> listaParametros; // Tema 20: Tipos/nombres de parámetros formales
     private final List<RegistroTS> listaAtributos; // Tema 29: Atributos miembros de una clase
     private final List<String> clasesHeredadas; // Tema 30: Clases padre ordenadas según 'extends'
@@ -139,4 +141,27 @@ public class RegistroTS {
     public List<String> getClasesHeredadas() {
         return new ArrayList<>(clasesHeredadas); // Copia defensiva
     }
+
+    public void setVisibilidad(String visibilidad) {
+        this.visibilidad = visibilidad;
+    }
+
+    public String getVisibilidad() { 
+        return visibilidad; 
+    }
+
+    public boolean esPrivado() { 
+        return "private".equalsIgnoreCase(visibilidad); 
+    }
+
+    public void agregarAmigo(String nombreAmigo) { 
+        if (!listaAmigos.contains(nombreAmigo)) { 
+            listaAmigos.add(nombreAmigo); 
+        } 
+    }
+
+    public List<String> getListaAmigos() { 
+        return listaAmigos; 
+    }
 }
+

@@ -2,7 +2,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 public class TablaDeSimbolos {
@@ -231,6 +230,40 @@ public class TablaDeSimbolos {
             }
         }
         return reg;
+    }
+
+    public boolean tienePermisoAcceso(RegistroTS regClaseDuenia, RegistroTS regMiembro, String ambitoEmisor) { 
+        // Si el miembro es público, cualquier ámbito tiene acceso 
+        if (!regMiembro.esPrivado()) { 
+            return true; 
+        }
+        if (regClaseDuenia == null){
+            return false;
+        }
+        String nombreClaseDuenia = regClaseDuenia.getLexema(); 
+        // Regla a: Si la llamada ocurre DENTRO de un método de la misma clase dueña -> PERMITIDO 
+        if (ambitoEmisor.contains(":" + nombreClaseDuenia)) { 
+            return true; 
+        } 
+        // Regla b: Verificar si la clase emisor o función emisora es AMIGA de la clase dueña 
+        List<String> amigos = regClaseDuenia.getListaAmigos();
+        if (amigos != null) {
+            for (String amigo : amigos){
+                // Si el ámbito emisor pertenece a una clase amiga o a una función amiga declarada
+                if (ambitoEmisor.contains(":" + amigo) || ambitoEmisor.endsWith(":" + amigo)) {
+                    return true;
+                }
+            }
+        }
+        // Si es privado y no es de la misma clase ni de una clase/función amiga -> DENEGADO
+        return false;
+    }
+
+    public boolean esAsignable(RegistroTS reg) { 
+        if (reg == null) 
+            return false; 
+        String uso = reg.getUso(); 
+        return "variable".equalsIgnoreCase(uso) || "parametro".equalsIgnoreCase(uso) || "objeto".equalsIgnoreCase(uso) || "atributo".equalsIgnoreCase(uso); 
     }
 
     // ==========================================
