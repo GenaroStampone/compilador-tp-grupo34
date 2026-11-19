@@ -144,30 +144,62 @@ declaracion_funcion
       }
     ;
 
-encabezado_funcion 
-    : type_specifier FUNCTION ID { 
-        // 1. Abrir nuevo ámbito con el nombre de la función 
-        controlAmbitos.abrirAmbito($3.getLexema()); 
-        // 2. Registrar la función en la Tabla de Símbolos (en el ámbito padre) 
-        String nameMangled = $3.getLexema() + ":" + controlAmbitos.getAmbitoPadre();
+encabezado_funcion
+    : type_specifier FUNCTION ID {
+        // 1. Abrir nuevo ámbito con el nombre de la función
+        String lexemaFunc = ((RegistroTS) $3.obj).getLexema();
+        controlAmbitos.abrirAmbito(lexemaFunc);
+
+        // 2. Registrar la función en la Tabla de Símbolos (en el ámbito padre)
+        String nameMangled = lexemaFunc + ":" + controlAmbitos.getAmbitoPadre();
         RegistroTS regID = (RegistroTS) $3.obj;
-        String lexemaFunc = regID.getLexema();
-        RegistroTS regFuncion = ts.registrarFuncion(nameMangled, $1.getTipo(), "nombre_funcion");
+
+        // Asumimos que $1 contiene el especificador de tipo (ej: "doublef" / "ushortint")
+        String tipoFunc = ((RegistroTS) $1.obj).getLexema();
+        RegistroTS regFuncion = ts.registrarFuncion(nameMangled, tipoFunc, "nombre_funcion");
+
         NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST(regFuncion != null ? regFuncion : regID);
         $$ = new ParserVal(hojaID);
-        ts.registrarFuncion(nameMangled, $1.getTipo(), "nombre_funcion"); 
-        } 
-    ; 
+      }
+    ;
 
 cuerpo_funcion 
-    : '(' parametros ')' bloque_declarativo BEGIN lista_sentencias retorno_opcional END ';' { 
-        NodoArbol cuerpoFunc = (NodoArbol) $6.obj; 
+    : '(' parametros ')' bloque_declarativo BEGIN lista_sentencias retorno_opcional END ';' 
+      {
+        NodoArbol cuerpoFunc = (NodoArbol) $6.obj;
         NodoArbol retFunc = (NodoArbol) $7.obj;
+
+        if (retFunc == null) {
+            String ambito = controlAmbitos.getAmbitoActual(); // Ej: "main:miFuncion"
+            int idx = ambito.lastIndexOf(':');
+            String claveFunc = ambito.substring(idx + 1) + ":" + ambito.substring(0, idx);
+
+            RegistroTS regFunc = ts.buscar(claveFunc);
+            String tipoFunc = (regFunc != null) ? regFunc.getTipoToken() : null;
+
+            RegistroTS regDefecto = ts.obtenerOCrearConstantePorDefecto(tipoFunc);
+            NodoArbol hojaDefecto = GeneradorCodigoIntermedio.crearHojaAST(regDefecto);
+            retFunc = GeneradorCodigoIntermedio.crearNodoAST("RETURN", hojaDefecto, null);
+        }
+
         NodoArbol cuerpoCompleto = GeneradorCodigoIntermedio.crearNodoAST(";", cuerpoFunc, retFunc);
         $$ = new ParserVal(cuerpoCompleto);
-        // Al terminar el bloque de la función, se cierra el ámbito 
-        controlAmbitos.cerrarAmbito(); 
-        } 
+
+        controlAmbitos.cerrarAmbito();
+      }
+    ;
+
+retorno_opcional
+    : RET '(' expresion ')' ';'
+      {
+        NodoArbol expr = (NodoArbol) $3.obj;
+        NodoArbol nodoRet = GeneradorCodigoIntermedio.crearNodoAST("RET", expr, null);
+        $$ = new ParserVal(nodoRet);
+      }
+    | /* vacio */
+      {
+        $$ = new ParserVal((Object) null);
+      }
     ;
 
 /* Temas 27 y 30: Clases, Visibilidad y Herencia Multiple */
@@ -460,33 +492,6 @@ expresion
         NodoArbol nodoAcceso = GeneradorCodigoIntermedio.crearNodoAST("[]", hojaID, indice);
         $$ = new ParserVal(nodoAcceso);
       }
-    | ID '.' ID
-     {
-        String nombreObjeto = ((RegistroTS) $1.obj).getLexema(); 
-        String nombreAtributo = ((RegistroTS) $3.obj).getLexema(); 
-        // Resolver el objeto a1 (obteniendo su RegistroTS) 
-        RegistroTS regObjeto = buscarVariableVisibilidad(nombreObjeto); 
-        if (regObjeto == null) { 
-            yyerror("Error Semántico: Objeto '" + nombreObjeto + "' no declarado"); 
-            $$ = new ParserVal(new NodoArbol((RegistroTS)null)); 
-        } else { 
-            String tipoClase = regObjeto.getTipo(); // Tipo del objeto (ej. "ca") 
-            // Buscar si el atributo está en la clase directa del objeto 
-            String claveAtributoDirecto = nombreAtributo + ":main:" + tipoClase; 
-            RegistroTS atributoResuelto = ts.buscar(claveAtributoDirecto); 
-            // Si no está en la clase directa, buscar en la Herencia 
-            if (atributoResuelto == null) { 
-                atributoResuelto = ts.buscarEnHerencia(tipoClase, nombreAtributo); 
-            } 
-            if (atributoResuelto == null) { 
-                yyerror("Error Semántico: El atributo '" + nombreAtributo + "' no pertenece a la clase '" + tipoClase + "' ni a sus clases heredadas"); 
-                $$ = new ParserVal(new NodoArbol((RegistroTS)null)); 
-            } else { 
-                // Generar hoja con el atributo resuelto en la clase/padre correspondiente 
-                $$ = new ParserVal(new NodoArbol(atributoResuelto)); 
-            } 
-        } 
-     }
     | ID
      {
         String lexemaOriginal = ((RegistroTS) $1.obj).getLexema(); 
