@@ -39,6 +39,118 @@ public class GeneradorCodigoIntermedio {
     }
 
     // ==========================================
+    // METODOS SEMANTICOS TP3 (TEMA 20)
+    // ==========================================
+
+    public NodoArbol generarInvocacionFuncionOrdenada(RegistroTS regFunc, List<NodoArbol> paramsReales, List<Integer> orden, int nroLinea) {
+        // Buscar la declaración de la función en la TS
+        RegistroTS funcDeclarada = tablaSimbolos.buscar(regFunc.getLexema());
+        if (funcDeclarada == null || !"FUNCION".equals(funcDeclarada.getUso())) {
+            registrarErrorSemantico(nroLinea, "La función '" + regFunc.getLexema() + "' no está declarada.");
+            return null;
+        }
+
+        List<String> paramsFormales = funcDeclarada.getListaParametros();
+
+        // Si por algún error de declaración la lista viniera nula o vacía:
+        if (paramsFormales == null || paramsFormales.isEmpty()) {
+            registrarErrorSemantico(nroLinea, "La función '" + regFunc.getLexema() + "' no posee parámetros formales declarados.");
+            return null;
+        }
+
+        // Chequeo de cantidad de parámetros reales vs formales
+        if (paramsReales.size() != paramsFormales.size()) {
+            registrarErrorSemantico(nroLinea, String.format(
+                    "Cantidad incorrecta de parámetros en invocación a '%s': esperados %d, recibidos %d",
+                    regFunc.getLexema(), paramsFormales.size(), paramsReales.size()));
+            return null;
+        }
+
+        // Chequeo Tema 20: El número de constantes de orden debe coincidir con los parámetros
+        if (orden.size() != paramsReales.size()) {
+            registrarErrorSemantico(nroLinea, String.format(
+                    "Error en orden de evaluación (Tema 20): La lista de orden tiene %d elementos, pero la función tiene %d parámetros",
+                    orden.size(), paramsReales.size()));
+            return null;
+        }
+
+        // Crear subárboles de copia en el orden especificado por la lista de constantes
+        NodoArbol nodoCopias = null;
+        for (int pos : orden) {
+            int idxReal = pos - 1; 
+            if (idxReal < 0 || idxReal >= paramsReales.size()) {
+                registrarErrorSemantico(nroLinea, "Índice de orden fuera de rango: " + pos);
+                return null;
+            }
+
+            NodoArbol paramReal = paramsReales.get(idxReal);
+            // Obtenemos el nombre/lexema del parámetro formal
+            String paramFormal = paramsFormales.get(idxReal);
+            RegistroTS regFormal = tablaSimbolos.buscar(paramFormal);
+            
+            NodoArbol hojaFormal;
+            if (regFormal != null) {
+                hojaFormal = crearHojaAST(regFormal);
+            } else {
+                // Fallback si en listaParametros se guardó el tipo o lexema directo
+                hojaFormal = crearNodoAST(paramFormal, null, null);
+            }
+
+            // Generar asignación implícita de copia: paramFormal := paramReal
+            NodoArbol copia = verificarAsignacion(hojaFormal, paramReal, nroLinea);
+            nodoCopias = crearNodoAST("COPIA_PARAM", nodoCopias, copia);
+        }
+
+        // 5. Retornar el nodo final de llamada a función
+        NodoArbol nodoFunc = crearHojaAST(funcDeclarada);
+        return crearNodoAST("CALL", nodoFunc, nodoCopias);
+    }
+
+    // Desempaqueta el subárbol recibido de la gramática e invoca a generarInvocacionFuncionOrdenada.
+    public NodoArbol procesarInvocacion(RegistroTS regFunc, NodoArbol infoInvoc, int nroLinea) {
+        List<NodoArbol> paramsReales = new ArrayList<>();
+        List<Integer> orden = new ArrayList<>();
+
+        if (infoInvoc != null && "INVOC_ORDENADA".equals(infoInvoc.getEtiqueta())) {
+            desarmarExpresiones(infoInvoc.getIzq(), paramsReales);
+            desarmarOrden(infoInvoc.getDer(), orden);
+        } else {
+            desarmarExpresiones(infoInvoc, paramsReales);
+            // Si no hay corchetes, genera el orden estándar: 1, 2, ..., N
+            for (int i = 1; i <= paramsReales.size(); i++) {
+                orden.add(i);
+            }
+        }
+
+        // Invoca directamente a tu método intacto:
+        return generarInvocacionFuncionOrdenada(regFunc, paramsReales, orden, nroLinea);
+    }
+
+    // Métodos auxiliares para recorrer el árbol del AST:
+    private void desarmarExpresiones(NodoArbol nodo, List<NodoArbol> lista) {
+        if (nodo == null) return;
+        if (",".equals(nodo.getEtiqueta())) {
+            desarmarExpresiones(nodo.getIzq(), lista);
+            desarmarExpresiones(nodo.getDer(), lista);
+        } else {
+            lista.add(nodo);
+        }
+    }
+
+    // Metodo auxiliar para obtener el orden del llamado a funcion (Ej. f(a, b, c)[1, 3, 2])
+    private void desarmarOrden(NodoArbol nodo, List<Integer> lista) {
+        if (nodo == null) return;
+        if (",".equals(nodo.getEtiqueta())) {
+            desarmarOrden(nodo.getIzq(), lista);
+            desarmarOrden(nodo.getDer(), lista);
+        } else {
+            if (nodo.getRegTS() != null) {
+                lista.add((int)nodo.getRegTS().getValorNum());
+            }
+        }
+    }
+
+    // ==========================================
     // ANÁLISIS SEMÁNTICO Y TEMA 35 (CONVERSIONES)
     // ==========================================
 
