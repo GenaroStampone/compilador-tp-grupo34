@@ -14,6 +14,7 @@ public class RegistroTS {
     private final List<String> listaParametros; // Tema 20: Tipos/nombres de parámetros formales
     private final List<RegistroTS> listaAtributos; // Tema 29: Atributos miembros de una clase
     private final List<String> clasesHeredadas; // Tema 30: Clases padre ordenadas según 'extends'
+    private List<Double> valoresEnum; // Tema 18: Atributo para almacenar los valores permitidos si el registro es una Enumeración (typedef)
 
     // Constructor para ID, Cadenas y Tokens sin valor numérico inicial
     public RegistroTS(String lexema, int idToken, String tipoToken, int nroLinea) {
@@ -27,6 +28,7 @@ public class RegistroTS {
         this.listaParametros = new ArrayList<>();
         this.listaAtributos = new ArrayList<>();
         this.clasesHeredadas = new ArrayList<>();
+        this.valoresEnum = new ArrayList<>();
     }
 
     // Constructor para constantes numéricas
@@ -138,5 +140,19 @@ public class RegistroTS {
 
     public List<String> getClasesHeredadas() {
         return new ArrayList<>(clasesHeredadas); // Copia defensiva
+    }
+
+    public List<Double> getValoresEnum() {
+        return new ArrayList<>(valoresEnum);
+    }
+
+    public void setValoresEnum(List<Double> valores) {
+        this.valoresEnum = (valores != null) ? new ArrayList<>(valores) : new ArrayList<>();
+    }
+
+    public void agregarValorEnum(Double valor) {
+        if (valor != null && !this.valoresEnum.contains(valor)) {
+            this.valoresEnum.add(valor);
+        }
     }
 }

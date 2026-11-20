@@ -132,13 +132,15 @@ declaracion_typedef
         // 1. Name Mangling del nombre del tipo (ej. "codigos_control:main")
         String nameMangled = nombreTipo + ":" + controlAmbitos.getAmbitoActual();
 
-        // 2. Control de Redeclaración en el MISMO ámbito
-        if (ts.existeSimbolo(nameMangled)) {
-            yyerror("Error Semántico: El tipo de dato '" + nombreTipo + "' ya fue definido en el ámbito " + controlAmbitos.getAmbitoActual());
+        // Control de Redeclaración en el MISMO ámbito
+        if (ts.buscar(nameMangled) != null) {
+            GeneradorCodigoIntermedio.registrarErrorSemantico(lexico.getNroLinea(), "Error Semantico: El tipo de dato '" + nombreTipo + "' ya fue definido en el ámbito " + controlAmbitos.getAmbitoActual());
         } else {
-            // 3. Registrar en la TS con Uso = "nombre_tipo" y asociar sus valores
-            ArrayList<RegistroTS> valores = (ArrayList<RegistroTS>) $5.obj;
-            ts.registrarTipoPersonalizado(nameMangled, "nombre_tipo", valores);
+            // Actualizar lexema mangled y registrar tipo + valores en el GeneradorCodigoIntermedio
+            reg.setLexema(nameMangled);
+            NodoArbol subarbolValores = (NodoArbol) $5.obj;
+            GeneradorCodigoIntermedio.registrarEnumeracion(reg, subarbolValores);
+            registrarEstructura("Enumeración (typedef)");
         }
      }
     ;
@@ -475,14 +477,24 @@ expresion
         NodoArbol expr = (NodoArbol) $2.obj;
         // Usamos una etiqueta explícita "UMINUS" para no confundirlo con la resta binaria
         NodoArbol nodo = GeneradorCodigoIntermedio.crearNodoAST("UMINUS", expr, null);
+        if (expr != null) {
+            nodo.setTipoToken(expr.getTipoToken()); // Propaga el tipo (USHORTINT o DOUBLEF)
+        }
         $$ = new ParserVal(nodo);
       }
     | ID '=' expresion
       {
-        NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) $1.obj);
-        NodoArbol expr = (NodoArbol) $3.obj;
-        NodoArbol nodoAsig = GeneradorCodigoIntermedio.verificarYConvertirTipos("=", hojaID, expr, lexico.getNroLinea());
-        $$ = new ParserVal(nodoAsig);
+          String lexema = ((RegistroTS) $1.obj).getLexema();
+          RegistroTS regID = buscarVariableVisibilidad(lexema);
+          if (regID == null) {
+              GeneradorCodigoIntermedio.registrarErrorSemantico(lexico.getNroLinea(), "Variable '" + lexemaOriginal + "' no declarada.");
+              $$ = new ParserVal(null);
+          } else {
+              NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST(regID);
+              NodoArbol expr = (NodoArbol) $3.obj;
+              NodoArbol nodoAsig = GeneradorCodigoIntermedio.verificarAsignacion(hojaID, expr, lexico.getNroLinea());
+              $$ = new ParserVal(nodoAsig);
+          }= new ParserVal(nodoAsig);
       }
     | ID invocacion_ordenada
       {
@@ -610,8 +622,6 @@ public List<String> getErroresSintacticos() {
 public List<String> getEstructurasDetectadas() {
     return estructurasDetectadas;
 }
-
-
 
 /* TP2 punto c: el lexico desconoce el signo. Al aplicar el '-' el Parser
    vuelve a validar el rango y actualiza la Tabla de Simbolos si corresponde. */
