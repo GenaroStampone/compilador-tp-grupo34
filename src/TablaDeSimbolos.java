@@ -101,7 +101,7 @@ public class TablaDeSimbolos {
     }
 
     // ==========================================
-    // METODOS SEMANTICOS TP3 (TEMAS 29 Y 30)
+    // METODOS SEMANTICOS TP3
     // ==========================================
 
     // TEMA 30: Herencia Múltiple con Desambiguado Opción 1.
@@ -260,10 +260,32 @@ public class TablaDeSimbolos {
     }
 
     public boolean esAsignable(RegistroTS reg) { 
-        if (reg == null) 
-            return false; 
+        if (reg == null){
+            return false;
+        }
         String uso = reg.getUso(); 
         return "variable".equalsIgnoreCase(uso) || "parametro".equalsIgnoreCase(uso) || "objeto".equalsIgnoreCase(uso) || "atributo".equalsIgnoreCase(uso); 
+    }
+    
+    public RegistroTS obtenerOCrearConstantePorDefecto(String tipoFuncion) {
+        String lexema;
+        int idToken;
+        String tipoToken;
+
+        if (tipoFuncion != null && ("DOUBLEF".equalsIgnoreCase(tipoFuncion) || "CTE_DOUBLEF".equalsIgnoreCase(tipoFuncion))) {
+            lexema = "0.0";
+            idToken = Parser.CTE_DOUBLEF;
+            tipoToken = "CTE_DOUBLEF";
+        } else { // ushortint por defecto
+            lexema = "0$us";
+            idToken = Parser.CTE_USHORT;
+            tipoToken = "CTE_USHORT";
+        }
+
+        // alta(...) ya consulta si existe en el HashMap antes de insertar
+        RegistroTS reg = alta(lexema, idToken, tipoToken, 0, 0.0);
+        reg.setUso("constante");
+        return reg;
     }
 
     // ==========================================

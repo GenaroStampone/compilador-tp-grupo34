@@ -81,7 +81,16 @@ lista_variables
 
 lista_valores
     : valor_enum
+        {
+            $$ = $1;
+        }
     | lista_valores ',' valor_enum
+        {
+            NodoArbol izq = (NodoArbol) $1.obj;
+            NodoArbol der = (NodoArbol) $3.obj;
+            NodoArbol list = GeneradorCodigoIntermedio.crearNodoAST(",", izq, der);
+            $$ = new ParserVal(list);
+        }
     ;
 
 valor_enum
@@ -160,8 +169,9 @@ encabezado_funcion
           $$ = new ParserVal(GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) $3.obj)); 
         } else {
           // Registrar la función en la Tabla de Símbolos (en el ámbito padre)
-
-          RegistroTS regFuncion = ts.registrarFuncion(nameMangled, $1.getTipo(), "nombre_funcion", tiposParametros);
+          RegistroTS regID = (RegistroTS) $3.obj;
+          String tipoFunc = ((RegistroTS) $1.obj).getLexema();
+          RegistroTS regFuncion = ts.registrarFuncion(nameMangled, tipoFunc, "nombre_funcion", tiposParametros);
           controlAmbitos.abrirAmbito(lexemaFunc);
           NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST(regFuncion);
           $$ = new ParserVal(hojaID);
@@ -173,11 +183,38 @@ cuerpo_funcion
     :   bloque_declarativo BEGIN lista_sentencias retorno_opcional END ';' { 
         NodoArbol cuerpoFunc = (NodoArbol) $6.obj; 
         NodoArbol retFunc = (NodoArbol) $7.obj;
+
+        if (retFunc == null) {
+            String ambito = controlAmbitos.getAmbitoActual(); // Ej: "main:miFuncion"
+            int idx = ambito.lastIndexOf(':');
+            String claveFunc = ambito.substring(idx + 1) + ":" + ambito.substring(0, idx);
+
+            RegistroTS regFunc = ts.buscar(claveFunc);
+            String tipoFunc = (regFunc != null) ? regFunc.getTipoToken() : null;
+
+            RegistroTS regDefecto = ts.obtenerOCrearConstantePorDefecto(tipoFunc);
+            NodoArbol hojaDefecto = GeneradorCodigoIntermedio.crearHojaAST(regDefecto);
+            retFunc = GeneradorCodigoIntermedio.crearNodoAST("RETURN", hojaDefecto, null);
+        }
+
         NodoArbol cuerpoCompleto = GeneradorCodigoIntermedio.crearNodoAST(";", cuerpoFunc, retFunc);
         $$ = new ParserVal(cuerpoCompleto);
-        // Al terminar el bloque de la función, se cierra el ámbito 
-        controlAmbitos.cerrarAmbito(); 
-        } 
+
+        controlAmbitos.cerrarAmbito();
+      }
+    ;
+
+retorno_opcional
+    : RET '(' expresion ')' ';'
+      {
+        NodoArbol expr = (NodoArbol) $3.obj;
+        NodoArbol nodoRet = GeneradorCodigoIntermedio.crearNodoAST("RET", expr, null);
+        $$ = new ParserVal(nodoRet);
+      }
+    | /* vacio */
+      {
+        $$ = new ParserVal((Object) null);
+      }
     ;
 
 /* Temas 27 y 30: Clases, Visibilidad y Herencia Multiple */
@@ -367,7 +404,7 @@ asignacion
         } else {
           NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST(regVariable);
           NodoArbol expr = (NodoArbol) $3.obj;
-          NodoArbol nodoAsig = GeneradorCodigoIntermedio.verificarYConvertirTipos(":=", hojaID, expr, lexico.getNroLinea());
+          NodoArbol nodoAsig = GeneradorCodigoIntermedio.verificarAsignacion(hojaID, expr, lexico.getNroLinea());
           $$ = new ParserVal(nodoAsig);
         }
       }
@@ -402,7 +439,7 @@ asignacion
             $$ = new ParserVal(null); 
           } else {
             NodoArbol expr = (NodoArbol) $6.obj;
-            NodoArbol nodoAsig = GeneradorCodigoIntermedio.verificarYConvertirTipos(":=", nodoAcceso, expr, lexico.getNroLinea());
+            NodoArbol nodoAsig = GeneradorCodigoIntermedio.verificarEscrituraAtributo(regObjeto, indice, expr, lexico.getNroLinea());
             $$ = new ParserVal(nodoAsig);
           }
         }
@@ -574,11 +611,10 @@ expresion
           // Error 2: El símbolo existe pero no es una función (ej: es una variable o clase) 
           yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": El identificador '" + lexemaFunc + "' es de uso '" + regFuncion.getUso() + "' y no puede ser invocado como función"); 
           $$ = new ParserVal(GeneradorCodigoIntermedio.crearHojaAST((RegistroTS)null)); 
-        } else { 
-          NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST(regFuncion);
-          NodoArbol args = (NodoArbol) $2.obj;
-          NodoArbol nodoCall = GeneradorCodigoIntermedio.crearNodoAST("CALL", hojaID, args);
-          nodoCall.setTipo(regFuncion.getTipoToken())
+        } else {
+          NodoArbol infoInvoc = (NodoArbol) $2.obj;
+          NodoArbol nodoCall = GeneradorCodigoIntermedio.procesarInvocacion(regFuncion, infoInvoc, lexico.getNroLinea());
+          nodoCall.setTipo(regFuncion.getTipoToken());
           $$ = new ParserVal(nodoCall);
         }
       }
@@ -593,7 +629,7 @@ expresion
         } else {
           NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST(regObjeto);
           NodoArbol indice = (NodoArbol) $3.obj;
-          NodoArbol nodoAcceso = GeneradorCodigoIntermedio.crearNodoAST("[]", hojaID, indice);
+          NodoArbol nodoAcceso = GeneradorCodigoIntermedio.verificarLecturaAtributo(regObj, indice, lexico.getNroLinea());
           $$ = new ParserVal(nodoAcceso);
         }
       }
@@ -627,8 +663,8 @@ invocacion_ordenada
     : '(' lista_expresiones ')' CORCHETE_IZQ lista_valores CORCHETE_DER
       {
         NodoArbol args = (NodoArbol) $2.obj;
-        NodoArbol indices = (NodoArbol) $5.obj;
-        NodoArbol inv = GeneradorCodigoIntermedio.crearNodoAST("INVOC", args, indices);
+        NodoArbol orden = (NodoArbol) $5.obj;
+        NodoArbol inv = GeneradorCodigoIntermedio.crearNodoAST("INVOC_ORDENADA", args, orden);
         $$ = new ParserVal(inv);
       }
     | '(' lista_expresiones ')'
