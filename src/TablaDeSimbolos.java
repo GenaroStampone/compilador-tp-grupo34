@@ -138,6 +138,11 @@ public class TablaDeSimbolos {
         return null;
     }
 
+    public String obtenerTipoAtributoPosicional(String nombreClase, int pos) { 
+        RegistroTS reg = obtenerAtributoPosicional(nombreClase, pos); 
+        return (reg != null) ? reg.getTipoToken() : null; 
+    }
+
     private List<RegistroTS> obtenerTodosLosAtributosHeredados(String nombreClase) {
         List<RegistroTS> lista = new ArrayList<>();
         RegistroTS regClase = buscar(nombreClase);
@@ -266,7 +271,7 @@ public class TablaDeSimbolos {
         String uso = reg.getUso(); 
         return "variable".equalsIgnoreCase(uso) || "parametro".equalsIgnoreCase(uso) || "objeto".equalsIgnoreCase(uso) || "atributo".equalsIgnoreCase(uso); 
     }
-    
+
     public RegistroTS obtenerOCrearConstantePorDefecto(String tipoFuncion) {
         String lexema;
         int idToken;

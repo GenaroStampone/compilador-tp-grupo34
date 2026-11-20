@@ -1,5 +1,7 @@
 %{
 import java.io.*;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.*;
 %}
 
@@ -27,16 +29,16 @@ import java.util.*;
 programa
     : ID ';' bloque_declarativo BEGIN lista_sentencias END ';'
       {
-        NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) $1.obj);
+        NodoArbol hojaID = gci.crearHojaAST((RegistroTS) $1.obj);
         NodoArbol cuerpoProg = (NodoArbol) $5.obj;
-        NodoArbol nodoProg = GeneradorCodigoIntermedio.crearNodoAST("PROGRAMA", hojaID, cuerpoProg);
+        NodoArbol nodoProg = gci.crearNodoAST("PROGRAMA", hojaID, cuerpoProg);
         $$ = new ParserVal(nodoProg);
       }
     | ID bloque_declarativo BEGIN lista_sentencias END ';'
       {
-        NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) $1.obj);
+        NodoArbol hojaID = gci.crearHojaAST((RegistroTS) $1.obj);
         NodoArbol cuerpoProg = (NodoArbol) $4.obj;
-        NodoArbol nodoProg = GeneradorCodigoIntermedio.crearNodoAST("PROGRAMA", hojaID, cuerpoProg);
+        NodoArbol nodoProg = gci.crearNodoAST("PROGRAMA", hojaID, cuerpoProg);
         $$ = new ParserVal(nodoProg);
       }
     ;
@@ -67,11 +69,11 @@ lista_variables
         {
             ArrayList<RegistroTS> lista = new ArrayList<>();
             lista.add((RegistroTS) $1.obj);
-            $$ = new ParserVal(lista)
+            $$ = new ParserVal(lista);
         }
     | lista_variables ',' ID
         {
-            ArrayList<RegistroTS> lista = (ArrayList<RegistroTS>) $1.obj
+            ArrayList<RegistroTS> lista = (ArrayList<RegistroTS>) $1.obj;
             lista.add((RegistroTS) $3.obj);
             $$ = $1;
         }
@@ -88,7 +90,7 @@ lista_valores
         {
             NodoArbol izq = (NodoArbol) $1.obj;
             NodoArbol der = (NodoArbol) $3.obj;
-            NodoArbol list = GeneradorCodigoIntermedio.crearNodoAST(",", izq, der);
+            NodoArbol list = gci.crearNodoAST(",", izq, der);
             $$ = new ParserVal(list);
         }
     ;
@@ -110,7 +112,8 @@ declaracion_variables
             // Name Mangling según el ámbito actual (ej. "a:main" o "a:main:consultar_clave")
             String nameMangled = lexemaOriginal + ":" + controlAmbitos.getAmbitoActual();
             // Control de Redeclaración en el MISMO ámbito
-            if (ts.buscar(nameMangled)) {
+            RegistroTS regExistente = ts.buscar(nameMangled);
+            if (regExistente != null) {
                 yyerror("Error Semántico: Variable redeclarada '" + lexemaOriginal + "' en el ámbito " + controlAmbitos.getAmbitoActual());
             } else {
                 // Registrar tipo y uso en la Tabla de Símbolos
@@ -132,15 +135,13 @@ declaracion_typedef
         // 1. Name Mangling del nombre del tipo (ej. "codigos_control:main")
         String nameMangled = nombreTipo + ":" + controlAmbitos.getAmbitoActual();
 
-        // Control de Redeclaración en el MISMO ámbito
-        if (ts.buscar(nameMangled) != null) {
-            GeneradorCodigoIntermedio.registrarErrorSemantico(lexico.getNroLinea(), "Error Semantico: El tipo de dato '" + nombreTipo + "' ya fue definido en el ámbito " + controlAmbitos.getAmbitoActual());
+        // 2. Control de Redeclaración en el MISMO ámbito
+        if (ts.existeSimbolo(nameMangled)) {
+            yyerror("Error Semántico: El tipo de dato '" + nombreTipo + "' ya fue definido en el ámbito " + controlAmbitos.getAmbitoActual());
         } else {
-            // Actualizar lexema mangled y registrar tipo + valores en el GeneradorCodigoIntermedio
-            reg.setLexema(nameMangled);
-            NodoArbol subarbolValores = (NodoArbol) $5.obj;
-            GeneradorCodigoIntermedio.registrarEnumeracion(reg, subarbolValores);
-            registrarEstructura("Enumeración (typedef)");
+            // 3. Registrar en la TS con Uso = "nombre_tipo" y asociar sus valores
+            ArrayList<RegistroTS> valores = (ArrayList<RegistroTS>) $5.obj;
+            ts.registrarTipoPersonalizado(nameMangled, "nombre_tipo", valores);
         }
      }
     ;
@@ -152,7 +153,7 @@ declaracion_funcion
         // Armamos el nodo del AST de la función conectando la hoja del encabezado con el subárbol del cuerpo 
         NodoArbol hojaFunc = (NodoArbol) $1.obj; 
         NodoArbol subArbolCuerpo = (NodoArbol) $2.obj; 
-        NodoArbol nodoFuncion = GeneradorCodigoIntermedio.crearNodoAST("FUNC", hojaFunc, subArbolCuerpo); 
+        NodoArbol nodoFuncion = gci.crearNodoAST("FUNC", hojaFunc, subArbolCuerpo); 
         $$ = new ParserVal(nodoFuncion); 
       }
     ;
@@ -168,56 +169,37 @@ encabezado_funcion
           // Error semántico: Redeclaración en el mismo ámbito 
           yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": La función o símbolo '" + lexemaFunc + "' ya fue declarado/a en el ámbito '" + ambitoPadre + "'"); 
           controlAmbitos.abrirAmbito(lexemaFunc); 
-          $$ = new ParserVal(GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) $3.obj)); 
+          $$ = new ParserVal(gci.crearHojaAST((RegistroTS) $3.obj)); 
         } else {
           // Registrar la función en la Tabla de Símbolos (en el ámbito padre)
           RegistroTS regID = (RegistroTS) $3.obj;
           String tipoFunc = ((RegistroTS) $1.obj).getLexema();
           RegistroTS regFuncion = ts.registrarFuncion(nameMangled, tipoFunc, "nombre_funcion", tiposParametros);
           controlAmbitos.abrirAmbito(lexemaFunc);
-          NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST(regFuncion);
+          NodoArbol hojaID = gci.crearHojaAST(regFuncion);
           $$ = new ParserVal(hojaID);
         }
       } 
     ; 
 
 cuerpo_funcion 
-    :   bloque_declarativo BEGIN lista_sentencias retorno_opcional END ';' 
+    :   bloque_declarativo BEGIN lista_sentencias END ';' 
     { 
         NodoArbol cuerpoFunc = (NodoArbol) $3.obj; 
-        NodoArbol retFunc = (NodoArbol) $4.obj;
         String ambito = controlAmbitos.getAmbitoActual();
         int idx = ambito.lastIndexOf(':');
         String claveFunc = ambito.substring(idx + 1) + ":" + ambito.substring(0, idx);
         RegistroTS regFunc = ts.buscar(claveFunc);
         String tipoFunc = (regFunc != null) ? regFunc.getTipoToken() : null;
-        if (retFunc == null) {
+        if (cuerpoFunc == null) {
             RegistroTS regDefecto = ts.obtenerOCrearConstantePorDefecto(tipoFunc);
-            NodoArbol hojaDefecto = GeneradorCodigoIntermedio.crearHojaAST(regDefecto);
-            retFunc = GeneradorCodigoIntermedio.crearNodoAST("RETURN", hojaDefecto, null);
+            NodoArbol hojaDefecto = gci.crearHojaAST(regDefecto);
+            NodoArbol retDefecto = gci.crearNodoAST("RETURN", hojaDefecto, null);
+            $$ = new ParserVal(retDefecto);
         } else {
-          String tipoRetorno = retFunc.getTipo();
-          if (tipoFunc != null && tipoRetorno != null && !tipoFunc.equalsIgnoreCase(tipoRetorno)) { /
-            / Si los tipos difieren, aplicar conversión implícita o emitir advertencia/error semántico 
-            retFunc = GeneradorCodigoIntermedio.verificarYConvertirTipos("RETURN", GeneradorCodigoIntermedio.crearHojaAST(regFunc), retFunc, lexico.getNroLinea()); 
-          }
+          $$ = new ParserVal(cuerpoFunc);
         }
-        NodoArbol cuerpoCompleto = GeneradorCodigoIntermedio.crearNodoAST(";", cuerpoFunc, retFunc);
-        $$ = new ParserVal(cuerpoCompleto);
         controlAmbitos.cerrarAmbito();
-      }
-    ;
-
-retorno_opcional
-    : RET '(' expresion ')' ';'
-      {
-        NodoArbol expr = (NodoArbol) $3.obj;
-        NodoArbol nodoRet = GeneradorCodigoIntermedio.crearNodoAST("RET", expr, null);
-        $$ = new ParserVal(nodoRet);
-      }
-    | /* vacio */
-      {
-        $$ = new ParserVal((Object) null);
       }
     ;
 
@@ -225,6 +207,7 @@ retorno_opcional
 declaracion_clase
     : encabezado_clase herencia_opcional cuerpo_clase
      {
+       registrarEstructura("Clase");
        System.out.println("Línea " + lexico.getNroLinea() + ": Declaración de Clase reconocida");
        RegistroTS regClaseActual = (RegistroTS) $1.obj;
        ArrayList<RegistroTS> listaPadres = (ArrayList<RegistroTS>) $2.obj;
@@ -293,10 +276,10 @@ cuerpo_clase_definicion
 
 miembro_clase
     : visibilidad_opcional declaracion
-    | declaracion
     | declaracion_friend   /* Tema 27: clases/funciones amigas */
       { registrarEstructura("Declaración friend"); }
     | EXTENDS lista_variables ';'  /* Tema 30: herencia multiple dentro del cuerpo */
+      { registrarEstructura("Herencia dentro de clase"); }
     ;
 
 visibilidad_opcional
@@ -338,19 +321,6 @@ lista_parametros_formales
      }
     ;
 
-retorno_opcional
-    : RET '(' expresion ')' ';'
-      {
-        NodoArbol expr = (NodoArbol) $3.obj;
-        NodoArbol nodoRet = GeneradorCodigoIntermedio.crearNodoAST("RET", expr, null);
-        $$ = new ParserVal(nodoRet);
-      }
-    | /* vacio */
-      {
-        $$ = new ParserVal((Object) null);
-      }
-    ;
-
 bloque_compuesto
     : sentencia
       { $$ = $1; }
@@ -374,7 +344,7 @@ lista_sentencias
         } else if (der == null) {
             $$ = $1;
         } else {
-            NodoArbol seq = GeneradorCodigoIntermedio.crearNodoAST(";", izq, der);
+            NodoArbol seq = gci.crearNodoAST(";", izq, der);
             $$ = new ParserVal(seq);
         }
       }
@@ -388,6 +358,12 @@ sentencia
     : sentencia_simple { $$ = $1; }
     | sentencia_while  { $$ = $1; }
     | sentencia_if     { $$ = $1; }
+    | RET '(' expresion ')' ';' 
+     { 
+        NodoArbol expr = (NodoArbol) $3.obj; 
+        NodoArbol nodoRet = gci.crearNodoAST("RETURN", expr, null); 
+        $$ = new ParserVal(nodoRet); 
+      }
     ;
 
 /* Tema 29: Acceso posicional a atributos con corchetes y asignación */
@@ -404,9 +380,9 @@ asignacion
           yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": Uso incorrecto de '" + lexemaVar + "'. No se puede asignar a un símbolo de uso '" + regVariable.getUso() + "'");
           $$ = new ParserVal(null); 
         } else {
-          NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST(regVariable);
+          NodoArbol hojaID = gci.crearHojaAST(regVariable);
           NodoArbol expr = (NodoArbol) $3.obj;
-          NodoArbol nodoAsig = GeneradorCodigoIntermedio.verificarAsignacion(hojaID, expr, lexico.getNroLinea());
+          NodoArbol nodoAsig = gci.verificarAsignacion(hojaID, expr, lexico.getNroLinea());
           $$ = new ParserVal(nodoAsig);
         }
       }
@@ -425,23 +401,24 @@ asignacion
           yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": El identificador '" + nombreObjeto + "' es de uso '" + regObjeto.getUso() + "' y no admite acceso posicional a atributos"); 
           $$ = new ParserVal(null);
         } else {
-          NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST(regObjeto);
+          NodoArbol hojaID = gci.crearHojaAST(regObjeto);
           NodoArbol indice = (NodoArbol) $3.obj;
-          if (indice != null && indice.getTipo() != null && !indice.getTipo().toLowerCase().contains("int")) { 
-            yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": El índice para el acceso posicional debe ser de tipo entero, pero se recibió '" + indice.getTipo() + "'"); 
+          int posIndice = gci.extraerEnteroIndice(indice);
+          if (indice != null && indice.getTipoToken() != null && !indice.getTipoToken().toLowerCase().contains("int")) { 
+            yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": El índice para el acceso posicional debe ser de tipo entero, pero se recibió '" + indice.getTipoToken() + "'"); 
           }
-          String tipoClase = regObjeto.getTipo(); // Ej: "ca" 
+          String tipoClase = regObjeto.getTipoToken(); // Ej: "ca" 
           RegistroTS regClaseDuenia = ts.buscar(tipoClase + ":main"); 
-          String tipoAtributo = ts.obtenerTipoAtributoPosicional(tipoClase, indice);
-          NodoArbol nodoAcceso = GeneradorCodigoIntermedio.crearNodoAST("[]", hojaID, indice);
-          nodoAcceso.setTipo(tipoAtributo);
-          RegistroTS regAtributo = ts.buscarAtributoPosicional(tipoClase, indice); 
+          String tipoAtributo = ts.obtenerTipoAtributoPosicional(tipoClase, posIndice);
+          NodoArbol nodoAcceso = gci.crearNodoAST("[]", hojaID, indice);
+          nodoAcceso.setTipoToken(tipoAtributo);
+          RegistroTS regAtributo = ts.obtenerAtributoPosicional(tipoClase, posIndice); 
           if (regAtributo != null && !ts.tienePermisoAcceso(regClaseDuenia, regAtributo, controlAmbitos.getAmbitoActual())) { 
             yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": Acceso Denegado. El atributo posicional en '" + tipoClase + "' es PRIVATE y el ámbito actual no es FRIEND"); 
             $$ = new ParserVal(null); 
           } else {
             NodoArbol expr = (NodoArbol) $6.obj;
-            NodoArbol nodoAsig = GeneradorCodigoIntermedio.verificarEscrituraAtributo(regObjeto, indice, expr, lexico.getNroLinea());
+            NodoArbol nodoAsig = gci.verificarEscrituraAtributo(regObjeto, indice, expr, lexico.getNroLinea());
             $$ = new ParserVal(nodoAsig);
           }
         }
@@ -452,9 +429,9 @@ asignacion
 sentencia_while
     : WHILE '(' condicion ')' REPEAT bloque_compuesto
       {
-        NodoArbol condNode = GeneradorCodigoIntermedio.crearNodoAST("cond", (NodoArbol) $3.obj, null);
-        NodoArbol cuerpoNode = GeneradorCodigoIntermedio.crearNodoAST("cuerpo", (NodoArbol) $6.obj, null);
-        NodoArbol whileNode = GeneradorCodigoIntermedio.crearNodoAST("WHILE", condNode, cuerpoNode);
+        NodoArbol condNode = gci.crearNodoAST("cond", (NodoArbol) $3.obj, null);
+        NodoArbol cuerpoNode = gci.crearNodoAST("cuerpo", (NodoArbol) $6.obj, null);
+        NodoArbol whileNode = gci.crearNodoAST("WHILE", condNode, cuerpoNode);
         $$ = new ParserVal(whileNode);
       }
     ;
@@ -462,12 +439,12 @@ sentencia_while
 sentencia_if
     : IF '(' condicion ')' bloque_compuesto rama_else END_IF ';'
       {
-        NodoArbol condNode = GeneradorCodigoIntermedio.crearNodoAST("cond", (NodoArbol) $3.obj, null);
+        NodoArbol condNode = gci.crearNodoAST("cond", (NodoArbol) $3.obj, null);
         NodoArbol bloqThen = (NodoArbol) $5.obj; // Subárbol directo de sentencias
         NodoArbol bloqElse = (NodoArbol) $6.obj; // Subárbol de la rama else (o null)
 
-        NodoArbol cuerpoNode = GeneradorCodigoIntermedio.crearNodoAST("cuerpo", bloqThen, bloqElse);
-        NodoArbol ifNode = GeneradorCodigoIntermedio.crearNodoAST("IF", condNode, cuerpoNode);
+        NodoArbol cuerpoNode = gci.crearNodoAST("cuerpo", bloqThen, bloqElse);
+        NodoArbol ifNode = gci.crearNodoAST("IF", condNode, cuerpoNode);
 
         $$ = new ParserVal(ifNode);
       }
@@ -477,7 +454,7 @@ rama_else
     : ELSE bloque_compuesto
       {
         NodoArbol elseBlock = (NodoArbol) $2.obj;
-        NodoArbol elseNode = GeneradorCodigoIntermedio.crearNodoAST("else", elseBlock, null);
+        NodoArbol elseNode = gci.crearNodoAST("else", elseBlock, null);
         $$ = new ParserVal(elseNode);
       }
     | /* vacio */
@@ -489,14 +466,14 @@ rama_else
 salida_pout
     : POUT '(' CADENA ')'
       {
-        NodoArbol hojaCadena = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) $3.obj);
-        NodoArbol nodoPout = GeneradorCodigoIntermedio.crearNodoAST("POUT", hojaCadena, null);
+        NodoArbol hojaCadena = gci.crearHojaAST((RegistroTS) $3.obj);
+        NodoArbol nodoPout = gci.crearNodoAST("POUT", hojaCadena, null);
         $$ = new ParserVal(nodoPout);
       }
     | POUT '(' expresion ')'
       {
         NodoArbol expr = (NodoArbol) $3.obj;
-        NodoArbol nodoPout = GeneradorCodigoIntermedio.crearNodoAST("POUT", expr, null);
+        NodoArbol nodoPout = gci.crearNodoAST("POUT", expr, null);
         $$ = new ParserVal(nodoPout);
       }
     ;
@@ -507,7 +484,7 @@ condicion
         NodoArbol izq = (NodoArbol) $1.obj;
         String op = (String) $2.obj;
         NodoArbol der = (NodoArbol) $3.obj;
-        NodoArbol nodoComp = GeneradorCodigoIntermedio.verificarYConvertirTipos(op, izq, der, lexico.getNroLinea());
+        NodoArbol nodoComp = gci.verificarYConvertirTipos(op, izq, der, lexico.getNroLinea());
         $$ = new ParserVal(nodoComp);
       }
     ;
@@ -527,28 +504,28 @@ expresion
       {
         NodoArbol izq = (NodoArbol) $1.obj;
         NodoArbol der = (NodoArbol) $3.obj;
-        NodoArbol nodo = GeneradorCodigoIntermedio.verificarYConvertirTipos("+", izq, der, lexico.getNroLinea());
+        NodoArbol nodo = gci.verificarYConvertirTipos("+", izq, der, lexico.getNroLinea());
         $$ = new ParserVal(nodo);
       }
     | expresion '-' expresion
       {
         NodoArbol izq = (NodoArbol) $1.obj;
         NodoArbol der = (NodoArbol) $3.obj;
-        NodoArbol nodo = GeneradorCodigoIntermedio.verificarYConvertirTipos("-", izq, der, lexico.getNroLinea());
+        NodoArbol nodo = gci.verificarYConvertirTipos("-", izq, der, lexico.getNroLinea());
         $$ = new ParserVal(nodo);
       }
     | expresion '*' expresion
       {
         NodoArbol izq = (NodoArbol) $1.obj;
         NodoArbol der = (NodoArbol) $3.obj;
-        NodoArbol nodo = GeneradorCodigoIntermedio.verificarYConvertirTipos("*", izq, der, lexico.getNroLinea());
+        NodoArbol nodo = gci.verificarYConvertirTipos("*", izq, der, lexico.getNroLinea());
         $$ = new ParserVal(nodo);
       }
     | expresion '/' expresion
       {
         NodoArbol izq = (NodoArbol) $1.obj;
         NodoArbol der = (NodoArbol) $3.obj;
-        NodoArbol nodo = GeneradorCodigoIntermedio.verificarYConvertirTipos("/", izq, der, lexico.getNroLinea());
+        NodoArbol nodo = gci.verificarYConvertirTipos("/", izq, der, lexico.getNroLinea());
         $$ = new ParserVal(nodo);
       }
     | '-' expresion %prec UMINUS
@@ -556,25 +533,15 @@ expresion
         aplicarSignoNegativo($2);
         NodoArbol expr = (NodoArbol) $2.obj;
         // Usamos una etiqueta explícita "UMINUS" para no confundirlo con la resta binaria
-        NodoArbol nodo = GeneradorCodigoIntermedio.crearNodoAST("UMINUS", expr, null);
-        if (expr != null) {
-            nodo.setTipoToken(expr.getTipoToken()); // Propaga el tipo (USHORTINT o DOUBLEF)
-        }
+        NodoArbol nodo = gci.crearNodoAST("UMINUS", expr, null);
         $$ = new ParserVal(nodo);
       }
     | ID '=' expresion
       {
-          String lexema = ((RegistroTS) $1.obj).getLexema();
-          RegistroTS regID = buscarVariableVisibilidad(lexema);
-          if (regID == null) {
-              GeneradorCodigoIntermedio.registrarErrorSemantico(lexico.getNroLinea(), "Variable '" + lexemaOriginal + "' no declarada.");
-              $$ = new ParserVal(null);
-          } else {
-              NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST(regID);
-              NodoArbol expr = (NodoArbol) $3.obj;
-              NodoArbol nodoAsig = GeneradorCodigoIntermedio.verificarAsignacion(hojaID, expr, lexico.getNroLinea());
-              $$ = new ParserVal(nodoAsig);
-          }= new ParserVal(nodoAsig);
+        NodoArbol hojaID = gci.crearHojaAST((RegistroTS) $1.obj);
+        NodoArbol expr = (NodoArbol) $3.obj;
+        NodoArbol nodoAsig = gci.verificarYConvertirTipos("=", hojaID, expr, lexico.getNroLinea());
+        $$ = new ParserVal(nodoAsig);
       }
     | ID '.' ID '(' lista_variables ')'
      {
@@ -583,9 +550,9 @@ expresion
         RegistroTS regObjeto = buscarVariableVisibilidad(nombreObjeto); 
         if (regObjeto == null) { 
           yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": El objeto '" + nombreObjeto + "' no está declarado o no es visible"); 
-          $$ = new ParserVal(GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) null)); 
+          $$ = new ParserVal(gci.crearHojaAST((RegistroTS) null)); 
         } else { 
-          String tipoClase = regObjeto.getTipo();
+          String tipoClase = regObjeto.getTipoToken();
           RegistroTS regClaseDuenia = ts.buscar(tipoClase + ":main");
           String claveMetodoDirecto = nombreMetodo + ":main:" + tipoClase; RegistroTS regMetodo = ts.buscar(claveMetodoDirecto); 
           if (regMetodo == null) { 
@@ -593,19 +560,19 @@ expresion
           } 
           if (regMetodo == null) { 
             yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": El método '" + nombreMetodo + "' no existe en la clase '" + tipoClase + "' ni en su herencia"); 
-            $$ = new ParserVal(GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) null)); 
+            $$ = new ParserVal(gci.crearHojaAST((RegistroTS) null)); 
           } else if (!"metodo".equals(regMetodo.getUso()) && !"nombre_funcion".equals(regMetodo.getUso())) { 
             yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": El identificador '" + nombreMetodo + "' no es un método de la clase '" + tipoClase + "'"); 
-            $$ = new ParserVal(GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) null)); 
+            $$ = new ParserVal(gci.crearHojaAST((RegistroTS) null)); 
           } else if (!ts.tienePermisoAcceso(regClaseDuenia, regMetodo, controlAmbitos.getAmbitoActual())) { 
             yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": Acceso Denegado. El método '" + nombreMetodo + "' es PRIVATE en '" + tipoClase + "'"); 
-            $$ = new ParserVal(GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) null)); 
+            $$ = new ParserVal(gci.crearHojaAST((RegistroTS) null)); 
           } else { 
             NodoArbol subArbolArgs = (NodoArbol) $5.obj; 
-            List<String> tiposFormales = regMetodo.getTiposParametros();
-            NodoArbol hojaMetodo = GeneradorCodigoIntermedio.crearHojaAST(regMetodo);
-            NodoArbol nodoCall = GeneradorCodigoIntermedio.crearNodoAST("CALL", hojaMetodo, subArbolArgs);
-            nodoCall.setTipo(regMetodo.getTipoToken());
+            List<String> tiposFormales = regMetodo.getListaParametros();
+            NodoArbol hojaMetodo = gci.crearHojaAST(regMetodo);
+            NodoArbol nodoCall = gci.crearNodoAST("CALL", hojaMetodo, subArbolArgs);
+            nodoCall.setTipoToken(regMetodo.getTipoToken());
             $$ = new ParserVal(nodoCall);
           }
         }
@@ -618,25 +585,32 @@ expresion
         if (regFuncion == null) { 
           // Error 1: No declarada o fuera de alcance 
           yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": La función o método '" + lexemaFunc + "' no está declarado o no es visible en este ámbito"); 
-          $$ = new ParserVal(GeneradorCodigoIntermedio.crearHojaAST((RegistroTS)null)); 
+          $$ = new ParserVal(gci.crearHojaAST((RegistroTS) null)); 
         } else if (!"nombre_funcion".equalsIgnoreCase(regFuncion.getUso()) && !"metodo".equalsIgnoreCase(regFuncion.getUso())) { 
           // Error 2: El símbolo existe pero no es una función (ej: es una variable o clase) 
           yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": El identificador '" + lexemaFunc + "' es de uso '" + regFuncion.getUso() + "' y no puede ser invocado como función"); 
-          $$ = new ParserVal(GeneradorCodigoIntermedio.crearHojaAST((RegistroTS)null)); 
+          $$ = new ParserVal(gci.crearHojaAST((RegistroTS) null)); 
         } else {
           NodoArbol infoInvoc = (NodoArbol) $2.obj;
-          NodoArbol nodoCall = GeneradorCodigoIntermedio.procesarInvocacion(regFuncion, infoInvoc, lexico.getNroLinea());
-          nodoCall.setTipo(regFuncion.getTipoToken());
+          NodoArbol nodoCall = gci.procesarInvocacion(regFuncion, infoInvoc, lexico.getNroLinea());
+          nodoCall.setTipoToken(regFuncion.getTipoToken());
           $$ = new ParserVal(nodoCall);
         }
       }
     | ID CORCHETE_IZQ expresion CORCHETE_DER
-      { 
-        RegistroTS regObj = buscarVariableVisibilidad(((RegistroTS) $1.obj).getLexema());
-        NodoArbol indice = (NodoArbol) $3.obj;
-
-        NodoArbol nodoAcceso = GeneradorCodigoIntermedio.verificarLecturaAtributo(regObj, indice, lexico.getNroLinea());        
-        $$ = new ParserVal(nodoAcceso);
+      { registrarEstructura("Acceso posicional");
+        String nombreObjeto = ((RegistroTS) $1.obj).getLexema();
+        RegistroTS regObjeto = buscarVariableVisibilidad(nombreObjeto);
+        if (regObjeto == null) { 
+          // Error semántico: el objeto o variable no está declarado 
+          yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": El objeto o variable '" + nombreObjeto + "' no está declarado o no es visible"); 
+          $$ = new ParserVal(gci.crearHojaAST((RegistroTS) null)); 
+        } else {
+          NodoArbol hojaID = gci.crearHojaAST(regObjeto);
+          NodoArbol indice = (NodoArbol) $3.obj;
+          NodoArbol nodoAcceso = gci.verificarLecturaAtributo(regObjeto, indice, lexico.getNroLinea());
+          $$ = new ParserVal(nodoAcceso);
+        }
       }
     | ID
      {
@@ -646,14 +620,14 @@ expresion
         if (regVariable == null) { 
           // Error 1: Variable no declarada o fuera de alcance 
           yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": La variable '" + lexemaVar + "' no está declarada o no es visible en este ámbito"); 
-          $$ = new ParserVal(GeneradorCodigoIntermedio.crearHojaAST((RegistroTS)null)); 
+          $$ = new ParserVal(gci.crearHojaAST((RegistroTS) null)); 
         } else if (!"variable".equalsIgnoreCase(regVariable.getUso()) && !"parametro".equalsIgnoreCase(regVariable.getUso()) && !"atributo".equalsIgnoreCase(regVariable.getUso()) && !"objeto".equalsIgnoreCase(regVariable.getUso())) { 
           // Error 2: Uso incorrecto de contexto (ej. usar un nombre de función o clase como operando) 
           yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": El identificador '" + lexemaVar + "' es de uso '" + regVariable.getUso() + "' y no puede ser utilizado como una variable"); 
-          $$ = new ParserVal(GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) null)); 
+          $$ = new ParserVal(gci.crearHojaAST((RegistroTS) null)); 
         } else {
-          NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST(registrarVariable);
-          hojaID.setTipo(regVariable.getTipoToken());
+          NodoArbol hojaID = gci.crearHojaAST(regVariable);
+          hojaID.setTipoToken(regVariable.getTipoToken());
           $$ = new ParserVal(hojaID);
         }
      }
@@ -669,7 +643,7 @@ invocacion_ordenada
       {
         NodoArbol args = (NodoArbol) $2.obj;
         NodoArbol orden = (NodoArbol) $5.obj;
-        NodoArbol inv = GeneradorCodigoIntermedio.crearNodoAST("INVOC_ORDENADA", args, orden);
+        NodoArbol inv = gci.crearNodoAST("INVOC_ORDENADA", args, orden);
         $$ = new ParserVal(inv);
       }
     | '(' lista_expresiones ')'
@@ -685,20 +659,20 @@ lista_expresiones
       {
         NodoArbol izq = (NodoArbol) $1.obj;
         NodoArbol der = (NodoArbol) $3.obj;
-        NodoArbol list = GeneradorCodigoIntermedio.crearNodoAST(",", izq, der);
+        NodoArbol list = gci.crearNodoAST(",", izq, der);
         $$ = new ParserVal(list);
       }
 
 constante
     : CTE_USHORT
       {
-        NodoArbol hojaCte = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) $1.obj);
+        NodoArbol hojaCte = gci.crearHojaAST((RegistroTS) $1.obj);
         $$ = new ParserVal(hojaCte);
       }
     | CTE_DOUBLEF
       {
         validarConstanteDoublef($1);
-        NodoArbol hojaCte = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) $1.obj);
+        NodoArbol hojaCte = gci.crearHojaAST((RegistroTS) $1.obj);
         $$ = new ParserVal(hojaCte);
       }
     ;
@@ -708,14 +682,16 @@ constante
 /* CÓDIGO JAVA DE SOPORTE */
 
 private AnalizadorLexico lexico;
-private TablaDeSimbolos ts;
+private static TablaDeSimbolos ts = new TablaDeSimbolos();
 private boolean huboError = false;
 private List<String> erroresSintacticos = new ArrayList<>();
 private List<String> estructurasDetectadas = new ArrayList<>();
+public static ControlAmbitos controlAmbitos = new ControlAmbitos();
+public static GeneradorCodigoIntermedio gci = new GeneradorCodigoIntermedio(ts);
 
 public Parser(AnalizadorLexico lexico, TablaDeSimbolos ts) {
     this.lexico = lexico;
-    this.ts = ts;
+    Parser.ts = ts;
 }
 
 private int yylex() {
@@ -758,6 +734,11 @@ public List<String> getErroresSintacticos() {
 
 public List<String> getEstructurasDetectadas() {
     return estructurasDetectadas;
+}
+
+/* Registra una reduccion sintactica reconocida, con la linea actual del lexico. */
+private void registrarEstructura(String estructura) {
+    estructurasDetectadas.add("Línea " + lexico.getNroLinea() + ": " + estructura);
 }
 
 /* TP2 punto c: el lexico desconoce el signo. Al aplicar el '-' el Parser
@@ -812,11 +793,11 @@ public void declararVariable(String lexemaOriginal, String tipoDato) {
     // 1. Armar clave con Name Mangling según el ámbito actual (ej. "a:main" o "a:main:consultar_clave") 
     String nameMangled = lexemaOriginal + ":" + controlAmbitos.getAmbitoActual(); 
     // 2. Control de Redeclaración en el MISMO ámbito 
-    if (ts.existeSimbolo(claveMangled)) { 
+    if (ts.existeSimbolo(nameMangled)) { 
         yyerror("Error Semántico: Variable redeclarada '" + lexemaOriginal + "' en el ámbito " + controlAmbitos.getAmbitoActual()); 
     } else { 
         // 3. Registrar tipo y uso en la Tabla de Símbolos 
-        ts.registrarVariable(claveMangled, tipoDato, "variable"); 
+        ts.registrarVariable(nameMangled, tipoDato, "variable"); 
     } 
 } 
 
@@ -837,7 +818,7 @@ public RegistroTS buscarVariableVisibilidad(String lexemaOriginal) {
 
     // Buscar en la Tabla de Símbolos de adentro hacia afuera
     for (String clave : mangledCandidatas) {
-        RegistroTS simbolo = ts.buscar(clave)
+        RegistroTS simbolo = ts.buscar(clave);
         if (ts.existeSimbolo(clave)) {
             return simbolo; // Encontró la declaración más cercana y visible
         }

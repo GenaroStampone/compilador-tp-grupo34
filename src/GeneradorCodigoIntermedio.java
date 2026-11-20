@@ -233,6 +233,26 @@ public class GeneradorCodigoIntermedio {
         }
         return false;
     }
+
+    public static int extraerEnteroIndice(NodoArbol nodo) { 
+        if (nodo == null) {
+            return -1;
+        } 
+        // Extraer el registro TS si es una hoja 
+        RegistroTS reg = nodo.getRegTS();
+        String lexema = (reg != null) ? reg.getLexema() : nodo.getLexema(); 
+        if (lexema != null) { // Remover sufijos de tipo si existen (ej. "0$i" -&gt; "0", "1$s" -&gt; "1") 
+            if (lexema.contains("$")) { 
+                lexema = lexema.substring(0, lexema.indexOf('$')); 
+            } 
+            try { 
+                return Integer.parseInt(lexema.trim()); 
+            } catch (NumberFormatException e) { 
+                return -1; 
+            } 
+        } 
+        return -1; 
+    }
     
 
     // ==========================================
