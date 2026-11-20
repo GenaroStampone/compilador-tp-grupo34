@@ -1,0 +1,8 @@
+programa_enum_invalida;
+typedef estados = [1$us, 2$us];
+estados estado;
+ushortint valor;
+begin
+    valor := 3$us;
+    estado := valor;
+end;

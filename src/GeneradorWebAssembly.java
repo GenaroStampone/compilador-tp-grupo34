@@ -90,7 +90,7 @@ public class GeneradorWebAssembly {
         out.append("  (import \"env\" \"logf\" (func $logf (param f64)))\n");
         out.append("  (import \"env\" \"logs\" (func $logs (param i32 i32)))\n");
         out.append("  (import \"env\" \"abort\" (func $abort (param i32)))\n");
-        out.append("  (memory ").append(paginas).append(")\n");
+        out.append("  (memory (export \"memory\") ").append(paginas).append(")\n");
         out.append(globalsWat);
         out.append(funcionesWat);
         out.append(main);
@@ -264,7 +264,7 @@ public class GeneradorWebAssembly {
             ctx.locales.put(nombre, tipoWatDe(r));
         }
 
-        String codigoCuerpo = compilarSecuencia(cuerpo, ctx);
+        String codigoCuerpo = compilarSecuencia(cuerpo != null ? cuerpo.getDer() : null, ctx);
         ctx.code.append(codigoCuerpo);
         String cero = tipoRet.equals("DOUBLEF") ? "f64.const 0.0" : "i32.const 0";
         ctx.code.append("  ").append(cero).append("\n  return\n");
@@ -605,7 +605,7 @@ public class GeneradorWebAssembly {
                     + (tipo.equals("DOUBLEF") ? "  f64.load\n" : "  i32.load\n");
         }
         String nombre = nombreVariable(reg);
-        return "  local.get " + nombre + "\n";
+        return (esGlobal(reg) ? "  global.get " : "  local.get ") + nombre + "\n";
     }
 
     private String compilarOperacion(NodoArbol nodo, Ctx ctx) {

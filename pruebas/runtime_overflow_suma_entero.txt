@@ -1,0 +1,7 @@
+programa_overflow_suma_entero;
+ushortint x, y, z;
+begin
+    x := 255$us;
+    y := 1$us;
+    z := x + y;
+end;

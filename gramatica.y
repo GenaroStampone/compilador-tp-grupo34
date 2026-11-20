@@ -905,7 +905,10 @@ private boolean verificarPermisoPosicional(RegistroTS regObjeto, NodoArbol indic
 
 private RegistroTS obtenerConstante(NodoArbol nodo) {
     if (nodo == null) return null;
-    if (nodo.getRegTS() != null) return nodo.getRegTS();
+    RegistroTS reg = nodo.getRegTS();
+    if (reg != null && (reg.getIdToken() == CTE_USHORT || reg.getIdToken() == CTE_DOUBLEF)) {
+        return reg;
+    }
     if ("UMINUS".equals(nodo.getEtiqueta())) return obtenerConstante(nodo.getIzq());
     return null;
 }

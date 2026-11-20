@@ -44,6 +44,7 @@ CLASS controlador_sistema begin
 
     {{ Atributo público }}
     doublef voltaje_operativo;
+    doublef ajuste_interno;
 
     {{ Declaración de métodos con retornos }}
     ushortint FUNCTION consultar_clave(ushortint salt) 
@@ -89,7 +90,7 @@ begin
     contador := limite = iterador + 2$us;
 
     {{ Tema 29: Acceso posicional a atributos con corchetes }}
-    nodo_maestro[0$us] := 250$us;
+    nodo_maestro[0$us] := 100$us;
     nodo_maestro[iterador] := 125$us;
     contador := nodo_maestro[0$us] + nodo_maestro[iterador];
 

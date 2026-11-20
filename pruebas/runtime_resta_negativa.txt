@@ -1,0 +1,7 @@
+programa_resta_negativa;
+ushortint x, y, z;
+begin
+    x := 1$us;
+    y := 2$us;
+    z := x - y;
+end;

@@ -1,0 +1,7 @@
+programa_div0_flotante;
+doublef x, y, z;
+begin
+    x := 10.0;
+    y := 0.0;
+    z := x / y;
+end;

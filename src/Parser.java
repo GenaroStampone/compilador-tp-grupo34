@@ -16,7 +16,7 @@
 
 
 
-//#line 2 "../gramatica.y"
+//#line 2 "gramatica.y"
 import java.util.*;
 //#line 19 "Parser.java"
 
@@ -499,7 +499,7 @@ final static String yyrule[] = {
 "constante : CTE_DOUBLEF",
 };
 
-//#line 634 "../gramatica.y"
+//#line 638 "gramatica.y"
 
 /* ============================================================================
    CÓDIGO JAVA DE SOPORTE DEL PARSER
@@ -516,6 +516,7 @@ private final List<String> estructurasDetectadas = new ArrayList<>();
 private final Deque<String> pilaTiposRetorno = new ArrayDeque<>();
 private final Deque<RegistroTS> pilaClases = new ArrayDeque<>();
 private final Deque<String> pilaAmbitosClase = new ArrayDeque<>();
+private final Map<String, NodoArbol> cuerposFunciones = new LinkedHashMap<>();
 
 public Parser(AnalizadorLexico lexico, TablaDeSimbolos ts) {
     this.lexico = lexico;
@@ -572,6 +573,10 @@ public GeneradorCodigoIntermedio getGenerador() {
 
 public TablaDeSimbolos getTablaSimbolos() {
     return ts;
+}
+
+public Map<String, NodoArbol> getCuerposFunciones() {
+    return new LinkedHashMap<>(cuerposFunciones);
 }
 
 private void registrarEstructura(String nombre) {
@@ -717,6 +722,11 @@ private NodoArbol cerrarFuncion(InfoFuncion info, NodoArbol decls, NodoArbol cue
     NodoArbol nodo = gen.crearNodoAST("FUNC", decls, cuerpo);
     nodo.setInfo(info);
     nodo.setTipoToken(info.getTipoRetorno());
+    cuerposFunciones.put(info.getRegistro().getLexema(), nodo);
+    if (!pilaClases.isEmpty() && !pilaAmbitosClase.isEmpty()
+            && pilaAmbitosClase.peek().equals(info.getAmbitoPadre())) {
+        pilaClases.peek().agregarMetodo(nodo);
+    }
     return nodo;
 }
 
@@ -760,7 +770,10 @@ private boolean verificarPermisoPosicional(RegistroTS regObjeto, NodoArbol indic
 
 private RegistroTS obtenerConstante(NodoArbol nodo) {
     if (nodo == null) return null;
-    if (nodo.getRegTS() != null) return nodo.getRegTS();
+    RegistroTS reg = nodo.getRegTS();
+    if (reg != null && (reg.getIdToken() == CTE_USHORT || reg.getIdToken() == CTE_DOUBLEF)) {
+        return reg;
+    }
     if ("UMINUS".equals(nodo.getEtiqueta())) return obtenerConstante(nodo.getIzq());
     return null;
 }
@@ -843,7 +856,7 @@ private void validarConstanteDoublef(ParserVal v) {
         errorSemantico("Constante doublef mal formada: " + reg.getLexema());
     }
 }
-//#line 775 "Parser.java"
+//#line 788 "Parser.java"
 //###############################################################
 // method: yylexdebug : check lexer state
 //###############################################################
@@ -998,7 +1011,7 @@ boolean doaction;
       {
 //########## USER-SUPPLIED ACTIONS ##########
 case 1:
-//#line 31 "../gramatica.y"
+//#line 31 "gramatica.y"
 {
         NodoArbol nombre = gen.crearHojaAST((RegistroTS) val_peek(6).obj);
         NodoArbol decls = (NodoArbol) val_peek(4).obj;
@@ -1010,34 +1023,34 @@ case 1:
       }
 break;
 case 4:
-//#line 49 "../gramatica.y"
+//#line 49 "gramatica.y"
 { yyval = new ParserVal(secuencia((NodoArbol) val_peek(1).obj, (NodoArbol) val_peek(0).obj)); }
 break;
 case 5:
-//#line 51 "../gramatica.y"
+//#line 51 "gramatica.y"
 { yyval = new ParserVal((Object) null); }
 break;
 case 10:
-//#line 60 "../gramatica.y"
+//#line 60 "gramatica.y"
 {
         yyerror("Declaración inválida; se resincroniza en ';'.");
         yyval = new ParserVal((Object) null);
       }
 break;
 case 11:
-//#line 67 "../gramatica.y"
+//#line 67 "gramatica.y"
 { yyval = new ParserVal((Object) "USHORTINT"); }
 break;
 case 12:
-//#line 68 "../gramatica.y"
+//#line 68 "gramatica.y"
 { yyval = new ParserVal((Object) "DOUBLEF"); }
 break;
 case 13:
-//#line 69 "../gramatica.y"
+//#line 69 "gramatica.y"
 { yyval = new ParserVal((Object) ((RegistroTS) val_peek(0).obj).getLexema()); }
 break;
 case 14:
-//#line 74 "../gramatica.y"
+//#line 74 "gramatica.y"
 {
         ArrayList<RegistroTS> lista = new ArrayList<>();
         lista.add((RegistroTS) val_peek(0).obj);
@@ -1045,7 +1058,7 @@ case 14:
       }
 break;
 case 15:
-//#line 80 "../gramatica.y"
+//#line 80 "gramatica.y"
 {
         @SuppressWarnings("unchecked")
         ArrayList<RegistroTS> lista = (ArrayList<RegistroTS>) val_peek(2).obj;
@@ -1054,7 +1067,7 @@ case 15:
       }
 break;
 case 16:
-//#line 90 "../gramatica.y"
+//#line 90 "gramatica.y"
 {
         ArrayList<RegistroTS> regs = declararListaVariables((String) val_peek(2).obj,
                 (List<RegistroTS>) val_peek(1).obj, lexico.getNroLinea(), "public");
@@ -1065,7 +1078,7 @@ case 16:
       }
 break;
 case 17:
-//#line 103 "../gramatica.y"
+//#line 103 "gramatica.y"
 {
         RegistroTS regID = (RegistroTS) val_peek(5).obj;
         String nombreTipo = regID.getLexema();
@@ -1098,7 +1111,7 @@ case 17:
       }
 break;
 case 18:
-//#line 137 "../gramatica.y"
+//#line 137 "gramatica.y"
 {
         ArrayList<RegistroTS> lista = new ArrayList<>();
         lista.add((RegistroTS) val_peek(0).obj);
@@ -1106,7 +1119,7 @@ case 18:
       }
 break;
 case 19:
-//#line 143 "../gramatica.y"
+//#line 143 "gramatica.y"
 {
         ArrayList<RegistroTS> lista = (ArrayList<RegistroTS>) val_peek(2).obj;
         lista.add((RegistroTS) val_peek(0).obj);
@@ -1114,14 +1127,14 @@ case 19:
       }
 break;
 case 20:
-//#line 152 "../gramatica.y"
+//#line 152 "gramatica.y"
 {
         NodoArbol n = (NodoArbol) val_peek(0).obj;
         yyval = new ParserVal(n.getRegTS());
       }
 break;
 case 21:
-//#line 157 "../gramatica.y"
+//#line 157 "gramatica.y"
 {
         aplicarSignoNegativo(val_peek(0));
         NodoArbol n = (NodoArbol) val_peek(0).obj;
@@ -1129,7 +1142,7 @@ case 21:
       }
 break;
 case 22:
-//#line 167 "../gramatica.y"
+//#line 167 "gramatica.y"
 {
         InfoFuncion info = (InfoFuncion) val_peek(5).obj;
         NodoArbol decls = (NodoArbol) val_peek(4).obj;
@@ -1138,14 +1151,14 @@ case 22:
       }
 break;
 case 23:
-//#line 177 "../gramatica.y"
+//#line 177 "gramatica.y"
 {
         yyval = new ParserVal(abrirFuncion((String) val_peek(5).obj, (RegistroTS) val_peek(3).obj,
                 (List<ParametroFormal>) val_peek(1).obj, "nombre_funcion", "public"));
       }
 break;
 case 24:
-//#line 185 "../gramatica.y"
+//#line 185 "gramatica.y"
 {
         ArrayList<ParametroFormal> lista = new ArrayList<>();
         lista.add(new ParametroFormal(((RegistroTS) val_peek(0).obj).getLexema(), (String) val_peek(1).obj));
@@ -1153,7 +1166,7 @@ case 24:
       }
 break;
 case 25:
-//#line 191 "../gramatica.y"
+//#line 191 "gramatica.y"
 {
         ArrayList<ParametroFormal> lista = (ArrayList<ParametroFormal>) val_peek(3).obj;
         lista.add(new ParametroFormal(((RegistroTS) val_peek(0).obj).getLexema(), (String) val_peek(1).obj));
@@ -1161,18 +1174,22 @@ case 25:
       }
 break;
 case 26:
-//#line 202 "../gramatica.y"
+//#line 202 "gramatica.y"
 {
         RegistroTS regClase = (RegistroTS) val_peek(2).obj;
         controlAmbitos.cerrarAmbito();
         if (!pilaClases.isEmpty()) pilaClases.pop();
         if (!pilaAmbitosClase.isEmpty()) pilaAmbitosClase.pop();
-        NodoArbol nodo = gen.crearNodoAST("CLASS", gen.crearHojaAST(regClase), null);
+        NodoArbol metodos = null;
+        for (NodoArbol m : regClase.getMetodos()) {
+          metodos = secuencia(metodos, m);
+        }
+        NodoArbol nodo = gen.crearNodoAST("CLASS", gen.crearHojaAST(regClase), metodos);
         yyval = new ParserVal(nodo);
       }
 break;
 case 27:
-//#line 214 "../gramatica.y"
+//#line 218 "gramatica.y"
 {
         String nombre = ((RegistroTS) val_peek(0).obj).getLexema();
         String clave = nombre + ":" + controlAmbitos.getAmbitoActual();
@@ -1190,29 +1207,29 @@ case 27:
       }
 break;
 case 28:
-//#line 233 "../gramatica.y"
+//#line 237 "gramatica.y"
 { procesarHerencia((List<RegistroTS>) val_peek(1).obj); }
 break;
 case 29:
-//#line 235 "../gramatica.y"
+//#line 239 "gramatica.y"
 { }
 break;
 case 33:
-//#line 249 "../gramatica.y"
+//#line 253 "gramatica.y"
 {
         declararListaVariables((String) val_peek(2).obj, (List<RegistroTS>) val_peek(1).obj, lexico.getNroLinea(), "public");
         registrarEstructura("Atributo de clase");
       }
 break;
 case 34:
-//#line 254 "../gramatica.y"
+//#line 258 "gramatica.y"
 {
         declararListaVariables((String) val_peek(2).obj, (List<RegistroTS>) val_peek(1).obj, lexico.getNroLinea(), "private");
         registrarEstructura("Atributo privado de clase");
       }
 break;
 case 35:
-//#line 259 "../gramatica.y"
+//#line 263 "gramatica.y"
 {
         InfoFuncion info = (InfoFuncion) val_peek(5).obj;
         cerrarFuncion(info, (NodoArbol) val_peek(4).obj, (NodoArbol) val_peek(2).obj);
@@ -1220,85 +1237,85 @@ case 35:
       }
 break;
 case 36:
-//#line 265 "../gramatica.y"
+//#line 269 "gramatica.y"
 {
         registrarAmigo(((RegistroTS) val_peek(1).obj).getLexema());
         registrarEstructura("Declaración friend");
       }
 break;
 case 37:
-//#line 270 "../gramatica.y"
+//#line 274 "gramatica.y"
 {
         procesarHerencia((List<RegistroTS>) val_peek(1).obj);
         registrarEstructura("Herencia");
       }
 break;
 case 38:
-//#line 275 "../gramatica.y"
+//#line 279 "gramatica.y"
 {
         yyerror("Miembro de clase inválido; se resincroniza en ';'.");
       }
 break;
 case 39:
-//#line 282 "../gramatica.y"
+//#line 286 "gramatica.y"
 {
         yyval = new ParserVal(abrirFuncion((String) val_peek(5).obj, (RegistroTS) val_peek(3).obj,
                 (List<ParametroFormal>) val_peek(1).obj, "metodo", "public"));
       }
 break;
 case 40:
-//#line 287 "../gramatica.y"
+//#line 291 "gramatica.y"
 {
         yyval = new ParserVal(abrirFuncion((String) val_peek(5).obj, (RegistroTS) val_peek(3).obj,
                 (List<ParametroFormal>) val_peek(1).obj, "metodo", "private"));
       }
 break;
 case 41:
-//#line 292 "../gramatica.y"
+//#line 296 "gramatica.y"
 {
         yyval = new ParserVal(abrirFuncion((String) val_peek(4).obj, (RegistroTS) val_peek(3).obj,
                 (List<ParametroFormal>) val_peek(1).obj, "metodo", "public"));
       }
 break;
 case 42:
-//#line 297 "../gramatica.y"
+//#line 301 "gramatica.y"
 {
         yyval = new ParserVal(abrirFuncion((String) val_peek(4).obj, (RegistroTS) val_peek(3).obj,
                 (List<ParametroFormal>) val_peek(1).obj, "metodo", "private"));
       }
 break;
 case 43:
-//#line 307 "../gramatica.y"
+//#line 311 "gramatica.y"
 { yyval = val_peek(0); }
 break;
 case 44:
-//#line 309 "../gramatica.y"
+//#line 313 "gramatica.y"
 {
         yyval = val_peek(2);
         registrarEstructura("Bloque compuesto");
       }
 break;
 case 45:
-//#line 317 "../gramatica.y"
+//#line 321 "gramatica.y"
 { yyval = new ParserVal(secuencia((NodoArbol) val_peek(1).obj, (NodoArbol) val_peek(0).obj)); }
 break;
 case 46:
-//#line 319 "../gramatica.y"
+//#line 323 "gramatica.y"
 { yyval = new ParserVal((Object) null); }
 break;
 case 48:
-//#line 325 "../gramatica.y"
+//#line 329 "gramatica.y"
 { yyval = val_peek(1); }
 break;
 case 52:
-//#line 330 "../gramatica.y"
+//#line 334 "gramatica.y"
 {
         yyerror("Sentencia inválida; se resincroniza en ';'.");
         yyval = new ParserVal((Object) null);
       }
 break;
 case 53:
-//#line 338 "../gramatica.y"
+//#line 342 "gramatica.y"
 {
         RegistroTS reg = buscarVariableVisibilidad(((RegistroTS) val_peek(3).obj).getLexema());
         if (reg == null) {
@@ -1315,7 +1332,7 @@ case 53:
       }
 break;
 case 54:
-//#line 353 "../gramatica.y"
+//#line 357 "gramatica.y"
 {
         String nombreObjeto = ((RegistroTS) val_peek(6).obj).getLexema();
         RegistroTS regObjeto = buscarVariableVisibilidad(nombreObjeto);
@@ -1341,7 +1358,7 @@ case 54:
       }
 break;
 case 55:
-//#line 380 "../gramatica.y"
+//#line 384 "gramatica.y"
 {
         NodoArbol cond = gen.crearNodoAST("cond", (NodoArbol) val_peek(5).obj, null);
         NodoArbol cuerpo = gen.crearNodoAST("cuerpo", (NodoArbol) val_peek(3).obj, (NodoArbol) val_peek(2).obj);
@@ -1351,15 +1368,15 @@ case 55:
       }
 break;
 case 56:
-//#line 391 "../gramatica.y"
+//#line 395 "gramatica.y"
 { yyval = val_peek(0); }
 break;
 case 57:
-//#line 393 "../gramatica.y"
+//#line 397 "gramatica.y"
 { yyval = new ParserVal((Object) null); }
 break;
 case 58:
-//#line 398 "../gramatica.y"
+//#line 402 "gramatica.y"
 {
         NodoArbol cond = gen.crearNodoAST("cond", (NodoArbol) val_peek(3).obj, null);
         NodoArbol cuerpo = gen.crearNodoAST("cuerpo", (NodoArbol) val_peek(0).obj, null);
@@ -1369,7 +1386,7 @@ case 58:
       }
 break;
 case 59:
-//#line 409 "../gramatica.y"
+//#line 413 "gramatica.y"
 {
         if (pilaTiposRetorno.isEmpty()) {
           errorSemantico("Sentencia 'ret' fuera de una función.");
@@ -1384,7 +1401,7 @@ case 59:
       }
 break;
 case 60:
-//#line 425 "../gramatica.y"
+//#line 429 "gramatica.y"
 {
         NodoArbol hoja = gen.crearHojaAST((RegistroTS) val_peek(1).obj);
         NodoArbol nodo = gen.crearNodoAST("POUT", hoja, null);
@@ -1393,7 +1410,7 @@ case 60:
       }
 break;
 case 61:
-//#line 432 "../gramatica.y"
+//#line 436 "gramatica.y"
 {
         NodoArbol nodo = gen.crearNodoAST("POUT", (NodoArbol) val_peek(1).obj, null);
         registrarEstructura("Sentencia POUT (expresión)");
@@ -1401,7 +1418,7 @@ case 61:
       }
 break;
 case 62:
-//#line 443 "../gramatica.y"
+//#line 447 "gramatica.y"
 {
         NodoArbol nodo = gen.verificarYConvertirTipos((String) val_peek(1).obj,
                 (NodoArbol) val_peek(2).obj, (NodoArbol) val_peek(0).obj, lexico.getNroLinea());
@@ -1409,47 +1426,47 @@ case 62:
       }
 break;
 case 63:
-//#line 451 "../gramatica.y"
+//#line 455 "gramatica.y"
 { yyval = new ParserVal((Object) "=="); }
 break;
 case 64:
-//#line 452 "../gramatica.y"
+//#line 456 "gramatica.y"
 { yyval = new ParserVal((Object) "!="); }
 break;
 case 65:
-//#line 453 "../gramatica.y"
+//#line 457 "gramatica.y"
 { yyval = new ParserVal((Object) ">="); }
 break;
 case 66:
-//#line 454 "../gramatica.y"
+//#line 458 "gramatica.y"
 { yyval = new ParserVal((Object) "<="); }
 break;
 case 67:
-//#line 455 "../gramatica.y"
+//#line 459 "gramatica.y"
 { yyval = new ParserVal((Object) ">"); }
 break;
 case 68:
-//#line 456 "../gramatica.y"
+//#line 460 "gramatica.y"
 { yyval = new ParserVal((Object) "<"); }
 break;
 case 69:
-//#line 461 "../gramatica.y"
+//#line 465 "gramatica.y"
 { yyval = new ParserVal(gen.verificarYConvertirTipos("+", (NodoArbol) val_peek(2).obj, (NodoArbol) val_peek(0).obj, lexico.getNroLinea())); }
 break;
 case 70:
-//#line 463 "../gramatica.y"
+//#line 467 "gramatica.y"
 { yyval = new ParserVal(gen.verificarYConvertirTipos("-", (NodoArbol) val_peek(2).obj, (NodoArbol) val_peek(0).obj, lexico.getNroLinea())); }
 break;
 case 71:
-//#line 465 "../gramatica.y"
+//#line 469 "gramatica.y"
 { yyval = new ParserVal(gen.verificarYConvertirTipos("*", (NodoArbol) val_peek(2).obj, (NodoArbol) val_peek(0).obj, lexico.getNroLinea())); }
 break;
 case 72:
-//#line 467 "../gramatica.y"
+//#line 471 "gramatica.y"
 { yyval = new ParserVal(gen.verificarYConvertirTipos("/", (NodoArbol) val_peek(2).obj, (NodoArbol) val_peek(0).obj, lexico.getNroLinea())); }
 break;
 case 73:
-//#line 469 "../gramatica.y"
+//#line 473 "gramatica.y"
 {
         NodoArbol expr = (NodoArbol) val_peek(0).obj;
         if (expr != null && expr.getRegTS() != null) {
@@ -1463,11 +1480,11 @@ case 73:
       }
 break;
 case 74:
-//#line 481 "../gramatica.y"
+//#line 485 "gramatica.y"
 { yyval = val_peek(1); }
 break;
 case 75:
-//#line 483 "../gramatica.y"
+//#line 487 "gramatica.y"
 {
         RegistroTS reg = buscarVariableVisibilidad(((RegistroTS) val_peek(2).obj).getLexema());
         if (reg == null) {
@@ -1484,7 +1501,7 @@ case 75:
       }
 break;
 case 76:
-//#line 498 "../gramatica.y"
+//#line 502 "gramatica.y"
 {
         RegistroTS regFunc = buscarFuncionVisible(((RegistroTS) val_peek(4).obj).getLexema());
         if (regFunc == null) {
@@ -1498,7 +1515,7 @@ case 76:
       }
 break;
 case 77:
-//#line 510 "../gramatica.y"
+//#line 514 "gramatica.y"
 {
         String nombreObjeto = ((RegistroTS) val_peek(6).obj).getLexema();
         String nombreMetodo = ((RegistroTS) val_peek(4).obj).getLexema();
@@ -1527,7 +1544,7 @@ case 77:
       }
 break;
 case 78:
-//#line 537 "../gramatica.y"
+//#line 541 "gramatica.y"
 {
         String nombreObjeto = ((RegistroTS) val_peek(3).obj).getLexema();
         RegistroTS regObjeto = buscarVariableVisibilidad(nombreObjeto);
@@ -1548,7 +1565,7 @@ case 78:
       }
 break;
 case 79:
-//#line 556 "../gramatica.y"
+//#line 560 "gramatica.y"
 {
         String lexemaVar = ((RegistroTS) val_peek(0).obj).getLexema();
         RegistroTS reg = buscarVariableVisibilidad(lexemaVar);
@@ -1567,11 +1584,11 @@ case 79:
       }
 break;
 case 80:
-//#line 573 "../gramatica.y"
+//#line 577 "gramatica.y"
 { yyval = val_peek(0); }
 break;
 case 81:
-//#line 578 "../gramatica.y"
+//#line 582 "gramatica.y"
 {
         RegistroTS reg = buscarVariableVisibilidad(((RegistroTS) val_peek(0).obj).getLexema());
         if (reg == null) {
@@ -1583,58 +1600,58 @@ case 81:
       }
 break;
 case 82:
-//#line 588 "../gramatica.y"
+//#line 592 "gramatica.y"
 { yyval = val_peek(0); }
 break;
 case 83:
-//#line 590 "../gramatica.y"
+//#line 594 "gramatica.y"
 {
         aplicarSignoNegativo(val_peek(0));
         yyval = val_peek(0);
       }
 break;
 case 84:
-//#line 598 "../gramatica.y"
+//#line 602 "gramatica.y"
 { yyval = val_peek(0); }
 break;
 case 85:
-//#line 600 "../gramatica.y"
+//#line 604 "gramatica.y"
 {
         NodoArbol nodo = gen.crearNodoAST(",", (NodoArbol) val_peek(2).obj, (NodoArbol) val_peek(0).obj);
         yyval = new ParserVal(nodo);
       }
 break;
 case 86:
-//#line 608 "../gramatica.y"
+//#line 612 "gramatica.y"
 { yyval = val_peek(1); }
 break;
 case 87:
-//#line 610 "../gramatica.y"
+//#line 614 "gramatica.y"
 { yyval = new ParserVal((Object) null); }
 break;
 case 88:
-//#line 615 "../gramatica.y"
+//#line 619 "gramatica.y"
 { yyval = val_peek(0); }
 break;
 case 89:
-//#line 617 "../gramatica.y"
+//#line 621 "gramatica.y"
 {
         NodoArbol nodo = gen.crearNodoAST(",", (NodoArbol) val_peek(2).obj, (NodoArbol) val_peek(0).obj);
         yyval = new ParserVal(nodo);
       }
 break;
 case 90:
-//#line 625 "../gramatica.y"
+//#line 629 "gramatica.y"
 { yyval = new ParserVal(gen.crearHojaAST((RegistroTS) val_peek(0).obj)); }
 break;
 case 91:
-//#line 627 "../gramatica.y"
+//#line 631 "gramatica.y"
 {
         validarConstanteDoublef(val_peek(0));
         yyval = new ParserVal(gen.crearHojaAST((RegistroTS) val_peek(0).obj));
       }
 break;
-//#line 1561 "Parser.java"
+//#line 1578 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####

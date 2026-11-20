@@ -1,0 +1,7 @@
+programa_div0_entero;
+ushortint x, y, z;
+begin
+    x := 10$us;
+    y := 0$us;
+    z := x / y;
+end;

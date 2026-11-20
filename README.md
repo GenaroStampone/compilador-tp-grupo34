@@ -1,86 +1,99 @@
-# Compilador Grupo 34 - TP2
+# Compilador Grupo 34 - Reentrega unificada TP1 a TP4
 
-## Requisitos del Sistema
-- **Java JDK** 8 o superior instalado.
-- Entorno de comandos **Bash** (Linux/macOS o Git Bash en Windows).
+Compilador del lenguaje definido para el cursado, con análisis léxico, sintáctico, semántico,
+representación intermedia en forma de AST y generación de WebAssembly textual (`.wat`).
 
-## Permisos de Ejecución
-Antes de ejecutar por primera vez, otorgar permisos de ejecución a los scripts:
+## Requisitos
+
+- JDK 8 o superior.
+- Bash.
+- Node.js 18 o superior para ejecutar los módulos WebAssembly generados.
+- `wat2wasm` de WABT para validar/ensamblar `.wat`.
+
+## Compilación del compilador
+
 ```bash
-chmod +x compilador ejecutar_pruebas.sh
+javac -d bin src/*.java
 ```
 
-## Modo de Uso
+## Uso
 
-### 1. Ejecutar un Caso de Prueba Individual
-Para probar un archivo fuente específico y ver el resultado completo en consola (reglas reconocidas, warnings y Tabla de Símbolos):
 ```bash
 ./compilador casos_de_prueba/01_prueba_correcto.txt
 ```
+
+El compilador imprime, en este orden:
+
+1. Tira de tokens.
+2. Estructuras sintácticas detectadas.
+3. Errores léxicos, sintácticos y semánticos agrupados, con número de línea.
+4. Representación intermedia (AST).
+5. Tabla de símbolos.
+6. Fuente numerado con su ruta absoluta.
+7. Datos de generación de `salida.wat`.
+
+Si no hay errores, se genera `salida.wat` en el directorio actual. Si hay errores, no se genera.
+
+## Ejecutar el WebAssembly generado
+
 ```bash
-./compilador casos_de_prueba/02_prueba_warnings_id.txt
-```
-```bash
-./compilador casos_de_prueba/03_prueba_errores_constantes.txt
-```
-```bash
-./compilador casos_de_prueba/04_prueba_errores_simbolos.txt
-```
-```bash
-./compilador casos_de_prueba/05_prueba_cadenas_y_comentarios.txt
-```
-```bash
-./compilador casos_de_prueba/06_prueba_errores_sintacticos_base.txt
-```
-```bash
-./compilador casos_de_prueba/07_programa_integral_valido.txt
-```
-```bash
-./compilador casos_de_prueba/08_programa_complejo_errores.txt
-```
-```bash
-./compilador casos_de_prueba/09_prueba_declaraciones_y_poo.txt
+wat2wasm salida.wat -o salida.wasm
+node ejecutar.js salida.wasm
 ```
 
-### 3. Ejecutar la Suite de Pruebas Automatizada
-Para correr la tanda completa de pruebas (Casos 01 al 09) y verificar los resultados de éxito/fallo:
+`ejecutar.js` provee las funciones de importación `log`, `logf`, `logs` y `abort`, y muestra
+los errores de ejecución con su código.
+
+## Pruebas
+
+Suite histórica de casos de compilación:
+
 ```bash
 ./ejecutar_pruebas.sh
 ```
 
-Aquí tenés el bloque en Markdown perfectamente formateado e identado dentro de un bloque de código listo para copiar y pegar directamente en tu **`README.md`**:
+Suite completa de la reentrega, que incluye compilación, validación con `wat2wasm`, ejecución
+y chequeos en tiempo de ejecución:
 
-## Estructura de Directorios
+```bash
+./probar_tp4.sh
+```
+
+## Estructura
 
 ```text
 compilador-tp-grupo34/
-├── casos_de_prueba/           # Archivos .txt con los casos de prueba unitarios e integrales
-│   ├── 01_prueba_correcto.txt
-│   ├── 02_prueba_warnings_id.txt
-│   ├── 03_prueba_errores_constantes.txt
-│   ├── 04_prueba_errores_simbolos.txt
-│   ├── 05_prueba_cadenas_y_comentarios.txt
-│   ├── 06_prueba_errores_sintacticos_base.txt
-│   ├── 07_programa_integral_valido.txt
-│   ├── 08_programa_complejo_errores.txt
-│   └── 09_prueba_declaraciones_y_poo.txt
-├── src/                       # Código fuente Java del Analizador Léxico, Parser (BYACC), Tabla de Símbolos, etc.
-│   ├── AccionSemantica.java
+├── casos_de_prueba/           # Casos TP1-TP4
+├── pruebas/                   # Casos de ejecución y errores runtime
+├── src/                       # Fuentes Java del compilador
 │   ├── AnalizadorLexico.java
 │   ├── ControlAmbitos.java
 │   ├── GeneradorCodigoIntermedio.java
+│   ├── GeneradorWebAssembly.java
 │   ├── Main.java
 │   ├── NodoArbol.java
 │   ├── Parser.java
 │   ├── ParserVal.java
 │   ├── RegistroTS.java
 │   ├── TablaDeSimbolos.java
-│   ├── Token.java
-│   └── ValidadorDeclaraciones.java
-├── compilador                 # Script ejecutable principal
-├── ejecutar_pruebas.sh        # Script ejecutable de pruebas automatizadas
-├── gramatica.y                # Especificación gramatical del parser en YACC
-├── README.md                  # Requisitos del sistema, permisos de ejecución y modo de uso
-└── y.output                   # Informe de estados y verificación de 0 conflictos Shift/Reduce
+│   ├── InfoFuncion.java
+│   ├── ParametroFormal.java
+│   └── Token.java
+├── compilador                 # Wrapper de ejecución
+├── ejecutar.js                # Host para ejecutar .wasm
+├── ejecutar_pruebas.sh        # Suite de compilación
+├── probar_tp4.sh              # Suite completa TP4
+├── gramatica.y                # Gramática Yacc
+├── y.output                   # Informe de conflictos
+├── salida.wat                 # Código WebAssembly generado
+└── INFORME_REENTREGA_TP4.md   # Informe de la reentrega
 ```
 
+## Regenerar el parser
+
+```bash
+byaccj -J -v -b Parser gramatica.y
+mv -f Parser.java src/Parser.java
+cp Parser.output y.output
+javac -d bin src/*.java
+```

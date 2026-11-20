@@ -1,0 +1,7 @@
+programa_overflow_suma_flotante;
+doublef x, y, z;
+begin
+    x := 1.7976931348623155d308;
+    y := 1.7976931348623155d308;
+    z := x + y;
+end;

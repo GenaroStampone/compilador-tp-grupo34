@@ -1,0 +1,10 @@
+programa_runtime_ok;
+ushortint x;
+doublef y;
+begin
+    x := 5$us;
+    y := 2.5;
+    pout({Inicio});
+    pout(x + 1$us);
+    pout(y * 2.0);
+end;

@@ -115,6 +115,19 @@ public class GeneradorCodigoIntermedio {
         return obtenerRegistroConstante(nodo) != null;
     }
 
+    private RegistroTS obtenerConstanteNumerica(NodoArbol nodo) {
+        if (nodo == null) return null;
+        RegistroTS reg = nodo.getRegTS();
+        if (reg != null && (reg.getIdToken() == Parser.CTE_USHORT
+                || reg.getIdToken() == Parser.CTE_DOUBLEF)) {
+            return reg;
+        }
+        if ("UMINUS".equals(nodo.getEtiqueta())) {
+            return obtenerConstanteNumerica(nodo.getIzq());
+        }
+        return null;
+    }
+
     public void registrarEnumeracion(RegistroTS regTipo, NodoArbol subarbolValores) {
         if (regTipo == null) return;
         List<Double> valores = new ArrayList<>();
@@ -214,7 +227,7 @@ public class GeneradorCodigoIntermedio {
                         + "' es de tipo base " + baseEnum + " y no admite un valor " + tDer + ".");
             }
 
-            RegistroTS cte = obtenerRegistroConstante(der);
+            RegistroTS cte = obtenerConstanteNumerica(der);
             if (cte != null && (cte.getIdToken() == Parser.CTE_USHORT || cte.getIdToken() == Parser.CTE_DOUBLEF)) {
                 double valor = cte.getValorNum();
                 if ("UMINUS".equals(der.getEtiqueta())) {
@@ -301,7 +314,7 @@ public class GeneradorCodigoIntermedio {
         NodoArbol nodoAcceso = crearNodoAST("[]", crearHojaAST(regObjeto), nodoIndice);
         nodoAcceso.setInfo(tipoClase);
 
-        RegistroTS cteIndice = obtenerRegistroConstante(nodoIndice);
+        RegistroTS cteIndice = obtenerConstanteNumerica(nodoIndice);
         if (cteIndice != null) {
             int pos = (int) cteIndice.getValorNum();
             if ("UMINUS".equals(nodoIndice.getEtiqueta())) pos = -pos;
@@ -339,7 +352,7 @@ public class GeneradorCodigoIntermedio {
             return null;
         }
         validarIndicePosicional(nodoIndice, nroLinea);
-        RegistroTS cteIndice = obtenerRegistroConstante(nodoIndice);
+        RegistroTS cteIndice = obtenerConstanteNumerica(nodoIndice);
         if (cteIndice != null) {
             int pos = (int) cteIndice.getValorNum();
             if ("UMINUS".equals(nodoIndice.getEtiqueta())) pos = -pos;
@@ -465,7 +478,7 @@ public class GeneradorCodigoIntermedio {
             desarmarOrden(nodo.getIzq(), lista);
             desarmarOrden(nodo.getDer(), lista);
         } else {
-            RegistroTS reg = obtenerRegistroConstante(nodo);
+            RegistroTS reg = obtenerConstanteNumerica(nodo);
             if (reg != null) {
                 lista.add((int) reg.getValorNum());
             }

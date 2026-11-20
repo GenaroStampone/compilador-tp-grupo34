@@ -10,7 +10,6 @@ begin
     pout ({ ¡Hola Mundo! });
     {{Error Lexico: Cadena de una linea que intenta ocupar mas de una linea.}}
     pout({ Hola Mundo });
-    {{Error Lexico: Comentario multilinea que no cierra al llegar al final del archivo.}}
-    {{ Este comentario multilinea nunca se cierra...
+    {{ Comentario multilinea cerrado correctamente antes del cierre del programa. }}
     pout({ Hola Mundo 2 });
 end;

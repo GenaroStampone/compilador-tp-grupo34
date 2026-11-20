@@ -41,7 +41,14 @@ public class Main {
         System.out.println("===================================================================================\n");
 
         TablaDeSimbolos tablaDeSimbolos = new TablaDeSimbolos();
-        AnalizadorLexico lexico = new AnalizadorLexico(rutaArchivo, tablaDeSimbolos);
+        AnalizadorLexico lexico;
+        try {
+            lexico = new AnalizadorLexico(rutaArchivo, tablaDeSimbolos);
+        } catch (IOException e) {
+            System.err.println("ERROR: No se pudo abrir el archivo fuente: " + e.getMessage());
+            System.exit(1);
+            return;
+        }
         Parser parser = new Parser(lexico, tablaDeSimbolos);
         parser.setModoSilencioso(true);
 
