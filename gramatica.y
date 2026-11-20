@@ -180,26 +180,28 @@ encabezado_funcion
     ; 
 
 cuerpo_funcion 
-    :   bloque_declarativo BEGIN lista_sentencias retorno_opcional END ';' { 
-        NodoArbol cuerpoFunc = (NodoArbol) $6.obj; 
-        NodoArbol retFunc = (NodoArbol) $7.obj;
-
+    :   bloque_declarativo BEGIN lista_sentencias retorno_opcional END ';' 
+    { 
+        NodoArbol cuerpoFunc = (NodoArbol) $3.obj; 
+        NodoArbol retFunc = (NodoArbol) $4.obj;
+        String ambito = controlAmbitos.getAmbitoActual();
+        int idx = ambito.lastIndexOf(':');
+        String claveFunc = ambito.substring(idx + 1) + ":" + ambito.substring(0, idx);
+        RegistroTS regFunc = ts.buscar(claveFunc);
+        String tipoFunc = (regFunc != null) ? regFunc.getTipoToken() : null;
         if (retFunc == null) {
-            String ambito = controlAmbitos.getAmbitoActual(); // Ej: "main:miFuncion"
-            int idx = ambito.lastIndexOf(':');
-            String claveFunc = ambito.substring(idx + 1) + ":" + ambito.substring(0, idx);
-
-            RegistroTS regFunc = ts.buscar(claveFunc);
-            String tipoFunc = (regFunc != null) ? regFunc.getTipoToken() : null;
-
             RegistroTS regDefecto = ts.obtenerOCrearConstantePorDefecto(tipoFunc);
             NodoArbol hojaDefecto = GeneradorCodigoIntermedio.crearHojaAST(regDefecto);
             retFunc = GeneradorCodigoIntermedio.crearNodoAST("RETURN", hojaDefecto, null);
+        } else {
+          String tipoRetorno = retFunc.getTipo();
+          if (tipoFunc != null && tipoRetorno != null && !tipoFunc.equalsIgnoreCase(tipoRetorno)) { /
+            / Si los tipos difieren, aplicar conversión implícita o emitir advertencia/error semántico 
+            retFunc = GeneradorCodigoIntermedio.verificarYConvertirTipos("RETURN", GeneradorCodigoIntermedio.crearHojaAST(regFunc), retFunc, lexico.getNroLinea()); 
+          }
         }
-
         NodoArbol cuerpoCompleto = GeneradorCodigoIntermedio.crearNodoAST(";", cuerpoFunc, retFunc);
         $$ = new ParserVal(cuerpoCompleto);
-
         controlAmbitos.cerrarAmbito();
       }
     ;
@@ -283,7 +285,7 @@ herencia_opcional
       }
     ;
 
-cuerpo_clase_deficion
+cuerpo_clase_definicion
     : cuerpo_clase_definicion miembro_clase
     | /* vacio */
     ;

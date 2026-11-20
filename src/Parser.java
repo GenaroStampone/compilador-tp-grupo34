@@ -188,130 +188,136 @@ public final static short COMP_MENOR_IGUAL=284;
 public final static short UMINUS=285;
 public final static short YYERRCODE=256;
 final static short yylhs[] = {                           -1,
-    0,    0,    1,    1,    3,    3,    3,    3,    3,    4,
-    4,    4,    5,    5,    6,    9,    9,   10,   10,    7,
-   12,   12,   13,   13,   14,   14,   14,   14,   15,    8,
-   16,   16,   17,   17,   19,   19,   19,   22,   22,    2,
-    2,   23,   23,   23,   20,   20,   24,   25,   27,   27,
-   21,   21,   26,   28,   28,   28,   28,   28,   28,   18,
-   18,   18,   18,   18,   18,   18,   18,   18,   18,   29,
-   29,   30,   30,   30,   11,   11,
+    0,    0,    1,    1,    3,    3,    3,    3,    3,    8,
+    8,    8,    9,    9,   10,   10,   11,   11,    4,    5,
+    7,   13,   14,   16,   16,    6,   18,   20,   19,   19,
+   21,   21,   22,   22,   22,   22,   23,   23,   24,   15,
+   15,   16,   16,   25,   25,   27,   27,   27,    2,    2,
+   26,   26,   26,   28,   28,   30,   31,   33,   33,   29,
+   29,   32,   34,   34,   34,   34,   34,   34,   17,   17,
+   17,   17,   17,   17,   17,   17,   17,   17,   17,   35,
+   35,   36,   36,   12,   12,
 };
 final static short yylen[] = {                            2,
-    7,    6,    2,    0,    3,    1,    1,    1,    2,    1,
-    1,    1,    1,    3,    7,    1,    3,    1,    2,    7,
-    2,    0,    2,    0,    2,    1,    3,    3,    1,   12,
-    2,    4,    5,    0,    1,    2,    2,    1,    4,    2,
-    0,    1,    1,    1,    4,    7,    6,    8,    2,    0,
-    4,    4,    3,    1,    1,    1,    1,    1,    1,    3,
-    3,    3,    3,    2,    3,    2,    4,    1,    1,    6,
-    3,    1,    3,    0,    1,    1,
+    7,    6,    2,    0,    1,    1,    1,    1,    2,    1,
+    1,    1,    1,    3,    1,    3,    1,    2,    3,    7,
+    2,    6,    6,    5,    0,    3,    2,    4,    2,    0,
+    2,    0,    2,    1,    1,    3,    1,    0,    3,    2,
+    4,    5,    0,    1,    4,    1,    2,    2,    2,    0,
+    1,    1,    1,    4,    7,    6,    8,    2,    0,    4,
+    4,    3,    1,    1,    1,    1,    1,    1,    3,    3,
+    3,    3,    2,    3,    6,    2,    4,    1,    1,    6,
+    3,    1,    3,    1,    1,
 };
 final static short yydefred[] = {                         0,
-    0,    0,    4,    0,    0,    0,   12,   41,    0,    0,
-   10,   11,    3,    0,    6,    7,    8,   41,    9,    0,
-    0,    0,   13,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,   42,   35,    0,   40,   43,   44,    0,    0,
-    0,    0,    5,    0,    0,   37,    0,    0,    0,    2,
-    0,    0,   36,    0,    0,   24,    0,   14,    1,    0,
-   75,   76,    0,   69,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,   16,   18,    0,    0,    0,    0,    0,
-    0,   66,   64,    0,    0,    0,    0,   45,    0,   54,
-   55,   56,   57,   58,   59,    0,    0,   51,   52,    0,
-   19,    0,    0,    0,   29,    0,    0,   26,   23,    0,
-   31,    0,    4,    0,    0,    0,    0,    0,    0,   62,
-   63,    0,    0,   41,    0,   38,    0,   15,   17,   20,
-    0,    0,   25,    0,    0,   67,    0,    0,    0,    0,
-    0,    0,   47,   27,   28,   32,   41,    0,    0,   46,
-    0,   49,    0,    0,    0,   39,   48,    0,    0,   70,
-    0,    0,    0,   30,    0,   33,
+    0,    0,    4,    0,    0,    0,   12,   50,    0,    0,
+   10,   11,    3,    5,    6,    7,    8,    0,    4,    0,
+   50,    9,    0,    0,   27,   13,    0,    0,    0,   21,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,   49,
+   51,   46,    0,   52,   53,    0,    0,   19,    0,   50,
+    0,   32,   26,    0,   48,    0,    0,    0,    2,    0,
+    0,   47,    0,    0,   14,    0,    0,    1,    0,   84,
+   85,    0,   79,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,   15,   17,    0,    0,    0,    0,    0,   37,
+    0,    0,   34,   31,    0,   35,    0,    0,    0,    0,
+   76,   73,    0,    0,    0,    0,   54,    0,   63,   64,
+   65,   66,   67,   68,    0,    0,   60,   61,    0,   18,
+    0,    0,   40,    0,   22,    0,    0,   28,    0,    0,
+   33,    0,    0,    0,    0,    0,    0,    0,   71,   72,
+    0,    0,   50,    0,   44,    0,   20,   16,    0,    0,
+   23,   39,   36,   77,    0,    0,    0,    0,    0,    0,
+    0,   56,   41,    0,    0,    0,    0,   55,    0,   58,
+    0,   24,    0,   75,   45,   57,   80,
 };
 final static short yydgoto[] = {                          2,
-    4,   20,   13,   14,   25,   15,   16,   17,   73,   74,
-   64,   41,   76,  109,  110,   78,  159,   67,   33,   34,
-   35,  125,   36,   37,   38,   68,  142,   96,   82,  117,
+    4,   23,   13,   14,   15,   16,   17,   18,   28,   82,
+   83,   73,   19,   30,   86,   88,   76,   20,   32,   53,
+   67,   94,   95,   96,  144,   40,   41,   42,   43,   44,
+   45,   77,  161,  115,  101,  135,
 };
-final static short yysindex[] = {                      -204,
-    6,    0,    0, -181, -179,   34,    0,    0, -177, -175,
-    0,    0,    0, -195,    0,    0,    0,    0,    0,  -53,
-   40, -159,    0, -143,   56,   15,   64, -148,   99,   81,
-  106,  111,    0,    0,   93,    0,    0,    0, -128, -100,
- -106,  123,    0,  -93,  121,    0,  -33,  -33,  -33,    0,
-  -40,  -33,    0,  -30,  126,    0, -141,    0,    0,   -6,
-    0,    0,  -33,    0,  143,   14,    7,  146,  148,  189,
-  153, -153,  -28,    0,    0, -145,  -57,  135,  -33,  -33,
-  -33,    0,    0,  -33,  -33,  -33,  -33,    0,  -73,    0,
-    0,    0,    0,    0,    0,  -33,   28,    0,    0,  -62,
-    0,  152,  -30,  156,    0, -100, -100,    0,    0, -102,
-    0, -141,    0,   21,  274,  274,  137,   42,   42,    0,
-    0,  -33,  274,    0,  -46,    0,   28,    0,    0,    0,
-  100,  103,    0,  -36, -135,    0,  -33,  -59,  150,   41,
-   28,  -26,    0,    0,    0,    0,    0,  274,  -30,    0,
-  164,    0,  168,  -84,   -8,    0,    0,  193,  -25,    0,
-  -33,  176,  268,    0,  185,    0,
+final static short yysindex[] = {                      -179,
+   38,    0,    0, -164, -139,   40,    0,    0, -156, -151,
+    0,    0,    0,    0,    0,    0,    0, -192,    0, -162,
+    0,    0,  -60,   65,    0,    0, -126,   52, -128,    0,
+ -124, -129,   15,   83, -154,  104,   87,  115,  117,    0,
+    0,    0,  103,    0,    0, -112,  137,    0,  -75,    0,
+  140,    0,    0,  130,    0,  -33,  -33,  -33,    0,  -40,
+  -33,    0,  -30, -169,    0,  -81, -186,    0,   -6,    0,
+    0,  -33,    0,  136,   14,    7,  150,  152,  167,  157,
+ -108,  -28,    0,    0,  -46,  123,  175,  -44,  163,    0,
+  -24, -124,    0,    0, -117,    0,  -33,  -33,  -33,  -17,
+    0,    0,  -33,  -33,  -33,  -33,    0,  -55,    0,    0,
+    0,    0,    0,    0,  -33,   28,    0,    0,  -31,    0,
+  168,  -30,    0, -169,    0,  -33,  176,    0,  185,   60,
+    0,   21,  267,  267,  127,  207,   11,   11,    0,    0,
+  -33,  267,    0,  -11,    0,   28,    0,    0,    3,  189,
+    0,    0,    0,    0,  -33,   -4, -124,  145,   41,   28,
+    1,    0,    0,  208,  267,  -30,  158,    0,  214,    0,
+  219,    0,   -8,    0,    0,    0,    0,
 };
 final static short yyrindex[] = {                         0,
- -108,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,  -17,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,   -4,    0,    0,    0,    0,  -41,
+ -103,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,   19,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-  155,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+   24,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,   34,    0,    0,  -41,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,  -27,  157,    0,  -21,  -14,    0,
-    0,    0,  210,    0,    1,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,  -34,    0,    0,
-    0,    0,    0,    0,    0,    0,    0,  166,    0,    0,
-    0,    0,    0,    2,    0,    0,    0,    0,    0,    0,
-    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
+    0,    0,  -27,  159,    0,    0,  -21,  -14,    0,    0,
+    0,  238,    0,   30,    0,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,  -34,    0,    0,    0,    0,
+    0,    0,    0,    0,  172,    0,    0,    0,    0,    0,
+    0,    0,    0,    0,    0,    0,    0,
 };
 final static short yygindex[] = {                         0,
-   37,   19,  -29,  -13,   11,    0,    0,    0,  124,  174,
-  -12,    0,    0,    0,    0,    0,    0,   23,    0,    0,
-    0,  -69,  -54,    0,    0,  226,    0,    0,    0,    0,
+   57,   22,  -20,    0,    0,    0,    0,  -22,    6,  134,
+  179,  -19,    0,    0,    0,    0,   17,    0,    0,    0,
+    0,    0,    0,    0,  -66,  -65,    0,    0,    0,    0,
+    0,  243,    0,    0,    0,    0,
 };
-final static int YYTABLESIZE=321;
+final static int YYTABLESIZE=314;
 static short yytable[];
 static { yytable();}
 static void yytable(){
-yytable = new short[]{                         68,
-   68,   68,   68,   68,   63,   68,   71,   71,   71,   71,
-   71,   63,   71,   65,   72,  103,   65,   68,   68,   60,
-   68,   60,   60,   60,   71,   71,   61,   71,   61,   61,
-   61,   65,   65,   81,   65,  103,   26,   60,   60,    5,
-   60,   75,  126,   77,   61,   61,  108,   61,   86,   84,
-   55,   85,    1,   87,   80,   86,   84,  143,   85,  101,
-   87,   23,   86,   84,    3,   85,   95,   87,   94,   65,
-   66,  152,  126,   70,    6,    7,    6,    7,   24,   21,
-  133,   22,    8,   86,   18,   83,  126,    9,   87,    9,
-   75,   10,   19,   10,   11,   12,   11,   12,  134,   44,
-   39,  114,  115,  116,   61,   62,  118,  119,  120,  121,
-    6,    7,   40,   42,   43,    7,  131,  132,  123,  104,
-    6,    7,   46,    9,  105,  106,  107,   10,  147,   47,
-   11,   12,   48,    9,   11,   12,   75,   10,   49,   50,
-   11,   12,  140,   44,  139,   51,   44,    4,    4,  135,
-   52,   53,   54,    6,    7,    4,   23,   56,  144,  148,
-    4,  145,   57,   58,    4,  154,    9,    4,    4,   44,
-   10,   27,   28,   11,   12,  113,   29,  138,  112,   59,
-  137,   31,   32,  163,   86,   84,   97,   85,   98,   87,
-  158,   86,   84,  100,   85,   74,   87,   72,   74,  111,
-   72,   88,   27,   28,  122,  127,   73,   29,  150,   73,
-  128,   30,   31,   32,  130,  141,   60,   61,   62,   69,
-  146,  149,  156,   60,   61,   62,  157,   61,   62,   99,
-   86,   84,  161,   85,  164,   87,  153,   68,   68,  162,
-   68,   68,   68,  166,   71,   71,   22,   71,   71,   71,
-   53,   65,   65,  102,   65,   65,   65,   60,   60,   21,
-   60,   60,   60,   50,   61,   61,   34,   61,   61,   61,
-   27,   28,  155,  160,   79,   29,  129,   71,    0,   45,
-   31,   32,    0,   27,   28,   90,   91,    0,   29,   92,
-   93,  124,    0,   31,   32,   89,   27,   28,    0,    0,
-    0,   29,  136,    0,    0,  151,   31,   32,  165,   86,
-   84,    0,   85,    0,   87,   86,   84,    0,   85,    0,
-   87,
+yytable = new short[]{                         78,
+   78,   78,   78,   78,   72,   78,   81,   81,   81,   81,
+   81,   72,   81,   74,   81,  122,   74,   78,   78,   69,
+   78,   69,   69,   69,   81,   81,   70,   81,   70,   70,
+   70,   74,   74,   99,   74,  122,   51,   69,   69,  100,
+   69,   85,   33,   84,   70,   70,   93,   70,  105,  103,
+  145,  104,  105,  106,   98,  105,  103,  106,  104,    5,
+  106,  120,  105,  103,   26,  104,  114,  106,  113,    6,
+    7,   66,   74,   75,  131,   29,   79,    1,   89,  162,
+  145,   27,    9,   90,   91,   92,   10,    7,  102,   11,
+   12,    6,    7,  170,  145,   49,    3,  130,   22,    8,
+   24,  149,   84,   49,    9,   25,   11,   12,   10,   31,
+   48,   11,   12,  132,  133,  134,    6,    7,  153,  137,
+  138,  139,  140,   56,   21,   46,   57,    6,    7,    9,
+   47,  142,   26,   10,   52,   50,   11,   12,    6,    7,
+    9,   55,  150,   58,   10,   59,   84,   11,   12,   70,
+   71,    9,    4,    4,   60,   10,   61,  158,   11,   12,
+    4,   62,  167,  125,  159,    4,  124,  156,   63,    4,
+  155,  165,    4,    4,   34,   35,   64,  105,  103,   36,
+  104,   65,  106,   49,   38,   39,  105,  103,   68,  104,
+  116,  106,  117,   87,  107,   34,   35,  119,  174,   82,
+   36,   49,   82,  168,   37,   38,   39,  118,  105,  103,
+  123,  104,   83,  106,  126,   83,   69,   70,   71,   78,
+  127,  128,  141,   69,   70,   71,  147,   70,   71,  164,
+  105,  103,  129,  104,  151,  106,  146,   78,   78,  136,
+   78,   78,   78,  152,   81,   81,  157,   81,   81,   81,
+  160,   74,   74,  121,   74,   74,   74,   69,   69,  163,
+   69,   69,   69,  171,   70,   70,  172,   70,   70,   70,
+   34,   35,  175,  177,   97,   36,  166,  176,   62,   54,
+   38,   39,   30,   34,   35,  109,  110,   29,   36,  111,
+  112,  143,   59,   38,   39,  108,   34,   35,   25,  173,
+  148,   36,  154,   80,    0,  169,   38,   39,  105,  103,
+    0,  104,    0,  106,
 };
 }
 static short yycheck[];
@@ -321,36 +327,35 @@ yycheck = new short[] {                         41,
    42,   43,   44,   45,   45,   47,   41,   42,   43,   44,
    45,   45,   47,   41,   45,   44,   44,   59,   60,   41,
    62,   43,   44,   45,   59,   60,   41,   62,   43,   44,
-   45,   59,   60,   40,   62,   44,   18,   59,   60,    3,
-   62,   54,   97,   57,   59,   60,   76,   62,   42,   43,
-   40,   45,  257,   47,   61,   42,   43,  127,   45,   72,
-   47,  257,   42,   43,   59,   45,   60,   47,   62,   47,
-   48,  141,  127,   51,  256,  257,  256,  257,  274,  257,
-  110,  257,  264,   42,  264,   63,  141,  269,   47,  269,
-  103,  273,   59,  273,  276,  277,  276,  277,  112,   44,
-   61,   79,   80,   81,  258,  259,   84,   85,   86,   87,
-  256,  257,  272,  257,   59,  257,  106,  107,   96,  265,
-  256,  257,   59,  269,  270,  271,  272,  273,  264,  278,
-  276,  277,  281,  269,  276,  277,  149,  273,   40,   59,
-  276,  277,  124,   44,  122,   40,   44,  256,  257,  113,
-   40,   59,  281,  256,  257,  264,  257,  264,   59,  137,
-  269,   59,   40,  257,  273,  147,  269,  276,  277,   44,
-  273,  256,  257,  276,  277,   41,  261,   41,   44,   59,
-   44,  266,  267,  161,   42,   43,   41,   45,   41,   47,
-  275,   42,   43,   41,   45,   41,   47,   41,   44,  257,
-   44,   59,  256,  257,  278,  268,   41,  261,   59,   44,
-   59,  265,  266,  267,   59,  262,  257,  258,  259,  260,
-  257,  281,   59,  257,  258,  259,   59,  258,  259,   41,
-   42,   43,   40,   45,   59,   47,  263,  279,  280,  265,
-  282,  283,  284,   59,  279,  280,  264,  282,  283,  284,
-   41,  279,  280,  282,  282,  283,  284,  279,  280,  264,
-  282,  283,  284,  263,  279,  280,  265,  282,  283,  284,
-  256,  257,  149,  282,  281,  261,  103,   52,   -1,  265,
-  266,  267,   -1,  256,  257,  279,  280,   -1,  261,  283,
-  284,  264,   -1,  266,  267,  282,  256,  257,   -1,   -1,
-   -1,  261,  282,   -1,   -1,  265,  266,  267,   41,   42,
-   43,   -1,   45,   -1,   47,   42,   43,   -1,   45,   -1,
-   47,
+   45,   59,   60,   40,   62,   44,   31,   59,   60,   46,
+   62,   64,   21,   63,   59,   60,   67,   62,   42,   43,
+  116,   45,   42,   47,   61,   42,   43,   47,   45,    3,
+   47,   81,   42,   43,  257,   45,   60,   47,   62,  256,
+  257,   50,   56,   57,   95,   19,   60,  257,  265,  146,
+  146,  274,  269,  270,  271,  272,  273,  257,   72,  276,
+  277,  256,  257,  160,  160,   44,   59,   92,   59,  264,
+  257,  124,  122,   44,  269,  257,  276,  277,  273,  272,
+   59,  276,  277,   97,   98,   99,  256,  257,   59,  103,
+  104,  105,  106,  278,  264,   61,  281,  256,  257,  269,
+  257,  115,  257,  273,  264,  264,  276,  277,  256,  257,
+  269,   59,  126,   40,  273,   59,  166,  276,  277,  258,
+  259,  269,  256,  257,   40,  273,   40,  141,  276,  277,
+  264,   59,  157,   41,  143,  269,   44,   41,  281,  273,
+   44,  155,  276,  277,  256,  257,   40,   42,   43,  261,
+   45,  257,   47,   44,  266,  267,   42,   43,   59,   45,
+   41,   47,   41,  275,   59,  256,  257,   41,   41,   41,
+  261,   44,   44,   59,  265,  266,  267,   41,   42,   43,
+  257,   45,   41,   47,   40,   44,  257,  258,  259,  260,
+  265,   59,  278,  257,  258,  259,   59,  258,  259,   41,
+   42,   43,  257,   45,   59,   47,  268,  279,  280,  257,
+  282,  283,  284,   59,  279,  280,   40,  282,  283,  284,
+  262,  279,  280,  282,  282,  283,  284,  279,  280,  257,
+  282,  283,  284,  263,  279,  280,   59,  282,  283,  284,
+  256,  257,   59,  282,  281,  261,  281,   59,   41,  265,
+  266,  267,  264,  256,  257,  279,  280,  264,  261,  283,
+  284,  264,  263,  266,  267,  282,  256,  257,  265,  166,
+  122,  261,  282,   61,   -1,  265,  266,  267,   42,   43,
+   -1,   45,   -1,   47,
 };
 }
 final static short YYFINAL=2;
@@ -359,7 +364,7 @@ final static String yyname[] = {
 "end-of-file",null,null,null,null,null,null,null,null,null,null,null,null,null,
 null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
 null,null,null,null,null,null,null,null,null,null,"'('","')'","'*'","'+'","','",
-"'-'",null,"'/'",null,null,null,null,null,null,null,null,null,null,null,"';'",
+"'-'","'.'","'/'",null,null,null,null,null,null,null,null,null,null,null,"';'",
 "'<'","'='","'>'",null,null,null,null,null,null,null,null,null,null,null,null,
 null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
 null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,null,
@@ -384,7 +389,7 @@ final static String yyrule[] = {
 "programa : ID bloque_declarativo BEGIN lista_sentencias END ';'",
 "bloque_declarativo : bloque_declarativo declaracion",
 "bloque_declarativo :",
-"declaracion : type_specifier lista_variables ';'",
+"declaracion : declaracion_variables",
 "declaracion : declaracion_typedef",
 "declaracion : declaracion_clase",
 "declaracion : declaracion_funcion",
@@ -394,31 +399,40 @@ final static String yyrule[] = {
 "type_specifier : ID",
 "lista_variables : ID",
 "lista_variables : lista_variables ',' ID",
-"declaracion_typedef : TYPEDEF ID '=' CORCHETE_IZQ lista_valores CORCHETE_DER ';'",
 "lista_valores : valor_enum",
 "lista_valores : lista_valores ',' valor_enum",
 "valor_enum : constante",
 "valor_enum : '-' constante",
-"declaracion_clase : CLASS ID herencia_opcional BEGIN cuerpo_clase END ';'",
-"herencia_opcional : EXTENDS lista_variables",
-"herencia_opcional :",
-"cuerpo_clase : cuerpo_clase miembro_clase",
-"cuerpo_clase :",
-"miembro_clase : visibilidad declaracion",
-"miembro_clase : declaracion",
-"miembro_clase : FRIEND lista_variables ';'",
-"miembro_clase : EXTENDS lista_variables ';'",
-"visibilidad : PRIVATE",
-"declaracion_funcion : type_specifier FUNCTION ID '(' parametros ')' bloque_declarativo BEGIN lista_sentencias retorno_opcional END ';'",
-"parametros : type_specifier ID",
-"parametros : parametros ',' type_specifier ID",
+"declaracion_variables : type_specifier lista_variables ';'",
+"declaracion_typedef : TYPEDEF ID '=' CORCHETE_IZQ lista_valores CORCHETE_DER ';'",
+"declaracion_funcion : encabezado_funcion cuerpo_funcion",
+"encabezado_funcion : type_specifier FUNCTION ID '(' lista_parametros_formales ')'",
+"cuerpo_funcion : bloque_declarativo BEGIN lista_sentencias retorno_opcional END ';'",
 "retorno_opcional : RET '(' expresion ')' ';'",
 "retorno_opcional :",
+"declaracion_clase : encabezado_clase herencia_opcional cuerpo_clase",
+"encabezado_clase : CLASS ID",
+"cuerpo_clase : BEGIN cuerpo_clase_definicion END ';'",
+"herencia_opcional : EXTENDS lista_variables",
+"herencia_opcional :",
+"cuerpo_clase_definicion : cuerpo_clase_definicion miembro_clase",
+"cuerpo_clase_definicion :",
+"miembro_clase : visibilidad_opcional declaracion",
+"miembro_clase : declaracion",
+"miembro_clase : declaracion_friend",
+"miembro_clase : EXTENDS lista_variables ';'",
+"visibilidad_opcional : PRIVATE",
+"visibilidad_opcional :",
+"declaracion_friend : FRIEND ID ';'",
+"lista_parametros_formales : type_specifier ID",
+"lista_parametros_formales : lista_parametros_formales ',' type_specifier ID",
+"retorno_opcional : RET '(' expresion ')' ';'",
+"retorno_opcional :",
+"bloque_compuesto : sentencia",
+"bloque_compuesto : BEGIN lista_sentencias END ';'",
 "sentencia_simple : asignacion",
 "sentencia_simple : salida_pout ';'",
 "sentencia_simple : error ';'",
-"bloque_compuesto : sentencia",
-"bloque_compuesto : BEGIN lista_sentencias END ';'",
 "lista_sentencias : lista_sentencias sentencia",
 "lista_sentencias :",
 "sentencia : sentencia_simple",
@@ -445,6 +459,7 @@ final static String yyrule[] = {
 "expresion : expresion '/' expresion",
 "expresion : '-' expresion",
 "expresion : ID '=' expresion",
+"expresion : ID '.' ID '(' lista_variables ')'",
 "expresion : ID invocacion_ordenada",
 "expresion : ID CORCHETE_IZQ expresion CORCHETE_DER",
 "expresion : ID",
@@ -453,12 +468,11 @@ final static String yyrule[] = {
 "invocacion_ordenada : '(' lista_expresiones ')'",
 "lista_expresiones : expresion",
 "lista_expresiones : lista_expresiones ',' expresion",
-"lista_expresiones :",
 "constante : CTE_USHORT",
 "constante : CTE_DOUBLEF",
 };
 
-//#line 237 "gramatica.y"
+//#line 704 "gramatica.y"
 
 /* CÓDIGO JAVA DE SOPORTE */
 
@@ -565,7 +579,61 @@ private void validarConstanteDoublef(ParserVal v) {
         yyerror("Constante doublef mal formada: " + reg.getLexema());
     }
 }
-//#line 497 "Parser.java"
+
+// Registra una sola variable aplicando Name Mangling y control de redeclaración 
+
+public void declararVariable(String lexemaOriginal, String tipoDato) { 
+    // 1. Armar clave con Name Mangling según el ámbito actual (ej. "a:main" o "a:main:consultar_clave") 
+    String nameMangled = lexemaOriginal + ":" + controlAmbitos.getAmbitoActual(); 
+    // 2. Control de Redeclaración en el MISMO ámbito 
+    if (ts.existeSimbolo(claveMangled)) { 
+        yyerror("Error Semántico: Variable redeclarada '" + lexemaOriginal + "' en el ámbito " + controlAmbitos.getAmbitoActual()); 
+    } else { 
+        // 3. Registrar tipo y uso en la Tabla de Símbolos 
+        ts.registrarVariable(claveMangled, tipoDato, "variable"); 
+    } 
+} 
+
+// Procesa la lista completa de identificadores que provienen de la regla lista_ids 
+
+public void declararListaVariables(ArrayList<RegistroTS> listaVars, String tipoDato) {
+    if (listaVars == null || tipoDato == null) {
+        return;
+    }
+    for (RegistroTS reg : listaVars) {
+        declararVariable(reg.getLexema(), tipoDato);
+    }
+}
+
+public RegistroTS buscarVariableVisibilidad(String lexemaOriginal) { 
+    // Obtener la jerarquía de ámbitos visibles: ["x:main:aa:aaa", "x:main:aa", "x:main"] 
+    List<String> mangledCandidatas = controlAmbitos.getJerarquiaBusqueda(lexemaOriginal);
+
+    // Buscar en la Tabla de Símbolos de adentro hacia afuera
+    for (String clave : mangledCandidatas) {
+        RegistroTS simbolo = ts.buscar(clave)
+        if (ts.existeSimbolo(clave)) {
+            return simbolo; // Encontró la declaración más cercana y visible
+        }
+    }
+
+    // Si estamos dentro de una clase y no se encontró localmente, buscar en la Herencia 
+    String ambitoActual = controlAmbitos.getAmbitoActual(); // ej "main:ca:metodo1" 
+    String[] partesScope = ambitoActual.split(":");
+    if (partesScope.length >= 2){ 
+        String nombreClase = partesScope[1]; // Extrae "ca" 
+        RegistroTS simboloHeredado = ts.buscarEnHerencia(nombreClase, lexemaOriginal); 
+        if (simboloHeredado != null) { 
+            return simboloHeredado; // Encontró la variable en una clase padre (cb, cc, etc.) 
+        } 
+    }
+
+    // Si no existe en ningún ámbito visible, emitir error semántico
+    yyerror("Error Semántico en línea " + lexico.getNroLinea() + 
+            ": La variable '" + lexemaOriginal + "' no está declarada o no es visible en este ámbito");
+    return null;
+}
+//#line 565 "Parser.java"
 //###############################################################
 // method: yylexdebug : check lexer state
 //###############################################################
@@ -722,119 +790,701 @@ boolean doaction;
 case 1:
 //#line 29 "gramatica.y"
 {
-        registrarEstructura("Programa");
-        System.out.println("Programa estructurado correctamente.");
+        NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) val_peek(6).obj);
+        NodoArbol cuerpoProg = (NodoArbol) val_peek(2).obj;
+        NodoArbol nodoProg = GeneradorCodigoIntermedio.crearNodoAST("PROGRAMA", hojaID, cuerpoProg);
+        yyval = new ParserVal(nodoProg);
       }
 break;
 case 2:
-//#line 34 "gramatica.y"
+//#line 36 "gramatica.y"
 {
-        registrarEstructura("Programa");
-        System.out.println("Programa estructurado correctamente.");
+        NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) val_peek(5).obj);
+        NodoArbol cuerpoProg = (NodoArbol) val_peek(2).obj;
+        NodoArbol nodoProg = GeneradorCodigoIntermedio.crearNodoAST("PROGRAMA", hojaID, cuerpoProg);
+        yyval = new ParserVal(nodoProg);
       }
 break;
-case 5:
-//#line 47 "gramatica.y"
-{ registrarEstructura("Declaración de variables"); }
-break;
 case 9:
-//#line 51 "gramatica.y"
+//#line 54 "gramatica.y"
 { System.out.println("Error sintáctico en declaración: resincronizado en ';'"); }
 break;
-case 15:
-//#line 68 "gramatica.y"
+case 13:
+//#line 67 "gramatica.y"
 {
-       registrarEstructura("Enumeración (typedef)");
-       System.out.println("Línea " + lexico.getNroLinea() + ": Enumeración (typedef) declarada");
-     }
+            ArrayList<RegistroTS> lista = new ArrayList<>();
+            lista.add((RegistroTS) val_peek(0).obj);
+            yyval = new ParserVal(lista)
+        }
 break;
-case 19:
-//#line 81 "gramatica.y"
+case 14:
+//#line 73 "gramatica.y"
+{
+            ArrayList<RegistroTS> lista = (ArrayList<RegistroTS>) val_peek(2).obj
+            lista.add((RegistroTS) val_peek(0).obj);
+            yyval = val_peek(2);
+        }
+break;
+case 15:
+//#line 84 "gramatica.y"
+{
+            yyval = val_peek(0);
+        }
+break;
+case 16:
+//#line 88 "gramatica.y"
+{
+            NodoArbol izq = (NodoArbol) val_peek(2).obj;
+            NodoArbol der = (NodoArbol) val_peek(0).obj;
+            NodoArbol list = GeneradorCodigoIntermedio.crearNodoAST(",", izq, der);
+            yyval = new ParserVal(list);
+        }
+break;
+case 18:
+//#line 98 "gramatica.y"
 { aplicarSignoNegativo(val_peek(0)); yyval = val_peek(0); }
 break;
-case 20:
-//#line 87 "gramatica.y"
+case 19:
+//#line 103 "gramatica.y"
 {
-       registrarEstructura("Clase");
-       System.out.println("Línea " + lexico.getNroLinea() + ": Declaración de Clase reconocida");
+        String tipoDato = ((RegistroTS) val_peek(2).obj).getLexema();
+        ArrayList<RegistroTS> listaVars = (ArrayList<RegistroTS>) val_peek(1).obj;
+        String ambitoActual = controlAmbitos.getAmbitoActual();
+        if (listaVars != null) {
+          for (RegistroTS reg : listaVars) {
+            String lexemaOriginal = reg.getLexema();
+            /* Name Mangling según el ámbito actual (ej. "a:main" o "a:main:consultar_clave")*/
+            String nameMangled = lexemaOriginal + ":" + controlAmbitos.getAmbitoActual();
+            /* Control de Redeclaración en el MISMO ámbito*/
+            if (ts.buscar(nameMangled)) {
+                yyerror("Error Semántico: Variable redeclarada '" + lexemaOriginal + "' en el ámbito " + controlAmbitos.getAmbitoActual());
+            } else {
+                /* Registrar tipo y uso en la Tabla de Símbolos*/
+                RegistroTS regNuevo = ts.registrarVariable(nameMangled, tipoDato, "variable");
+            }
+          }
+        }
+      
+     }
+break;
+case 20:
+//#line 127 "gramatica.y"
+{
+        /* $1 = TYPEDEF, $2 = ID del nuevo tipo*/
+        RegistroTS reg = (RegistroTS) val_peek(5).obj;
+        String nombreTipo = reg.getLexema();
+
+        /* 1. Name Mangling del nombre del tipo (ej. "codigos_control:main")*/
+        String nameMangled = nombreTipo + ":" + controlAmbitos.getAmbitoActual();
+
+        /* 2. Control de Redeclaración en el MISMO ámbito*/
+        if (ts.existeSimbolo(nameMangled)) {
+            yyerror("Error Semántico: El tipo de dato '" + nombreTipo + "' ya fue definido en el ámbito " + controlAmbitos.getAmbitoActual());
+        } else {
+            /* 3. Registrar en la TS con Uso = "nombre_tipo" y asociar sus valores*/
+            ArrayList<RegistroTS> valores = (ArrayList<RegistroTS>) val_peek(2).obj;
+            ts.registrarTipoPersonalizado(nameMangled, "nombre_tipo", valores);
+        }
      }
 break;
 case 21:
-//#line 94 "gramatica.y"
-{ registrarEstructura("Herencia"); }
-break;
-case 27:
-//#line 107 "gramatica.y"
-{ registrarEstructura("Declaración friend"); }
-break;
-case 28:
-//#line 109 "gramatica.y"
-{ registrarEstructura("Herencia dentro de clase"); }
-break;
-case 30:
-//#line 118 "gramatica.y"
-{ registrarEstructura("Declaración de función"); }
-break;
-case 33:
-//#line 128 "gramatica.y"
-{ registrarEstructura("Sentencia RET"); }
-break;
-case 37:
-//#line 135 "gramatica.y"
-{ System.out.println("Error sintáctico en sentencia ejecutable: resincronizado en ';'"); }
-break;
-case 45:
-//#line 157 "gramatica.y"
-{ registrarEstructura("Asignación"); }
-break;
-case 46:
-//#line 159 "gramatica.y"
+//#line 148 "gramatica.y"
 {
-        System.out.println("Linea " + lexico.getNroLinea() + ": Asignacion a atributo opcional");
-        registrarEstructura("Asignación a atributo opcional");
+        controlAmbitos.cerrarAmbito(); 
+        /* Armamos el nodo del AST de la función conectando la hoja del encabezado con el subárbol del cuerpo */
+        NodoArbol hojaFunc = (NodoArbol) val_peek(1).obj; 
+        NodoArbol subArbolCuerpo = (NodoArbol) val_peek(0).obj; 
+        NodoArbol nodoFuncion = GeneradorCodigoIntermedio.crearNodoAST("FUNC", hojaFunc, subArbolCuerpo); 
+        yyval = new ParserVal(nodoFuncion); 
       }
 break;
+case 22:
+//#line 160 "gramatica.y"
+{ 
+        String lexemaFunc = ((RegistroTS) val_peek(3).obj).getLexema();
+        String ambitoPadre = controlAmbitos.getAmbitoActual();
+        String nameMangled = lexemaFunc + ":" + ambitoPadre;
+        List<String> tiposParametros = (List<String>) val_peek(1).obj;
+        if (ts.buscar(nameMangled) != null) { 
+          /* Error semántico: Redeclaración en el mismo ámbito */
+          yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": La función o símbolo '" + lexemaFunc + "' ya fue declarado/a en el ámbito '" + ambitoPadre + "'"); 
+          controlAmbitos.abrirAmbito(lexemaFunc); 
+          yyval = new ParserVal(GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) val_peek(3).obj)); 
+        } else {
+          /* Registrar la función en la Tabla de Símbolos (en el ámbito padre)*/
+          RegistroTS regID = (RegistroTS) val_peek(3).obj;
+          String tipoFunc = ((RegistroTS) val_peek(5).obj).getLexema();
+          RegistroTS regFuncion = ts.registrarFuncion(nameMangled, tipoFunc, "nombre_funcion", tiposParametros);
+          controlAmbitos.abrirAmbito(lexemaFunc);
+          NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST(regFuncion);
+          yyval = new ParserVal(hojaID);
+        }
+      }
+break;
+case 23:
+//#line 184 "gramatica.y"
+{ 
+        NodoArbol cuerpoFunc = (NodoArbol) val_peek(3).obj; 
+        NodoArbol retFunc = (NodoArbol) val_peek(2).obj;
+        String ambito = controlAmbitos.getAmbitoActual();
+        int idx = ambito.lastIndexOf(':');
+        String claveFunc = ambito.substring(idx + 1) + ":" + ambito.substring(0, idx);
+        RegistroTS regFunc = ts.buscar(claveFunc);
+        String tipoFunc = (regFunc != null) ? regFunc.getTipoToken() : null;
+        if (retFunc == null) {
+            RegistroTS regDefecto = ts.obtenerOCrearConstantePorDefecto(tipoFunc);
+            NodoArbol hojaDefecto = GeneradorCodigoIntermedio.crearHojaAST(regDefecto);
+            retFunc = GeneradorCodigoIntermedio.crearNodoAST("RETURN", hojaDefecto, null);
+        } else {
+          String tipoRetorno = retFunc.getTipo();
+          if (tipoFunc != null && tipoRetorno != null && !tipoFunc.equalsIgnoreCase(tipoRetorno)) { /
+            / Si los tipos difieren, aplicar conversión implícita o emitir advertencia/error semántico 
+            retFunc = GeneradorCodigoIntermedio.verificarYConvertirTipos("RETURN", GeneradorCodigoIntermedio.crearHojaAST(regFunc), retFunc, lexico.getNroLinea()); 
+          }
+        }
+        NodoArbol cuerpoCompleto = GeneradorCodigoIntermedio.crearNodoAST(";", cuerpoFunc, retFunc);
+        yyval = new ParserVal(cuerpoCompleto);
+        controlAmbitos.cerrarAmbito();
+      }
+break;
+case 24:
+//#line 211 "gramatica.y"
+{
+        NodoArbol expr = (NodoArbol) val_peek(2).obj;
+        NodoArbol nodoRet = GeneradorCodigoIntermedio.crearNodoAST("RET", expr, null);
+        yyval = new ParserVal(nodoRet);
+      }
+break;
+case 25:
+//#line 217 "gramatica.y"
+{
+        yyval = new ParserVal((Object) null);
+      }
+break;
+case 26:
+//#line 225 "gramatica.y"
+{
+       registrarEstructura("Clase");
+       System.out.println("Línea " + lexico.getNroLinea() + ": Declaración de Clase reconocida");
+       RegistroTS regClaseActual = (RegistroTS) val_peek(2).obj;
+       ArrayList<RegistroTS> listaPadres = (ArrayList<RegistroTS>) val_peek(1).obj;
+       if (regClaseActual != null && listaPadres != null){
+            for (RegistroTS regPadre : listaPadres) {
+                String nombrePadre = regPadre.getLexema();
+                /* 1. Validar que la clase padre exista en la Tabla de Símbolos*/
+                RegistroTS clasePadreEncontrada = buscarVariableVisibilidad(nombrePadre);
+                if (clasePadreEncontrada == null || !"nombre_clase".equals(clasePadreEncontrada.getUso())) {
+                    yyerror("Error Semántico: La clase base '" + nombrePadre + "' no está declarada o no es visible");
+                } else if (ts.esHerenciaCircular(clasePadreEncontrada.getLexema(), regClaseActual.getLexema())){
+                    yyerror("Error Semántico: Herencia circular detectada. La clase '" + nombrePadre + "' genera un ciclo de herencia con la clase actual");
+                } else {
+                    /* Cargar el nombre de la clase padre en el RegistroTS de la clase actual*/
+                    regClaseActual.agregarClaseHeredada(clasePadreEncontrada.getLexema());
+                }
+            }   
+       }
+       yyval = new ParserVal(null);
+     }
+break;
+case 27:
+//#line 251 "gramatica.y"
+{  
+        String nombreClase = ((RegistroTS) val_peek(0).obj).getLexema();
+        String ambitoPadre = controlAmbitos.getAmbitoActual();
+        String nameMangled = nombreClase + ":" + ambitoPadre;
+        RegistroTS regClase = null; 
+        if (ts.buscar(nameMangled) != null) { 
+            yyerror("Error Semántico: La clase '" + nombreClase + "' ya fue declarada en el ámbito " + controlAmbitos.getAmbitoActual());
+            controlAmbitos.abrirAmbito(nombreClase); 
+            regClase = (RegistroTS) val_peek(0).obj;
+        } else { 
+            regClase = ts.registrarClase(nameMangled, "nombre_clase");
+            controlAmbitos.abrirAmbito(nombreClase); 
+        }
+        yyval = new ParserVal(regClase);
+     }
+break;
+case 28:
+//#line 270 "gramatica.y"
+{ 
+        /* Al terminar el bloque de la clase, se cierra el ámbito */
+        controlAmbitos.cerrarAmbito(); 
+     }
+break;
+case 29:
+//#line 278 "gramatica.y"
+{ 
+        registrarEstructura("Herencia");
+        yyval = val_peek(0); /* Propagamos la lista de clases heredadas*/
+     }
+break;
+case 30:
+//#line 283 "gramatica.y"
+{
+        yyval = new ParserVal(new ArrayList<RegistroTS>());
+      }
+break;
+case 35:
+//#line 297 "gramatica.y"
+{ registrarEstructura("Declaración friend"); }
+break;
+case 36:
+//#line 299 "gramatica.y"
+{ registrarEstructura("Herencia dentro de clase"); }
+break;
+case 37:
+//#line 304 "gramatica.y"
+{ 
+      yyval = new ParserVal("private");
+     }
+break;
+case 38:
+//#line 308 "gramatica.y"
+{ 
+      yyval = new ParserVal("public"); 
+     }
+break;
+case 39:
+//#line 315 "gramatica.y"
+{ 
+      String nombreAmigo = ((RegistroTS) val_peek(1).obj).getLexema(); 
+      /* Obtenemos el registro de la clase actual que está abierta en el ámbito */
+      String nombreClaseActual = controlAmbitos.getAmbitoActual(); 
+      RegistroTS regClaseActual = ts.buscar(nombreClaseActual + ":main"); 
+      if (regClaseActual != null) { 
+        /* Registramos la clase o función como amiga de la clase actual */
+        regClaseActual.agregarAmigo(nombreAmigo); 
+        } 
+     }
+break;
+case 40:
+//#line 328 "gramatica.y"
+{
+      List<String> lista = new ArrayList<>();
+        lista.add((String) val_peek(1).obj); /* Agrega el tipo (ej: "USHORTINT")*/
+        yyval = new ParserVal(lista);
+     }
+break;
+case 41:
+//#line 334 "gramatica.y"
+{ 
+        List<String> lista = (List<String>) val_peek(3).obj;
+        lista.add((String) val_peek(1).obj);
+        yyval = new ParserVal(lista);
+     }
+break;
+case 42:
+//#line 343 "gramatica.y"
+{
+        NodoArbol expr = (NodoArbol) val_peek(2).obj;
+        NodoArbol nodoRet = GeneradorCodigoIntermedio.crearNodoAST("RET", expr, null);
+        yyval = new ParserVal(nodoRet);
+      }
+break;
+case 43:
+//#line 349 "gramatica.y"
+{
+        yyval = new ParserVal((Object) null);
+      }
+break;
+case 44:
+//#line 356 "gramatica.y"
+{ yyval = val_peek(0); }
+break;
+case 45:
+//#line 358 "gramatica.y"
+{ yyval = val_peek(2); }
+break;
+case 46:
+//#line 362 "gramatica.y"
+{ yyval = val_peek(0); }
+break;
 case 47:
-//#line 168 "gramatica.y"
-{ registrarEstructura("Sentencia WHILE-REPEAT"); }
+//#line 363 "gramatica.y"
+{ yyval = val_peek(1); }
 break;
 case 48:
-//#line 173 "gramatica.y"
-{ registrarEstructura("Sentencia IF"); }
+//#line 364 "gramatica.y"
+{ yyval = new ParserVal((Object) null); }
+break;
+case 49:
+//#line 369 "gramatica.y"
+{
+        NodoArbol izq = (NodoArbol) val_peek(1).obj;
+        NodoArbol der = (NodoArbol) val_peek(0).obj;
+        if (izq == null) {
+            yyval = val_peek(0);
+        } else if (der == null) {
+            yyval = val_peek(1);
+        } else {
+            NodoArbol seq = GeneradorCodigoIntermedio.crearNodoAST(";", izq, der);
+            yyval = new ParserVal(seq);
+        }
+      }
+break;
+case 50:
+//#line 382 "gramatica.y"
+{
+        yyval = new ParserVal((Object) null);
+      }
 break;
 case 51:
-//#line 183 "gramatica.y"
-{ registrarEstructura("Sentencia POUT"); }
+//#line 388 "gramatica.y"
+{ yyval = val_peek(0); }
 break;
 case 52:
-//#line 185 "gramatica.y"
-{ registrarEstructura("Sentencia POUT"); }
+//#line 389 "gramatica.y"
+{ yyval = val_peek(0); }
 break;
 case 53:
-//#line 190 "gramatica.y"
-{ registrarEstructura("Condición"); }
+//#line 390 "gramatica.y"
+{ yyval = val_peek(0); }
+break;
+case 54:
+//#line 396 "gramatica.y"
+{
+        registrarEstructura("Asignación");
+        String lexemaVar = ((RegistroTS) val_peek(3).obj).getLexema(); 
+        RegistroTS regVariable = buscarVariableVisibilidad(lexemaVar);
+        if (regVariable == null) { 
+          yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": La variable '" + lexemaVar + "' no está declarada o no es visible en este ámbito"); 
+          yyval = new ParserVal(null); 
+        } else if (!ts.esAsignable(regVariable)) { 
+          yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": Uso incorrecto de '" + lexemaVar + "'. No se puede asignar a un símbolo de uso '" + regVariable.getUso() + "'");
+          yyval = new ParserVal(null); 
+        } else {
+          NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST(regVariable);
+          NodoArbol expr = (NodoArbol) val_peek(1).obj;
+          NodoArbol nodoAsig = GeneradorCodigoIntermedio.verificarAsignacion(hojaID, expr, lexico.getNroLinea());
+          yyval = new ParserVal(nodoAsig);
+        }
+      }
+break;
+case 55:
+//#line 414 "gramatica.y"
+{
+        registrarEstructura("Asignación a atributo posicional"); 
+        /* Extraer el lexema del objeto ($1.obj) */
+        String nombreObjeto = ((RegistroTS) val_peek(6).obj).getLexema(); 
+        /* Resolver la visibilidad y ámbito del objeto (Local -> Clase -> Global) */
+        RegistroTS regObjeto = buscarVariableVisibilidad(nombreObjeto); 
+        if (regObjeto == null) { 
+          /* Error semántico: Objeto o variable no declarada */
+          yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": El objeto o variable '" + nombreObjeto + "' no está declarado o no es visible"); 
+          yyval = new ParserVal(null);
+        } else if (!"objeto".equalsIgnoreCase(regObjeto.getUso())) { 
+          yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": El identificador '" + nombreObjeto + "' es de uso '" + regObjeto.getUso() + "' y no admite acceso posicional a atributos"); 
+          yyval = new ParserVal(null);
+        } else {
+          NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST(regObjeto);
+          NodoArbol indice = (NodoArbol) val_peek(4).obj;
+          if (indice != null && indice.getTipo() != null && !indice.getTipo().toLowerCase().contains("int")) { 
+            yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": El índice para el acceso posicional debe ser de tipo entero, pero se recibió '" + indice.getTipo() + "'"); 
+          }
+          String tipoClase = regObjeto.getTipo(); /* Ej: "ca" */
+          RegistroTS regClaseDuenia = ts.buscar(tipoClase + ":main"); 
+          String tipoAtributo = ts.obtenerTipoAtributoPosicional(tipoClase, indice);
+          NodoArbol nodoAcceso = GeneradorCodigoIntermedio.crearNodoAST("[]", hojaID, indice);
+          nodoAcceso.setTipo(tipoAtributo);
+          RegistroTS regAtributo = ts.buscarAtributoPosicional(tipoClase, indice); 
+          if (regAtributo != null && !ts.tienePermisoAcceso(regClaseDuenia, regAtributo, controlAmbitos.getAmbitoActual())) { 
+            yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": Acceso Denegado. El atributo posicional en '" + tipoClase + "' es PRIVATE y el ámbito actual no es FRIEND"); 
+            yyval = new ParserVal(null); 
+          } else {
+            NodoArbol expr = (NodoArbol) val_peek(1).obj;
+            NodoArbol nodoAsig = GeneradorCodigoIntermedio.verificarEscrituraAtributo(regObjeto, indice, expr, lexico.getNroLinea());
+            yyval = new ParserVal(nodoAsig);
+          }
+        }
+      }
+break;
+case 56:
+//#line 454 "gramatica.y"
+{
+        NodoArbol condNode = GeneradorCodigoIntermedio.crearNodoAST("cond", (NodoArbol) val_peek(3).obj, null);
+        NodoArbol cuerpoNode = GeneradorCodigoIntermedio.crearNodoAST("cuerpo", (NodoArbol) val_peek(0).obj, null);
+        NodoArbol whileNode = GeneradorCodigoIntermedio.crearNodoAST("WHILE", condNode, cuerpoNode);
+        yyval = new ParserVal(whileNode);
+      }
+break;
+case 57:
+//#line 464 "gramatica.y"
+{
+        NodoArbol condNode = GeneradorCodigoIntermedio.crearNodoAST("cond", (NodoArbol) val_peek(5).obj, null);
+        NodoArbol bloqThen = (NodoArbol) val_peek(3).obj; /* Subárbol directo de sentencias*/
+        NodoArbol bloqElse = (NodoArbol) val_peek(2).obj; /* Subárbol de la rama else (o null)*/
+
+        NodoArbol cuerpoNode = GeneradorCodigoIntermedio.crearNodoAST("cuerpo", bloqThen, bloqElse);
+        NodoArbol ifNode = GeneradorCodigoIntermedio.crearNodoAST("IF", condNode, cuerpoNode);
+
+        yyval = new ParserVal(ifNode);
+      }
+break;
+case 58:
+//#line 478 "gramatica.y"
+{
+        NodoArbol elseBlock = (NodoArbol) val_peek(0).obj;
+        NodoArbol elseNode = GeneradorCodigoIntermedio.crearNodoAST("else", elseBlock, null);
+        yyval = new ParserVal(elseNode);
+      }
+break;
+case 59:
+//#line 484 "gramatica.y"
+{
+        yyval = new ParserVal((Object) null);
+      }
+break;
+case 60:
+//#line 491 "gramatica.y"
+{
+        NodoArbol hojaCadena = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) val_peek(1).obj);
+        NodoArbol nodoPout = GeneradorCodigoIntermedio.crearNodoAST("POUT", hojaCadena, null);
+        yyval = new ParserVal(nodoPout);
+      }
+break;
+case 61:
+//#line 497 "gramatica.y"
+{
+        NodoArbol expr = (NodoArbol) val_peek(1).obj;
+        NodoArbol nodoPout = GeneradorCodigoIntermedio.crearNodoAST("POUT", expr, null);
+        yyval = new ParserVal(nodoPout);
+      }
+break;
+case 62:
+//#line 506 "gramatica.y"
+{
+        NodoArbol izq = (NodoArbol) val_peek(2).obj;
+        String op = (String) val_peek(1).obj;
+        NodoArbol der = (NodoArbol) val_peek(0).obj;
+        NodoArbol nodoComp = GeneradorCodigoIntermedio.verificarYConvertirTipos(op, izq, der, lexico.getNroLinea());
+        yyval = new ParserVal(nodoComp);
+      }
+break;
+case 63:
+//#line 516 "gramatica.y"
+{ yyval = new ParserVal("=="); }
 break;
 case 64:
-//#line 209 "gramatica.y"
-{ aplicarSignoNegativo(val_peek(0)); yyval = val_peek(0); }
+//#line 517 "gramatica.y"
+{ yyval = new ParserVal("!="); }
+break;
+case 65:
+//#line 518 "gramatica.y"
+{ yyval = new ParserVal(">="); }
+break;
+case 66:
+//#line 519 "gramatica.y"
+{ yyval = new ParserVal("<="); }
 break;
 case 67:
-//#line 213 "gramatica.y"
-{ registrarEstructura("Acceso posicional"); }
+//#line 520 "gramatica.y"
+{ yyval = new ParserVal(">"); }
+break;
+case 68:
+//#line 521 "gramatica.y"
+{ yyval = new ParserVal("<"); }
+break;
+case 69:
+//#line 527 "gramatica.y"
+{
+        NodoArbol izq = (NodoArbol) val_peek(2).obj;
+        NodoArbol der = (NodoArbol) val_peek(0).obj;
+        NodoArbol nodo = GeneradorCodigoIntermedio.verificarYConvertirTipos("+", izq, der, lexico.getNroLinea());
+        yyval = new ParserVal(nodo);
+      }
 break;
 case 70:
-//#line 220 "gramatica.y"
-{ registrarEstructura("Invocación ordenada con índices"); }
+//#line 534 "gramatica.y"
+{
+        NodoArbol izq = (NodoArbol) val_peek(2).obj;
+        NodoArbol der = (NodoArbol) val_peek(0).obj;
+        NodoArbol nodo = GeneradorCodigoIntermedio.verificarYConvertirTipos("-", izq, der, lexico.getNroLinea());
+        yyval = new ParserVal(nodo);
+      }
 break;
 case 71:
-//#line 222 "gramatica.y"
-{ registrarEstructura("Invocación ordenada"); }
+//#line 541 "gramatica.y"
+{
+        NodoArbol izq = (NodoArbol) val_peek(2).obj;
+        NodoArbol der = (NodoArbol) val_peek(0).obj;
+        NodoArbol nodo = GeneradorCodigoIntermedio.verificarYConvertirTipos("*", izq, der, lexico.getNroLinea());
+        yyval = new ParserVal(nodo);
+      }
+break;
+case 72:
+//#line 548 "gramatica.y"
+{
+        NodoArbol izq = (NodoArbol) val_peek(2).obj;
+        NodoArbol der = (NodoArbol) val_peek(0).obj;
+        NodoArbol nodo = GeneradorCodigoIntermedio.verificarYConvertirTipos("/", izq, der, lexico.getNroLinea());
+        yyval = new ParserVal(nodo);
+      }
+break;
+case 73:
+//#line 555 "gramatica.y"
+{
+        aplicarSignoNegativo(val_peek(0));
+        NodoArbol expr = (NodoArbol) val_peek(0).obj;
+        /* Usamos una etiqueta explícita "UMINUS" para no confundirlo con la resta binaria*/
+        NodoArbol nodo = GeneradorCodigoIntermedio.crearNodoAST("UMINUS", expr, null);
+        yyval = new ParserVal(nodo);
+      }
+break;
+case 74:
+//#line 563 "gramatica.y"
+{
+        NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) val_peek(2).obj);
+        NodoArbol expr = (NodoArbol) val_peek(0).obj;
+        NodoArbol nodoAsig = GeneradorCodigoIntermedio.verificarYConvertirTipos("=", hojaID, expr, lexico.getNroLinea());
+        yyval = new ParserVal(nodoAsig);
+      }
+break;
+case 75:
+//#line 570 "gramatica.y"
+{
+        String nombreObjeto = ((RegistroTS) val_peek(5).obj).getLexema(); 
+        String nombreMetodo = ((RegistroTS) val_peek(3).obj).getLexema(); 
+        RegistroTS regObjeto = buscarVariableVisibilidad(nombreObjeto); 
+        if (regObjeto == null) { 
+          yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": El objeto '" + nombreObjeto + "' no está declarado o no es visible"); 
+          yyval = new ParserVal(GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) null)); 
+        } else { 
+          String tipoClase = regObjeto.getTipo();
+          RegistroTS regClaseDuenia = ts.buscar(tipoClase + ":main");
+          String claveMetodoDirecto = nombreMetodo + ":main:" + tipoClase; RegistroTS regMetodo = ts.buscar(claveMetodoDirecto); 
+          if (regMetodo == null) { 
+            regMetodo = ts.buscarEnHerencia(tipoClase, nombreMetodo); 
+          } 
+          if (regMetodo == null) { 
+            yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": El método '" + nombreMetodo + "' no existe en la clase '" + tipoClase + "' ni en su herencia"); 
+            yyval = new ParserVal(GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) null)); 
+          } else if (!"metodo".equals(regMetodo.getUso()) && !"nombre_funcion".equals(regMetodo.getUso())) { 
+            yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": El identificador '" + nombreMetodo + "' no es un método de la clase '" + tipoClase + "'"); 
+            yyval = new ParserVal(GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) null)); 
+          } else if (!ts.tienePermisoAcceso(regClaseDuenia, regMetodo, controlAmbitos.getAmbitoActual())) { 
+            yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": Acceso Denegado. El método '" + nombreMetodo + "' es PRIVATE en '" + tipoClase + "'"); 
+            yyval = new ParserVal(GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) null)); 
+          } else { 
+            NodoArbol subArbolArgs = (NodoArbol) val_peek(1).obj; 
+            List<String> tiposFormales = regMetodo.getTiposParametros();
+            NodoArbol hojaMetodo = GeneradorCodigoIntermedio.crearHojaAST(regMetodo);
+            NodoArbol nodoCall = GeneradorCodigoIntermedio.crearNodoAST("CALL", hojaMetodo, subArbolArgs);
+            nodoCall.setTipo(regMetodo.getTipoToken());
+            yyval = new ParserVal(nodoCall);
+          }
+        }
+     }
 break;
 case 76:
-//#line 233 "gramatica.y"
-{ validarConstanteDoublef(val_peek(0)); yyval = val_peek(0); }
+//#line 605 "gramatica.y"
+{
+        String lexemaFunc = ((RegistroTS) val_peek(1).obj).getLexema();
+        RegistroTS regFuncion = buscarVariableVisibilidad(lexemaFunc);
+        if (regFuncion == null) { 
+          /* Error 1: No declarada o fuera de alcance */
+          yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": La función o método '" + lexemaFunc + "' no está declarado o no es visible en este ámbito"); 
+          yyval = new ParserVal(GeneradorCodigoIntermedio.crearHojaAST((RegistroTS)null)); 
+        } else if (!"nombre_funcion".equalsIgnoreCase(regFuncion.getUso()) && !"metodo".equalsIgnoreCase(regFuncion.getUso())) { 
+          /* Error 2: El símbolo existe pero no es una función (ej: es una variable o clase) */
+          yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": El identificador '" + lexemaFunc + "' es de uso '" + regFuncion.getUso() + "' y no puede ser invocado como función"); 
+          yyval = new ParserVal(GeneradorCodigoIntermedio.crearHojaAST((RegistroTS)null)); 
+        } else {
+          NodoArbol infoInvoc = (NodoArbol) val_peek(0).obj;
+          NodoArbol nodoCall = GeneradorCodigoIntermedio.procesarInvocacion(regFuncion, infoInvoc, lexico.getNroLinea());
+          nodoCall.setTipo(regFuncion.getTipoToken());
+          yyval = new ParserVal(nodoCall);
+        }
+      }
 break;
-//#line 761 "Parser.java"
+case 77:
+//#line 624 "gramatica.y"
+{ registrarEstructura("Acceso posicional");
+        String nombreObjeto = ((RegistroTS) val_peek(3).obj).getLexema();
+        RegistroTS regObjeto = buscarVariableVisibilidad(nombreObjeto);
+        if (regObjeto == null) { 
+          /* Error semántico: el objeto o variable no está declarado */
+          yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": El objeto o variable '" + nombreObjeto + "' no está declarado o no es visible"); 
+          yyval = new ParserVal(GeneradorCodigoIntermedio.crearHojaAST((RegistroTS)null)); 
+        } else {
+          NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST(regObjeto);
+          NodoArbol indice = (NodoArbol) val_peek(1).obj;
+          NodoArbol nodoAcceso = GeneradorCodigoIntermedio.verificarLecturaAtributo(regObj, indice, lexico.getNroLinea());
+          yyval = new ParserVal(nodoAcceso);
+        }
+      }
+break;
+case 78:
+//#line 639 "gramatica.y"
+{
+        String lexemaVar = ((RegistroTS) val_peek(0).obj).getLexema(); 
+        /* Resolver visibilidad de adentro hacia afuera usando Name Mangling */
+        RegistroTS regVariable = buscarVariableVisibilidad(lexemaVar); 
+        if (regVariable == null) { 
+          /* Error 1: Variable no declarada o fuera de alcance */
+          yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": La variable '" + lexemaVar + "' no está declarada o no es visible en este ámbito"); 
+          yyval = new ParserVal(GeneradorCodigoIntermedio.crearHojaAST((RegistroTS)null)); 
+        } else if (!"variable".equalsIgnoreCase(regVariable.getUso()) && !"parametro".equalsIgnoreCase(regVariable.getUso()) && !"atributo".equalsIgnoreCase(regVariable.getUso()) && !"objeto".equalsIgnoreCase(regVariable.getUso())) { 
+          /* Error 2: Uso incorrecto de contexto (ej. usar un nombre de función o clase como operando) */
+          yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": El identificador '" + lexemaVar + "' es de uso '" + regVariable.getUso() + "' y no puede ser utilizado como una variable"); 
+          yyval = new ParserVal(GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) null)); 
+        } else {
+          NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST(registrarVariable);
+          hojaID.setTipo(regVariable.getTipoToken());
+          yyval = new ParserVal(hojaID);
+        }
+     }
+break;
+case 79:
+//#line 658 "gramatica.y"
+{ 
+        /* $$ hereda directamente el ParserVal con el NodoArbol producido en la regla constante */
+        yyval = val_peek(0); 
+     }
+break;
+case 80:
+//#line 666 "gramatica.y"
+{
+        NodoArbol args = (NodoArbol) val_peek(4).obj;
+        NodoArbol orden = (NodoArbol) val_peek(1).obj;
+        NodoArbol inv = GeneradorCodigoIntermedio.crearNodoAST("INVOC_ORDENADA", args, orden);
+        yyval = new ParserVal(inv);
+      }
+break;
+case 81:
+//#line 673 "gramatica.y"
+{
+        yyval = val_peek(1);
+      }
+break;
+case 82:
+//#line 680 "gramatica.y"
+{ yyval = val_peek(0); }
+break;
+case 83:
+//#line 682 "gramatica.y"
+{
+        NodoArbol izq = (NodoArbol) val_peek(2).obj;
+        NodoArbol der = (NodoArbol) val_peek(0).obj;
+        NodoArbol list = GeneradorCodigoIntermedio.crearNodoAST(",", izq, der);
+        yyval = new ParserVal(list);
+      }
+break;
+case 84:
+//#line 691 "gramatica.y"
+{
+        NodoArbol hojaCte = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) val_peek(0).obj);
+        yyval = new ParserVal(hojaCte);
+      }
+break;
+case 85:
+//#line 696 "gramatica.y"
+{
+        validarConstanteDoublef(val_peek(0));
+        NodoArbol hojaCte = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) val_peek(0).obj);
+        yyval = new ParserVal(hojaCte);
+      }
+break;
+//#line 1411 "Parser.java"
 //########## END OF USER-SUPPLIED ACTIONS ##########
     }//switch
     //#### Now let's reduce... ####

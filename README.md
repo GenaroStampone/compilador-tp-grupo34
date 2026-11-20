@@ -67,7 +67,10 @@ compilador-tp-grupo34/
 ├── src/                       # Código fuente Java del Analizador Léxico, Parser (BYACC), Tabla de Símbolos, etc.
 │   ├── AccionSemantica.java
 │   ├── AnalizadorLexico.java
+│   ├── ControlAmbitos.java
+│   ├── GeneradorCodigoIntermedio.java
 │   ├── Main.java
+│   ├── NodoArbol.java
 │   ├── Parser.java
 │   ├── ParserVal.java
 │   ├── RegistroTS.java
