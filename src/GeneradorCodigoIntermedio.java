@@ -152,6 +152,89 @@ public class GeneradorCodigoIntermedio {
         }
     }
 
+    // =========================================================================
+    // TEMA 23: ENUMERACIONES (typedef ID = [lista_valores])
+    // =========================================================================
+
+    // Registra una enumeración en la Tabla de Símbolos asignando uso = "TIPO_ENUM" y extrayendo los valores constantes del subárbol de la gramática.
+    public void registrarEnumeracion(RegistroTS regTipo, NodoArbol subarbolValores) {
+        if (regTipo == null) return;
+
+        regTipo.setUso("TIPO_ENUM");
+        List<Double> valoresPermitidos = new ArrayList<>();
+        desarmarValoresEnum(subarbolValores, valoresPermitidos);
+        regTipo.setValoresEnum(valoresPermitidos);
+    }
+
+    // Recorre el subárbol encadenado por nodos "," y extrae el valor numérico del RegistroTS de cada constante (sea positiva o negativa).
+    private void desarmarValoresEnum(NodoArbol nodo, List<Double> lista) {
+        if (nodo == null) return;
+
+        if (",".equals(nodo.getEtiqueta())) {
+            desarmarValoresEnum(nodo.getIzq(), lista);
+            desarmarValoresEnum(nodo.getDer(), lista);
+        } else if (nodo.getRegTS() != null) {
+            lista.add(nodo.getRegTS().getValorNum());
+        }
+    }
+
+    // Busca en la Tabla de Símbolos la definición del tipo enumerado a partir del tipoToken.
+    private RegistroTS obtenerRegistroTipoEnum(String tipoToken) {
+        if (tipoToken == null) return null;
+
+        RegistroTS regTipo = tablaSimbolos.buscar(tipoToken);
+        if (regTipo != null && ("TIPO_ENUM".equals(regTipo.getUso()) || "nombre_tipo".equals(regTipo.getUso()))) {
+            return regTipo;
+        }
+        return null;
+    }
+
+    /**
+     * Obtiene el RegistroTS de una constante, ya sea de una hoja directa
+     * o si está envuelta por un nodo unario "UMINUS".
+     */
+    private RegistroTS obtenerRegistroConstante(NodoArbol nodo) {
+        if (nodo == null) return null;
+
+        // Caso 1: Hoja directa
+        if (nodo.getRegTS() != null) {
+            return nodo.getRegTS();
+        }
+
+        // Caso 2: Expresión con menos unario "UMINUS"
+        if ("UMINUS".equals(nodo.getEtiqueta()) && nodo.getIzq() != null) {
+            return obtenerRegistroConstante(nodo.getIzq());
+        }
+
+        return null;
+    }
+
+    // Valida si el valor asignado a una variable de tipo enumerado pertenece a la lista de valores válidos.
+    // Si el lado derecho es una constante, realiza el chequeo. Si es una variable/expresión dinámica, lo posterga.
+    // Retorna true si la variable izquierda es de tipo enumerado, false en caso contrario.
+    public boolean verificarAsignacionEnum(RegistroTS regVar, NodoArbol nodoExpr, int nroLinea) {
+        if (regVar == null || regVar.getTipoToken() == null) return false;
+
+        RegistroTS regTipo = obtenerRegistroTipoEnum(regVar.getTipoToken());
+        if (regTipo != null) {
+            // Obtenemos el registro de la constante desenvolviendo UMINUS si corresponde
+            RegistroTS regCte = obtenerRegistroConstante(nodoExpr);
+            if (regCte != null) {
+                if (regCte.getIdToken() == Parser.CTE_USHORT || regCte.getIdToken() == Parser.CTE_DOUBLEF) {
+                    double valAsignado = regCte.getValorNum();
+                    if (!regTipo.getValoresEnum().contains(valAsignado)) {
+                        registrarErrorSemantico(nroLinea, String.format(
+                                "El valor '%s' no pertenece a los valores válidos de la enumeración '%s'",
+                                regCte.getLexema(), regTipo.getLexema()));
+                    }
+                }
+            }
+            return true; // Es una asignación a tipo Enumerado
+        }
+        return false;
+    }
+    
+
     // ==========================================
     // TEMA 29: ASIGNACIÓN A ATRIBUTO POSICIONAL 
     // ==========================================
@@ -297,6 +380,18 @@ public class GeneradorCodigoIntermedio {
 
     // Valida la compatibilidad en asignaciones.
     public NodoArbol verificarAsignacion(NodoArbol izq, NodoArbol der, int nroLinea) {
+        if (izq == null || der == null) 
+            return null;
+
+        // TEMA 23: Si la variable de la izquierda es de tipo Enumerado, se valida su rango primero
+        if (izq.getRegTS() != null) {
+            boolean esEnum = verificarAsignacionEnum(izq.getRegTS(), der, nroLinea);
+            if (esEnum) {
+                // Retorna directamente el nodo de asignación := sin pasar por el chequeo estándar de tipos
+                return crearNodoAST(":=", izq, der);
+            }
+        }
+
         String tIzq = obtenerTipoDato(izq);
         String tDer = obtenerTipoDato(der);
 

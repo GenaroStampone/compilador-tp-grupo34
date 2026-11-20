@@ -132,13 +132,15 @@ declaracion_typedef
         // 1. Name Mangling del nombre del tipo (ej. "codigos_control:main")
         String nameMangled = nombreTipo + ":" + controlAmbitos.getAmbitoActual();
 
-        // 2. Control de Redeclaración en el MISMO ámbito
-        if (ts.existeSimbolo(nameMangled)) {
-            yyerror("Error Semántico: El tipo de dato '" + nombreTipo + "' ya fue definido en el ámbito " + controlAmbitos.getAmbitoActual());
+        // Control de Redeclaración en el MISMO ámbito
+        if (ts.buscar(nameMangled) != null) {
+            GeneradorCodigoIntermedio.registrarErrorSemantico(lexico.getNroLinea(), "Error Semantico: El tipo de dato '" + nombreTipo + "' ya fue definido en el ámbito " + controlAmbitos.getAmbitoActual());
         } else {
-            // 3. Registrar en la TS con Uso = "nombre_tipo" y asociar sus valores
-            ArrayList<RegistroTS> valores = (ArrayList<RegistroTS>) $5.obj;
-            ts.registrarTipoPersonalizado(nameMangled, "nombre_tipo", valores);
+            // Actualizar lexema mangled y registrar tipo + valores en el GeneradorCodigoIntermedio
+            reg.setLexema(nameMangled);
+            NodoArbol subarbolValores = (NodoArbol) $5.obj;
+            GeneradorCodigoIntermedio.registrarEnumeracion(reg, subarbolValores);
+            registrarEstructura("Enumeración (typedef)");
         }
      }
     ;
@@ -223,7 +225,6 @@ retorno_opcional
 declaracion_clase
     : encabezado_clase herencia_opcional cuerpo_clase
      {
-       registrarEstructura("Clase");
        System.out.println("Línea " + lexico.getNroLinea() + ": Declaración de Clase reconocida");
        RegistroTS regClaseActual = (RegistroTS) $1.obj;
        ArrayList<RegistroTS> listaPadres = (ArrayList<RegistroTS>) $2.obj;
@@ -296,7 +297,6 @@ miembro_clase
     | declaracion_friend   /* Tema 27: clases/funciones amigas */
       { registrarEstructura("Declaración friend"); }
     | EXTENDS lista_variables ';'  /* Tema 30: herencia multiple dentro del cuerpo */
-      { registrarEstructura("Herencia dentro de clase"); }
     ;
 
 visibilidad_opcional
@@ -557,14 +557,24 @@ expresion
         NodoArbol expr = (NodoArbol) $2.obj;
         // Usamos una etiqueta explícita "UMINUS" para no confundirlo con la resta binaria
         NodoArbol nodo = GeneradorCodigoIntermedio.crearNodoAST("UMINUS", expr, null);
+        if (expr != null) {
+            nodo.setTipoToken(expr.getTipoToken()); // Propaga el tipo (USHORTINT o DOUBLEF)
+        }
         $$ = new ParserVal(nodo);
       }
     | ID '=' expresion
       {
-        NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST((RegistroTS) $1.obj);
-        NodoArbol expr = (NodoArbol) $3.obj;
-        NodoArbol nodoAsig = GeneradorCodigoIntermedio.verificarYConvertirTipos("=", hojaID, expr, lexico.getNroLinea());
-        $$ = new ParserVal(nodoAsig);
+          String lexema = ((RegistroTS) $1.obj).getLexema();
+          RegistroTS regID = buscarVariableVisibilidad(lexema);
+          if (regID == null) {
+              GeneradorCodigoIntermedio.registrarErrorSemantico(lexico.getNroLinea(), "Variable '" + lexemaOriginal + "' no declarada.");
+              $$ = new ParserVal(null);
+          } else {
+              NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST(regID);
+              NodoArbol expr = (NodoArbol) $3.obj;
+              NodoArbol nodoAsig = GeneradorCodigoIntermedio.verificarAsignacion(hojaID, expr, lexico.getNroLinea());
+              $$ = new ParserVal(nodoAsig);
+          }= new ParserVal(nodoAsig);
       }
     | ID '.' ID '(' lista_variables ')'
      {
@@ -621,19 +631,12 @@ expresion
         }
       }
     | ID CORCHETE_IZQ expresion CORCHETE_DER
-      { registrarEstructura("Acceso posicional");
-        String nombreObjeto = ((RegistroTS) $1.obj).getLexema();
-        RegistroTS regObjeto = buscarVariableVisibilidad(nombreObjeto);
-        if (regObjeto == null) { 
-          // Error semántico: el objeto o variable no está declarado 
-          yyerror("Error Semántico en línea " + lexico.getNroLinea() + ": El objeto o variable '" + nombreObjeto + "' no está declarado o no es visible"); 
-          $$ = new ParserVal(GeneradorCodigoIntermedio.crearHojaAST((RegistroTS)null)); 
-        } else {
-          NodoArbol hojaID = GeneradorCodigoIntermedio.crearHojaAST(regObjeto);
-          NodoArbol indice = (NodoArbol) $3.obj;
-          NodoArbol nodoAcceso = GeneradorCodigoIntermedio.verificarLecturaAtributo(regObj, indice, lexico.getNroLinea());
-          $$ = new ParserVal(nodoAcceso);
-        }
+      { 
+        RegistroTS regObj = buscarVariableVisibilidad(((RegistroTS) $1.obj).getLexema());
+        NodoArbol indice = (NodoArbol) $3.obj;
+
+        NodoArbol nodoAcceso = GeneradorCodigoIntermedio.verificarLecturaAtributo(regObj, indice, lexico.getNroLinea());        
+        $$ = new ParserVal(nodoAcceso);
       }
     | ID
      {
@@ -755,11 +758,6 @@ public List<String> getErroresSintacticos() {
 
 public List<String> getEstructurasDetectadas() {
     return estructurasDetectadas;
-}
-
-/* Registra una reduccion sintactica reconocida, con la linea actual del lexico. */
-private void registrarEstructura(String estructura) {
-    estructurasDetectadas.add("Línea " + lexico.getNroLinea() + ": " + estructura);
 }
 
 /* TP2 punto c: el lexico desconoce el signo. Al aplicar el '-' el Parser
