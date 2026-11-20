@@ -87,7 +87,7 @@ public class TablaDeSimbolos {
             long val = Long.parseLong(numeroLimpio);
             return val >= 0 && val <= 255;
         }
-        catch (NumberFormatException _) {
+        catch (NumberFormatException ignored) {
             return false; // Si no es un número válido o excede los límites de parseo
         }
     }
@@ -107,19 +107,53 @@ public class TablaDeSimbolos {
     // TEMA 30: Herencia Múltiple con Desambiguado Opción 1.
     // Busca un miembro navegando en el orden de 'clasesHeredadas'.
     public RegistroTS buscarEnHerencia(String nombreClase, String nombreMiembro) {
+        return buscarEnHerencia(nombreClase, nombreMiembro, new HashSet<>());
+    }
+
+    private RegistroTS buscarEnHerencia(String nombreClase, String nombreMiembro, HashSet<String> visitadas) {
+        if (nombreClase == null || !visitadas.add(nombreClase)) {
+            return null;
+        }
         RegistroTS regClase = buscar(nombreClase);
+        if (regClase == null) {
+            regClase = buscar(nombreClase + ":main");
+        }
         if (regClase == null) {
             return null;
         }
         for (RegistroTS atrib : regClase.getListaAtributos()) {
-            if (atrib.getLexema().equals(nombreMiembro) || atrib.getLexema().endsWith("@" + nombreMiembro)) {
+            if (nombreMiembro.equals(atrib.getNombreSimple())) {
                 return atrib;
             }
         }
         for (String clasePadre : regClase.getClasesHeredadas()) {
-            RegistroTS hallado = buscarEnHerencia(clasePadre, nombreMiembro);
+            RegistroTS hallado = buscarEnHerencia(clasePadre, nombreMiembro, visitadas);
             if (hallado != null) {
                 return hallado;
+            }
+        }
+        return null;
+    }
+
+    public RegistroTS buscarMetodoEnHerencia(String nombreClase, String nombreMetodo) {
+        return buscarMetodoEnHerencia(nombreClase, nombreMetodo, new HashSet<>());
+    }
+
+    private RegistroTS buscarMetodoEnHerencia(String nombreClase, String nombreMetodo, HashSet<String> visitadas) {
+        if (nombreClase == null || !visitadas.add(nombreClase)) {
+            return null;
+        }
+        RegistroTS metodo = buscar(nombreMetodo + ":main:" + nombreClase);
+        if (metodo != null) {
+            return metodo;
+        }
+        RegistroTS regClase = buscar(nombreClase + ":main");
+        if (regClase != null) {
+            for (String padre : regClase.getClasesHeredadas()) {
+                RegistroTS hallado = buscarMetodoEnHerencia(padre, nombreMetodo, visitadas);
+                if (hallado != null) {
+                    return hallado;
+                }
             }
         }
         return null;
@@ -138,16 +172,45 @@ public class TablaDeSimbolos {
         return null;
     }
 
-    private List<RegistroTS> obtenerTodosLosAtributosHeredados(String nombreClase) {
+    public List<RegistroTS> obtenerTodosLosAtributosHeredados(String nombreClase) {
+        return obtenerTodosLosAtributosHeredados(nombreClase, new HashSet<>());
+    }
+
+    private List<RegistroTS> obtenerTodosLosAtributosHeredados(String nombreClase, HashSet<String> visitadas) {
         List<RegistroTS> lista = new ArrayList<>();
-        RegistroTS regClase = buscar(nombreClase);
+        if (nombreClase == null || !visitadas.add(nombreClase)) {
+            return lista;
+        }
+        RegistroTS regClase = buscar(nombreClase + ":main");
+        if (regClase == null) {
+            regClase = buscar(nombreClase);
+        }
         if (regClase != null) {
             for (String padre : regClase.getClasesHeredadas()) {
-                lista.addAll(obtenerTodosLosAtributosHeredados(padre));
+                lista.addAll(obtenerTodosLosAtributosHeredados(padre, visitadas));
             }
             lista.addAll(regClase.getListaAtributos());
         }
         return lista;
+    }
+
+    public RegistroTS buscarTipoVisible(String nombreTipo, List<String> candidatos) {
+        if (nombreTipo == null) {
+            return null;
+        }
+        if (candidatos != null) {
+            for (String clave : candidatos) {
+                RegistroTS reg = buscar(clave);
+                if (reg != null && (reg.esTipoEnum() || "nombre_clase".equalsIgnoreCase(reg.getUso()))) {
+                    return reg;
+                }
+            }
+        }
+        RegistroTS global = buscar(nombreTipo + ":main");
+        if (global != null && (global.esTipoEnum() || "nombre_clase".equalsIgnoreCase(global.getUso()))) {
+            return global;
+        }
+        return null;
     }
 
     public boolean esHerenciaCircular(String clavePadre, String claveActual) { 
@@ -223,10 +286,16 @@ public class TablaDeSimbolos {
             tabla.put(claveMangled, reg);
         }
         reg.setTipoToken("typedef");
-        reg.setUso(uso);         // "nombre_tipo"
+        reg.setUso(uso);         // "type_name"
         if (valoresPermitidos != null){
+            boolean primero = true;
             for (RegistroTS val : valoresPermitidos){
                 reg.agregarAtributo(val);
+                reg.agregarValorEnum(val.getValorNum());
+                if (primero) {
+                    reg.setTipoBaseEnum(val.getIdToken() == Parser.CTE_DOUBLEF ? "DOUBLEF" : "USHORTINT");
+                    primero = false;
+                }
             }
         }
         return reg;

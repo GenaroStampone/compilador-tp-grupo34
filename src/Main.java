@@ -1,164 +1,200 @@
 import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Clase Principal del Compilador (Grupo 34 - TP2)
+ * Compilador Grupo 34 - reentrega unificada TP1 a TP4.
  *
- * Implementa la arquitectura monolítica donde el Analizador Sintáctico (Parser)
- * coordina la ejecución bajo demanda solicitándole tokens al Analizador Léxico
- * a medida que los necesita para validar la gramática del programa fuente.
+ * El parser coordina al analisis lexico bajo demanda y construye el AST con
+ * validaciones semanticas. Si no hay errores, se genera codigo WebAssembly
+ * textual en salida.wat.
  */
 public class Main {
 
-    public static void main(String[] args) throws Exception {
-        // ---------------------------------------------------------------------
-        // VALIDACIÓN DE ARGUMENTOS POR LÍNEA DE COMANDOS
-        // ---------------------------------------------------------------------
+    private static final String ARCHIVO_WAT = "salida.wat";
+
+    public static void main(String[] args) {
         if (args.length < 1) {
-            System.err.println("===================================================================================");
-            System.err.println(" ERROR: Debe pasar la ruta del archivo de código fuente como parámetro.");
-            System.err.println(" Ejemplo de uso: ./compilador casos_de_prueba/prueba_valida_g34.txt");
-            System.err.println("              o: java -cp bin Main casos_de_prueba/prueba_valida_g34.txt");
-            System.err.println("===================================================================================");
+            System.err.println("ERROR: Debe indicar la ruta del archivo fuente.");
+            System.err.println("Uso: ./compilador casos_de_prueba/01_prueba_correcto.txt");
             System.exit(1);
         }
 
         String rutaArchivo = args[0];
         File archivo = new File(rutaArchivo);
-
         if (!archivo.exists() || !archivo.isFile()) {
-            System.err.println("===================================================================================");
-            System.err.println(" ERROR: El archivo especificado no existe o no es válido: " + rutaArchivo);
-            System.err.println("===================================================================================");
+            System.err.println("ERROR: El archivo indicado no existe o no es un archivo valido: " + rutaArchivo);
             System.exit(1);
         }
 
+        Path rutaFuente = archivo.toPath().toAbsolutePath().normalize();
         System.out.println("===================================================================================");
-        System.out.println("                   COMPILADOR GRUPO 34 - CICLO LECTIVO 2026                        ");
+        System.out.println("              COMPILADOR GRUPO 34 - REENTREGA UNIFICADA TP1 A TP4                  ");
         System.out.println("===================================================================================");
-        System.out.println(" Archivo fuente a compilar : " + archivo.getAbsolutePath());
-        System.out.println(" Modo de ejecución         : Arquitectura Monolítica (Parser -> Léxico bajo demanda)");
+        System.out.println(" Archivo fuente : " + rutaFuente);
+        System.out.println(" Arquitectura   : Parser -> Lexico bajo demanda -> AST/Semantica -> WebAssembly");
         System.out.println("===================================================================================\n");
 
-        // ---------------------------------------------------------------------
-        // INICIALIZACIÓN DE ESTRUCTURAS Y COMPONENTES MONOLÍTICOS
-        // ---------------------------------------------------------------------
-        // Inicializa la Tabla de Símbolos donde se almacenarán Identificadores, Literales y Palabras Reservadas
         TablaDeSimbolos tablaDeSimbolos = new TablaDeSimbolos();
-
-        // Inicializa el Analizador Léxico con el contador de líneas y estructuras de errores/warnings
         AnalizadorLexico lexico = new AnalizadorLexico(rutaArchivo, tablaDeSimbolos);
-
-        // Inicializa el Analizador Sintáctico (Parser) vinculándolo con el Léxico y la Tabla de Símbolos
         Parser parser = new Parser(lexico, tablaDeSimbolos);
+        parser.setModoSilencioso(true);
 
-        // ---------------------------------------------------------------------
-        // EJECUCIÓN MONOLÍTICA COORDINADA POR EL PARSER
-        // ---------------------------------------------------------------------
-        System.out.println(">>> INICIANDO PROCESO DE PARSING Y ANÁLISIS SINTÁCTICO / LÉXICO <<<\n");
+        int resultadoParser = 0;
+        Exception excepcionParser = null;
+        try {
+            resultadoParser = parser.yyparse();
+        } catch (Exception e) {
+            excepcionParser = e;
+        } finally {
+            lexico.cerrar();
+        }
 
-        int resultadoParser = parser.yyparse();
+        imprimirTokens(lexico);
+        imprimirEstructuras(parser);
 
-        // Cierra los descriptores de lectura del archivo fuente
-        lexico.cerrar();
+        List<String> erroresLexicos = new ArrayList<>(lexico.getErrores());
+        List<String> erroresSintacticos = new ArrayList<>(parser.getErroresSintacticos());
+        List<String> erroresSemanticos = new ArrayList<>(parser.getGenerador().getErroresSemanticos());
+        List<String> warnings = new ArrayList<>(lexico.getWarnings());
+        imprimirErrores(warnings, erroresLexicos, erroresSintacticos, erroresSemanticos, excepcionParser);
 
-        System.out.println("\n>>> FASE DE PARSING FINALIZADA <<<\n");
+        imprimirAST(parser);
+        tablaDeSimbolos.imprimirTabla();
+        imprimirFuenteNumerada(rutaFuente);
 
-        // ---------------------------------------------------------------------
-        // MUESTRA POR PANTALLA: TOKENS CONSUMIDOS POR EL PARSER
-        // ---------------------------------------------------------------------
+        boolean hayErrores = resultadoParser != 0
+                || parser.huboError()
+                || !erroresLexicos.isEmpty()
+                || !erroresSintacticos.isEmpty()
+                || !erroresSemanticos.isEmpty()
+                || excepcionParser != null;
+
+        boolean watGenerado = false;
+        if (!hayErrores) {
+            try {
+                GeneradorWebAssembly generadorWat = new GeneradorWebAssembly(
+                        tablaDeSimbolos,
+                        parser.getCuerposFunciones(),
+                        parser.getGenerador().getRaizAST());
+                String codigoWat = generadorWat.generar();
+                Path salidaWat = Paths.get(ARCHIVO_WAT).toAbsolutePath().normalize();
+                Files.write(salidaWat, codigoWat.getBytes(StandardCharsets.UTF_8));
+                System.out.println("===================================================================================");
+                System.out.println("                       GENERACION DE CODIGO WEBASSEMBLY                            ");
+                System.out.println("===================================================================================");
+                System.out.println(" Archivo generado : " + salidaWat);
+                System.out.printf(" Tamano           : %d bytes%n", codigoWat.getBytes(StandardCharsets.UTF_8).length);
+                System.out.println(" Formato          : WebAssembly textual (.wat)");
+                System.out.println("===================================================================================\n");
+                watGenerado = true;
+            } catch (IOException | RuntimeException e) {
+                hayErrores = true;
+                System.err.println("ERROR: No se pudo generar el codigo WebAssembly: " + e.getMessage());
+            }
+        }
+
+        int totalErrores = erroresLexicos.size() + erroresSintacticos.size()
+                + erroresSemanticos.size() + (excepcionParser != null ? 1 : 0);
+
+        System.out.println("===================================================================================");
+        System.out.printf(" RESUMEN FINAL: %d error(es) | %d advertencia(s) | WAT: %s%n",
+                totalErrores, warnings.size(), watGenerado ? "generado" : "no generado");
+        System.out.printf(" Detalle: %d lexico(s), %d sintactico(s), %d semantico(s)%n",
+                erroresLexicos.size(), erroresSintacticos.size(), erroresSemanticos.size());
+        if (hayErrores) {
+            System.out.println(" RESULTADO: COMPILACION CON ERRORES");
+            System.out.println("===================================================================================");
+            System.exit(1);
+        }
+        System.out.println(" RESULTADO: COMPILACION EXITOSA (0 ERRORES)");
+        System.out.println("===================================================================================");
+        System.exit(0);
+    }
+
+    private static void imprimirTokens(AnalizadorLexico lexico) {
         System.out.println("===================================================================================");
         System.out.println("                   TIRA DE TOKENS PROCESADOS POR EL PARSER                         ");
         System.out.println("===================================================================================");
-        List<Token> tiraTokens = lexico.getTokensDetectados();
-        for (Token t : tiraTokens) {
-            System.out.println("  " + t);
+        List<Token> tokens = lexico.getTokensDetectados();
+        for (Token token : tokens) {
+            System.out.println("  " + token);
         }
-        System.out.printf("Total de tokens procesados bajo demanda: %d%n", tiraTokens.size());
+        System.out.printf("Total de tokens: %d%n%n", tokens.size());
+    }
 
-        // ---------------------------------------------------------------------
-        // MUESTRA POR PANTALLA: ESTRUCTURAS SINTÁCTICAS DETECTADAS
-        // ---------------------------------------------------------------------
-        System.out.println("\n===================================================================================");
-        System.out.println("                       ESTRUCTURAS SINTÁCTICAS DETECTADAS                          ");
+    private static void imprimirEstructuras(Parser parser) {
+        System.out.println("===================================================================================");
+        System.out.println("                       ESTRUCTURAS SINTACTICAS DETECTADAS                          ");
         System.out.println("===================================================================================");
         List<String> estructuras = parser.getEstructurasDetectadas();
         if (estructuras.isEmpty()) {
-            System.out.println("  (No se registraron reducciones de estructuras sintácticas)");
+            System.out.println("  (No se registraron estructuras sintacticas)");
         } else {
-            for (String est : estructuras) {
-                System.out.println("  [OK] " + est);
+            for (String estructura : estructuras) {
+                System.out.println("  [OK] " + estructura);
             }
         }
-        System.out.printf("Total de estructuras sintácticas identificadas: %d%n", estructuras.size());
+        System.out.printf("Total de estructuras: %d%n%n", estructuras.size());
+    }
 
-        // ---------------------------------------------------------------------
-        // MUESTRA POR PANTALLA: LISTADO FORMATEADO DE ERRORES Y ADVERTENCIAS
-        // ---------------------------------------------------------------------
-        System.out.println("\n===================================================================================");
-        System.out.println("             LISTADO FORMATEADO DE ERRORES Y ADVERTENCIAS DETECTADOS               ");
+    private static void imprimirErrores(List<String> warnings, List<String> erroresLexicos,
+            List<String> erroresSintacticos, List<String> erroresSemanticos, Exception excepcionParser) {
+        System.out.println("===================================================================================");
+        System.out.println("             ERRORES Y ADVERTENCIAS DE COMPILACION (TODOS JUNTOS)                  ");
         System.out.println("===================================================================================");
 
-        List<String> warningsLexicos = lexico.getWarnings();
-        List<String> erroresLexicos = lexico.getErrores();
-        List<String> erroresSintacticos = parser.getErroresSintacticos();
-
-        int totalErrores = erroresLexicos.size() + erroresSintacticos.size();
-        int totalWarnings = warningsLexicos.size();
-
-        if (totalWarnings > 0) {
-            System.out.println("\n--- ADVERTENCIAS LÉXICAS (" + totalWarnings + ") ---");
-            for (String w : warningsLexicos) {
-                System.out.println("  [ADVERTENCIA] " + w);
-            }
+        if (warnings.isEmpty() && erroresLexicos.isEmpty() && erroresSintacticos.isEmpty()
+                && erroresSemanticos.isEmpty() && excepcionParser == null) {
+            System.out.println("  No se detectaron errores ni advertencias.");
+            System.out.println();
+            return;
         }
 
-        if (erroresLexicos.size() > 0) {
-            System.out.println("\n--- ERRORES LÉXICOS (" + erroresLexicos.size() + ") ---");
-            for (String e : erroresLexicos) {
-                System.out.println("  [ERROR LÉXICO] " + e);
-            }
+        for (String warning : warnings) {
+            System.out.println("  [ADVERTENCIA] " + warning);
         }
-
-        if (erroresSintacticos.size() > 0) {
-            System.out.println("\n--- ERRORES SINTÁCTICOS (" + erroresSintacticos.size() + ") ---");
-            for (String s : erroresSintacticos) {
-                System.out.println("  [ERROR SINTÁCTICO] " + s);
-            }
+        for (String error : erroresLexicos) {
+            System.out.println("  [ERROR LEXICO] " + error);
         }
-
-        if (totalErrores == 0 && totalWarnings == 0) {
-            System.out.println("  ¡Excelente! No se detectaron errores léxicos ni sintácticos, ni advertencias.");
-        } else if (totalErrores == 0) {
-            System.out.println("  Programa sintácticamente válido. Se registraron únicamente advertencias (warnings).");
+        for (String error : erroresSintacticos) {
+            System.out.println("  [ERROR SINTACTICO] " + error);
         }
+        for (String error : erroresSemanticos) {
+            System.out.println("  [ERROR SEMANTICO] " + error);
+        }
+        if (excepcionParser != null) {
+            System.out.println("  [ERROR INTERNO] " + excepcionParser.getMessage());
+        }
+        System.out.println();
+    }
 
-        System.out.println("\n-----------------------------------------------------------------------------------");
-        System.out.printf(" RESUMEN: %d Error(es) (%d Léxico(s), %d Sintáctico(s)) | %d Advertencia(s)%n",
-                totalErrores, erroresLexicos.size(), erroresSintacticos.size(), totalWarnings);
+    private static void imprimirAST(Parser parser) {
         System.out.println("===================================================================================");
-
-        // ---------------------------------------------------------------------
-        // MUESTRA POR PANTALLA: ESTADO FINAL DE LA TABLA DE SÍMBOLOS
-        // ---------------------------------------------------------------------
-        tablaDeSimbolos.imprimirTabla();
-
-        // ---------------------------------------------------------------------
-        // VEREDICTO FINAL DE COMPILACIÓN
-        // ---------------------------------------------------------------------
-        boolean compilacionExitosa = (resultadoParser == 0) && !parser.huboError() && erroresLexicos.isEmpty();
-
+        System.out.println("               REPRESENTACION INTERMEDIA: ARBOL SINTACTICO ABSTRACTO               ");
         System.out.println("===================================================================================");
-        if (compilacionExitosa) {
-            System.out.println("                >>> RESULTADO FINAL: COMPILACIÓN EXITOSA (0 ERRORES) <<<           ");
-            System.out.println(" El programa fuente fue procesado correctamente y cumple con todas las reglas.");
-            System.out.println("===================================================================================\n");
-            System.exit(0);
-        } else {
-            System.err.println("                >>> RESULTADO FINAL: COMPILACIÓN CON ERRORES <<<                   ");
-            System.err.println(" Se detectaron inconsistencias léxicas o sintácticas durante la compilación.");
-            System.err.println("===================================================================================\n");
-            System.exit(1);
+        parser.getGenerador().imprimirAST();
+        System.out.println();
+    }
+
+    private static void imprimirFuenteNumerada(Path rutaFuente) {
+        System.out.println("===================================================================================");
+        System.out.println("                         FUENTE CON NUMERACION DE LINEAS                            ");
+        System.out.println("===================================================================================");
+        System.out.println(" Archivo: " + rutaFuente);
+        try {
+            List<String> lineas = Files.readAllLines(rutaFuente, StandardCharsets.UTF_8);
+            for (int i = 0; i < lineas.size(); i++) {
+                System.out.printf("%4d | %s%n", i + 1, lineas.get(i));
+            }
+        } catch (IOException e) {
+            System.out.println("  No se pudo releer el archivo fuente: " + e.getMessage());
         }
+        System.out.println();
     }
 }
