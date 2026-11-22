@@ -1,5 +1,11 @@
 # Compiled class file
 *.class
+/bin/
+
+# Generated parser artifacts in repository root
+/Parser.java
+/ParserVal.java
+/Parser.output
 
 # Log file
 *.log

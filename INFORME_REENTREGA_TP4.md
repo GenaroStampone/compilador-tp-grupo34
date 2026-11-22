@@ -121,19 +121,21 @@ se validan en ejecución contra la lista de valores permitidos del tipo.
 ## Casos de prueba y resultados
 
 Se mantuvieron los nueve casos históricos de `casos_de_prueba/` y se agregaron casos de ejecución
-en `pruebas/`:
+y regresión en `pruebas/`:
 
 - Ejecución correcta con impresión de cadenas y números.
 - División por cero entera y flotante.
 - Overflow de suma entera y flotante.
 - Resta negativa de `ushortint`.
 - Asignación inválida a enumeración.
+- Acceso válido desde función amiga y denegado sin `friend`.
+- Acceso posicional con índice variable sobre atributos de tipos distintos (rechazado).
 
 Resultados de la ejecución final:
 
 ```text
 ./ejecutar_pruebas.sh  -> 9 pasadas, 0 falladas
-./probar_tp4.sh        -> 17 pasadas, 0 falladas
+./probar_tp4.sh        -> 20 pasadas, 0 falladas
 ```
 
 Todos los `.wat` generados por los casos válidos fueron validados con `wat2wasm`.

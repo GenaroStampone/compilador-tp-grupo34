@@ -1,0 +1,15 @@
+{{ indice posicional variable sobre atributos de tipos distintos: debe fallar }}
+programa_posicional_heterogeneo;
+
+class mezcla BEGIN
+    ushortint entero;
+    doublef flotante;
+end;
+
+mezcla m;
+ushortint i;
+
+begin
+    i := 0$us;
+    m[i] := 1$us;
+end;

@@ -1,0 +1,23 @@
+{{ friend function y metodo privado con receptor }}
+programa_permisos_validos;
+
+class servidor BEGIN
+    friend auditoria_externa;
+    ushortint secreto;
+    private ushortint FUNCTION obtener(ushortint delta)
+    begin
+        ret (secreto + delta);
+    end;
+end;
+
+servidor srv;
+
+ushortint FUNCTION auditoria_externa(ushortint ignorado)
+begin
+    ret (srv.obtener(5$us));
+end;
+
+begin
+    srv[0$us] := 10$us;
+    pout(auditoria_externa(0$us));
+end;

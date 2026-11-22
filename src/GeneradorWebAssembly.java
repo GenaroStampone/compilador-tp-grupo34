@@ -511,8 +511,8 @@ public class GeneradorWebAssembly {
         sb.append(valor).append("  local.set ").append(tmpValor).append("\n");
         sb.append(compilarExpresion(indiceNode, ctx)).append("  local.set ").append(tmpIndice).append("\n");
 
-        String cuerpo = "";
-        for (int i = attrs.size() - 1; i >= 0; i--) {
+        String cuerpo = "  " + abortar(5);
+        for (int i = 0; i < attrs.size(); i++) {
             RegistroTS attr = attrs.get(i);
             String tipoAttr = tipoBaseDe(attr.getTipoToken());
             Integer slot = slotsAtributos.get(attr);
@@ -524,12 +524,9 @@ public class GeneradorWebAssembly {
                     + "    local.get " + tmpValor + "\n"
                     + convertir(tipoExpr, tipoAttr).replace("\n", "\n    ")
                     + "    " + (tipoAttr.equals("DOUBLEF") ? "f64.store" : "i32.store") + "\n"
-                    + (cuerpo.isEmpty() ? "    " + abortar(5) : "  else\n" + indentar(cuerpo))
+                    + "  else\n" + indentar(cuerpo)
                     + "  end\n";
             cuerpo = rama;
-        }
-        if (attrs.isEmpty()) {
-            cuerpo = "  " + abortar(5);
         }
         sb.append(cuerpo);
         if (dejarValor) sb.append("  local.get ").append(tmpValor).append("\n");

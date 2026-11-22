@@ -1,5 +1,6 @@
 %{
 import java.util.*;
+@SuppressWarnings("unchecked")
 %}
 
 /* ============================================================================
@@ -531,6 +532,7 @@ expresion
               $$ = new ParserVal((Object) null);
             } else {
               NodoArbol nodo = gen.crearInvocacion(regMetodo, (NodoArbol) $5.obj, (NodoArbol) $7.obj, lexico.getNroLinea());
+              nodo.setTer(gen.crearHojaAST(regObjeto));
               registrarEstructura("Invocación de método");
               $$ = new ParserVal(nodo);
             }

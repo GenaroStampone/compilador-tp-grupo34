@@ -301,31 +301,46 @@ public class TablaDeSimbolos {
         return reg;
     }
 
-    public boolean tienePermisoAcceso(RegistroTS regClaseDuenia, RegistroTS regMiembro, String ambitoEmisor) { 
-        // Si el miembro es público, cualquier ámbito tiene acceso 
-        if (!regMiembro.esPrivado()) { 
-            return true; 
+    public boolean tienePermisoAcceso(RegistroTS regClaseDuenia, RegistroTS regMiembro, String ambitoEmisor) {
+        if (regMiembro == null || !regMiembro.esPrivado()) {
+            return true;
         }
-        if (regClaseDuenia == null){
+        if (regClaseDuenia == null) {
             return false;
         }
-        String nombreClaseDuenia = regClaseDuenia.getLexema(); 
-        // Regla a: Si la llamada ocurre DENTRO de un método de la misma clase dueña -> PERMITIDO 
-        if (ambitoEmisor.contains(":" + nombreClaseDuenia)) { 
-            return true; 
-        } 
-        // Regla b: Verificar si la clase emisor o función emisora es AMIGA de la clase dueña 
+        String nombreClaseDuenia = nombreSimple(regClaseDuenia.getLexema());
+        if (contieneSegmento(ambitoEmisor, nombreClaseDuenia)) {
+            return true;
+        }
         List<String> amigos = regClaseDuenia.getListaAmigos();
         if (amigos != null) {
-            for (String amigo : amigos){
-                // Si el ámbito emisor pertenece a una clase amiga o a una función amiga declarada
-                if (ambitoEmisor.contains(":" + amigo) || ambitoEmisor.endsWith(":" + amigo)) {
+            for (String amigo : amigos) {
+                if (contieneSegmento(ambitoEmisor, nombreSimple(amigo))) {
                     return true;
                 }
             }
         }
-        // Si es privado y no es de la misma clase ni de una clase/función amiga -> DENEGADO
         return false;
+    }
+
+    private boolean contieneSegmento(String ambito, String nombre) {
+        if (ambito == null || nombre == null || nombre.isEmpty()) {
+            return false;
+        }
+        for (String parte : ambito.split(":")) {
+            if (nombre.equals(parte)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private String nombreSimple(String lexema) {
+        if (lexema == null) {
+            return "";
+        }
+        int pos = lexema.indexOf(':');
+        return pos >= 0 ? lexema.substring(0, pos) : lexema;
     }
 
     public boolean esAsignable(RegistroTS reg) { 

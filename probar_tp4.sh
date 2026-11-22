@@ -56,6 +56,9 @@ CASOS=(
     'casos_de_prueba/07_programa_integral_valido.txt|VALIDO|programa integral'
     'casos_de_prueba/08_programa_complejo_errores.txt|INVALIDO|errores complejos'
     'casos_de_prueba/09_prueba_declaraciones_y_poo.txt|VALIDO|declaraciones y POO'
+    'pruebas/permisos_validos.txt|VALIDO|friend y receptor de metodo'
+    'pruebas/permisos_invalidos.txt|INVALIDO|acceso privado denegado'
+    'pruebas/posicional_heterogeneo_invalido.txt|INVALIDO|indice variable heterogeneo'
 )
 
 for caso in "${CASOS[@]}"; do

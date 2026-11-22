@@ -334,6 +334,9 @@ public class GeneradorCodigoIntermedio {
             if (attrs.isEmpty()) {
                 registrarErrorSemantico(nroLinea, "La clase '" + tipoClase + "' no posee atributos para el acceso posicional.");
                 nodoAcceso.setTipoToken("ERROR");
+            } else if (!tiposAtributosHomogeneos(attrs)) {
+                registrarErrorSemantico(nroLinea, "El acceso posicional con índice variable requiere que todos los atributos de '" + tipoClase + "' sean del mismo tipo base.");
+                nodoAcceso.setTipoToken("ERROR");
             } else {
                 nodoAcceso.setTipoToken(attrs.get(0).getTipoToken());
             }
@@ -369,10 +372,33 @@ public class GeneradorCodigoIntermedio {
             return asig;
         }
 
+        List<RegistroTS> attrs = tablaSimbolos.obtenerTodosLosAtributosHeredados(tipoClase);
+        if (attrs.isEmpty()) {
+            registrarErrorSemantico(nroLinea, "La clase '" + tipoClase + "' no posee atributos para el acceso posicional.");
+            return null;
+        }
+        if (!tiposAtributosHomogeneos(attrs)) {
+            registrarErrorSemantico(nroLinea, "El acceso posicional con índice variable requiere que todos los atributos de '" + tipoClase + "' sean del mismo tipo base.");
+            return null;
+        }
+
         NodoArbol asig = crearNodoAST(":=", crearNodoAST("[]", crearHojaAST(regObjeto), nodoIndice), nodoExpr);
         asig.setTipoToken(nodoExpr != null ? nodoExpr.getTipoToken() : "DESCONOCIDO");
         asig.setInfo(new Object[] { tipoClase, null, regObjeto });
         return asig;
+    }
+
+    private boolean tiposAtributosHomogeneos(List<RegistroTS> attrs) {
+        if (attrs == null || attrs.isEmpty()) {
+            return true;
+        }
+        String base = tipoBaseDe(attrs.get(0).getTipoToken());
+        for (RegistroTS attr : attrs) {
+            if (!base.equalsIgnoreCase(tipoBaseDe(attr.getTipoToken()))) {
+                return false;
+            }
+        }
+        return true;
     }
 
     private void validarIndicePosicional(NodoArbol nodoIndice, int nroLinea) {

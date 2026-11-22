@@ -1,0 +1,22 @@
+{{ acceso a metodo privado sin friend: debe fallar }}
+programa_permisos_invalidos;
+
+class servidor BEGIN
+    ushortint secreto;
+    private ushortint FUNCTION obtener(ushortint delta)
+    begin
+        ret (delta);
+    end;
+end;
+
+servidor srv;
+
+ushortint FUNCTION intruso_externa(ushortint ignorado)
+begin
+    ret (srv.obtener(1$us));
+end;
+
+begin
+    srv[0$us] := 10$us;
+    pout(intruso_externa(0$us));
+end;

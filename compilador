@@ -16,14 +16,12 @@ fi
 # 3. Posicionarse en el directorio del proyecto
 cd "$PROJ_DIR" || exit 1
 
-# 4. Si los .class no existen o falta Main.class, crear bin/ y compilar allí
-if [ ! -f "bin/Main.class" ]; then
-    mkdir -p bin
-    javac -d bin src/*.java
-    if [ $? -ne 0 ]; then
-        echo "[ERROR CRÍTICO] Falló la compilación de los archivos Java en src/." >&2
-        exit 1
-    fi
+# 4. Compilar siempre para no ejecutar clases obsoletas
+mkdir -p bin
+javac -d bin src/*.java
+if [ $? -ne 0 ]; then
+    echo "[ERROR CRÍTICO] Falló la compilación de los archivos Java en src/." >&2
+    exit 1
 fi
 
 # 5. Ejecutar la clase Main buscando las clases en la carpeta bin/

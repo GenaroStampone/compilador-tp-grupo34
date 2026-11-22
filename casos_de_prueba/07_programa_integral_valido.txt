@@ -30,6 +30,7 @@ end;
 
 class modulo_auxiliar BEGIN
     ushortint codigo_modulo;
+    ushortint codigo_lectura;
 end;
 
 CLASS controlador_sistema begin
@@ -63,6 +64,7 @@ end;
 {{ Instanciación de Objetos de las Clases Definidas }}
 dispositivo_base sensor_ambiente;
 controlador_sistema nodo_maestro, nodo_secundario;
+modulo_auxiliar modulo_lectura;
 
 {{ Declaración de Funciones }}
 ushortint function procesar_datos(ushortint v1, ushortint v2, ushortint v3)
@@ -90,9 +92,9 @@ begin
     contador := limite = iterador + 2$us;
 
     {{ Tema 29: Acceso posicional a atributos con corchetes }}
-    nodo_maestro[0$us] := 100$us;
-    nodo_maestro[iterador] := 125$us;
-    contador := nodo_maestro[0$us] + nodo_maestro[iterador];
+    modulo_lectura[0$us] := 100$us;
+    modulo_lectura[iterador] := 125$us;
+    contador := modulo_lectura[0$us] + modulo_lectura[iterador];
 
     {{ Tema 20: Invocaciones con parametros opcionales}}
     contador := procesar_datos(contador, limite, iterador)[2$us, 1$us, 2$us] + 5$us;
