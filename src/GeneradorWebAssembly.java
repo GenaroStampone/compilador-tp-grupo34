@@ -637,13 +637,6 @@ public class GeneradorWebAssembly {
                     + "  if\n    " + abortar(2) + "  end\n"
                     + "  local.get " + tmp + "\n";
         }
-        if (op.equals("-")) {
-            String tmp = ctx.temp("i32");
-            return izq + der + "  i32.sub\n  local.set " + tmp + "\n"
-                    + "  local.get " + tmp + "\n  i32.const 0\n  i32.lt_s\n"
-                    + "  if\n    " + abortar(4) + "  end\n"
-                    + "  local.get " + tmp + "\n";
-        }
         if (op.equals("/")) {
             String a = ctx.temp("i32");
             String b = ctx.temp("i32");
@@ -652,7 +645,7 @@ public class GeneradorWebAssembly {
                     + "  if\n    " + abortar(1) + "  end\n"
                     + "  local.get " + a + "\n  local.get " + b + "\n  i32.div_u\n";
         }
-        return izq + der + "  i32.mul\n";
+        return izq + der + "  i32." + (op.equals("*") ? "mul" : "sub") + "\n";
     }
 
     private String compilarComparacion(NodoArbol nodo, Ctx ctx) {
