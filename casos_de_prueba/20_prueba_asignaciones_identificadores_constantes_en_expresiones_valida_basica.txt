@@ -1,0 +1,30 @@
+{{Caso de Prueba Nro20: Codigo sintacticamente correcto de asignaciones de identificadores o constantes en expresiones.}}
+{{Comportamiento Esperado del Compilador: Tira de tokens completa, 0 errores y 0 warnings.}}
+
+programa_correcto;
+
+ushortint a, b, c, d;
+DOUBLEF x, y, z;
+
+begin
+    a := b = 10$us;
+    z := 1.0;
+    x := y = z - 2.5d+0;
+    a := b = c + d = 5$us;
+    if (a = 15$us == 15$us) 
+        b := a; 
+    else 
+        b := 0$us; 
+    end_if;
+    if (a=b+c==d=b)
+        BEGIN
+            a := 10$us;
+            b:= a = b + 14$us;
+        END;
+    ElSe 
+        x := z = y * x;
+    END_If;
+    IF (x==y=x+z)
+        x := 2.0;
+    END_IF
+END;

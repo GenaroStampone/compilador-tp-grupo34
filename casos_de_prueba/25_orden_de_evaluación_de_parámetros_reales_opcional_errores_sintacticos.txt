@@ -1,0 +1,42 @@
+{{Caso de Prueba Nro19: Codigo sintacticamente incorrecto de asignaciones de identificadores o constantes en expresiones.}}
+{{Comportamiento Esperado del Compilador: Errores sintacticos sobre }}
+
+programa_incorrecto;
+
+ushortint function f_prueba (ushortint p1, ushortint p2) 
+    begin 
+        ret (p1 + p2); 
+    end; 
+
+ushortint a, b, res;
+
+begin 
+    a := 1$us;
+    b := 2$us; 
+
+    {Falta de corchete de cierre ']' en la lista de orden de evaluación} 
+    res := f_prueba(a, b)[1, 2;
+
+    {Falta de corchete de cierre '[' en la lista de orden de evaluación} 
+    res := f_prueba(a, b)1, 2];
+
+    {Menos Constantes de orden que parametros} 
+    res := f_prueba(a, b)[2];
+
+    {Mas constantes de orden que de parametros}
+    res := f_prueba(a, b)[1, 2, 3];
+
+    {Corchetes vacíos sin indicar las constantes de orden} 
+    res := f_prueba(a, b) []; 
+    
+    {Coma faltante en el orden de constantes dentro de los corchetes}
+    res := f_prueba(a, b) [2 3]; 
+    
+    {Falta de coma separadora en los parámetros reales antes de los corchetes}
+    res := f_prueba(a b) [2, 3];
+
+    {Falta de ';' al final de la linea}
+    res := f_prueba(a, b) [2, 3]
+
+    res := a + b;
+end;

@@ -1,0 +1,13 @@
+{{Caso de Prueba Nro11: Pruebas sobre errores lexicos en cadenas}}
+{{Comportamiento Esperado del Compilador: Errores léxicos por malformación de cadenas y errores lexicos sobre ellas.}}
+
+programa_incorrecto;
+
+USHORTINT prueba;
+
+BEGIN 
+    {Esta cadena no se cierra antes del fin de linea 
+    prueba := 10$us;
+    {Cadena 
+    multilinea incorrecta}
+end;

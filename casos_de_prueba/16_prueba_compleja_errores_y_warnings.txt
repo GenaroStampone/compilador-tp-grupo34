@@ -1,0 +1,21 @@
+{{Caso de Prueba Nro15: Pruebas sobre errores lexicos en un programa complejo incluyendo temas 2, 8 , 9 y 16}}
+{{Comportamiento Esperado del Compilador: Errores léxicos y Warnings por variables con longitud larga y mal formadas, ademas de cadenas y comentarios invalidos. Involucrandose igualmente la ausencia de ";" y como actua el programa.}}
+
+programa_incorrecto
+
+USHORTINT variable_de_longitud_larga;
+DOUBLEF variable_22_caracteres;
+
+BEGIN
+    {variables invalidas con errores}
+    variable_de_longitud_larga := 2$us;
+    variable_22_caracteres := 5$us;
+    variable_de_longitud_larga := 7;
+    {variable valida
+    variable_22_caracteres := 2.0;
+    {{
+        variables validas
+    }
+    variable_22_caracteres := 6.0;
+    {fin del programa}
+end

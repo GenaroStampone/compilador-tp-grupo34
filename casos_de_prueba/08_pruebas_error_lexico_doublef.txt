@@ -1,0 +1,17 @@
+{{Caso de Prueba Nro8: Pruebas sobre errores lexicos sobre DOUBLEF}}
+{{Comportamiento Esperado del Compilador: Errores léxicos por malformación de sufijo o sintaxis. Ademas de error por valor sin parte decimal.}}
+
+programa_incorrecto;
+
+DOUBLEF constante_con_mas_de_veintidos_caracteres, EN_MAYUSCULA, CoMbInAdO, @_valor_extraño, sin_decimal_1, sin_decimal_2, sin_decimal_3;
+
+begin
+    constante_con_mas_de_veintidos_caracteres := 1.0;
+    EN_MAYUSCULA := 2.0;
+    CoMbInAdO := 3.0;
+    @_valor_extraño := 4.0;
+    no_declarada := 5.0;
+    sin_decimal_1 := 15.;
+    sin_decimal_2 := 3d-5;
+    sin_decimal_3 := 20;
+end;

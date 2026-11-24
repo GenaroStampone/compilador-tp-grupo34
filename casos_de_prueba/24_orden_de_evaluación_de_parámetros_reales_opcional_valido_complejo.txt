@@ -1,0 +1,48 @@
+{{Caso de Prueba Nro20: Codigo complejo sintacticamente correcto de orden de evaluacion de parametros reales opcional.}}
+{{Comportamiento Esperado del Compilador: Tira de tokens completa, 0 errores y 0 warnings.}}
+
+programa_correcto;
+
+class procesador_matematico 
+    begin 
+        doublef calcular_promedio (doublef val1, doublef val2, doublef val3) 
+            begin 
+                ret ((val1 + val2 + val3) / 3.0d+0); 
+            end;
+    end;
+
+ushortint function evaluar_rangos (ushortint base, ushortint incremento, doublef escala)
+    ushortint temp;
+    begin 
+        temp := base + incremento; 
+        if (escala >= 1.0d+0) 
+            ret (temp); 
+        else 
+            ret (0$us); 
+        end_if; 
+    end;
+
+ushortint x, y, res_int; 
+doublef d1, d2, d3, res_double; 
+procesador_matematico proc;
+
+begin 
+    x := 10$us; 
+    y := 20$us; 
+    d1 := 1.5d+0; 
+    d2 := 2.5d+0; 
+    d3 := 4.0d+0; 
+    factor_multiplicador := 2.0d+0; 
+    res_int := evaluar_rangos(x + 5$us, y * 2$us, factor_multiplicador) [1, 2, 3]; 
+    res_double := proc.calcular_promedio(d1, d2, d3) [1, 3, 2]; 
+    if (res_double > 2.0d+0) 
+        begin 
+            pout({Calculo con orden de evaluacion exitoso}); 
+            res_double := proc.calcular_promedio(d1, d2, d3); 
+        end; 
+    else 
+        begin 
+            pout({Resultado fuera del rango esperado}); 
+        end;
+    end_if;
+end;

@@ -1,0 +1,19 @@
+{{Caso de Prueba Nro14: Codigo complejo lexicamente correcto del compiladorcon temas 2, 8, 9 y 16 incluidos}}
+{{Comportamiento Esperado del Compilador: Tira de tokens completa, 0 errores y 0 warnings.}}
+
+programa_correcto;
+
+USHORTINT val_minimo, val_maximo, val medio;
+doublef factor_presicion, umbral_calculo;
+
+begin
+    {Inicializacion de variables USHORTIN}
+    val_minimo := 0$us;
+    val_maximo := 255$us;
+    {Inicializa de variables DOUBLEF}
+    factor_precision := 1.7976931348623157d+308;
+    umbral_calculo := .6;
+    val_medio := 3$us;
+    val_medio := 100$us;
+    umbral_calculo := 1.7;
+end;

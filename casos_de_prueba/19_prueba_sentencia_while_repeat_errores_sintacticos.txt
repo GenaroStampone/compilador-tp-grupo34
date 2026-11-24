@@ -1,0 +1,29 @@
+{{Caso de Prueba Nro19: Codigo sintacticamente incorrecto de sentencia WHILE-REPEAT}}
+{{Comportamiento Esperado del Compilador: Errores sintacticos sobre falta de REPEAT, parentesis y bloques incompletos}}
+
+programa_incorrecto;
+
+USHORTINT i, max;
+
+begin
+    i := 0$us; 
+    max := 5$us; 
+    
+    {Error 1: Falta de la palabra reservada REPEAT}
+    while (i < max) 
+        i := i + 1$us; 
+        
+    {Error 2: Falta de paréntesis de apertura en la condición}
+    while i < max) repeat 
+        i := i + 1$us; 
+    
+    {Error 3: Bloque incompleto (falta el END de cierre en el cuerpo del WHILE)}
+    while (i > 0$us) repeat 
+        begin 
+            i := i - 1$us; 
+            pout({Falta cierre del bloque}); 
+    
+    {Error 4: Falta de ';' al final de la sentencia WHILE}
+    while (i == 0$us) repeat 
+        pout({Sin punto y coma final})
+end;

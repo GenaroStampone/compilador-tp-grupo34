@@ -1,0 +1,14 @@
+{{Caso de Prueba Nro13: Pruebas sobre errores lexicos en comentarios multilinea}}
+{{Comportamiento Esperado del Compilador: Errores léxicos por malformación de comentarios multilinea}}
+
+programa_correcto;
+
+USHORTINT prueba;
+
+BEGIN 
+    {{ llaves de comentario dentro de comentario: 
+        {{comentario dentro}} comentario fuera}}
+    prueba := 1$us;
+    {{Esta cadena no se cierra antes del fin de linea
+
+end;
