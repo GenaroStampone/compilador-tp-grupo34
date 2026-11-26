@@ -34,7 +34,6 @@ public class GeneradorWebAssembly {
     private final Map<String, String> nombreFuncion = new HashMap<>();
     private final Set<String> nombresUsados = new LinkedHashSet<>();
     private final Map<String, Integer> datos = new LinkedHashMap<>();
-    private int contadorIds = 0;
     private int siguienteObjeto = 0;
     private int siguienteDato = 0;
 
@@ -321,8 +320,6 @@ public class GeneradorWebAssembly {
                 return compilarRetorno(nodo, ctx);
             case "CALL":
                 return compilarLlamada(nodo, ctx) + "\n  drop\n";
-            case "ENUM_CHECK":
-                return compilarSecuencia(nodo.getIzq(), ctx);
             default:
                 return "";
         }
