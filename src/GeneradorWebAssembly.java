@@ -352,9 +352,10 @@ public class GeneradorWebAssembly {
         String condCode = compilarExpresion(cond, ctx);
         String thenCode = compilarSecuencia(thenNode, ctx);
         String elseCode = compilarSecuencia(elseNode, ctx);
+        String bloqueElse = elseCode.isEmpty() ? "" : " else\n" + indentar(elseCode);
         return condCode
                 + "  if\n" + indentar(thenCode)
-                + "  else\n" + indentar(elseCode)
+                + bloqueElse
                 + "  end\n";
     }
 
