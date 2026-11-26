@@ -379,10 +379,7 @@ public class GeneradorWebAssembly {
 
     private String compilarRetorno(NodoArbol nodo, Ctx ctx) {
         NodoArbol expr = nodo.getIzq();
-        String tipoFuncion = tipoBaseDe(nodo.getTipoToken());
         String codigo = compilarExpresion(expr, ctx);
-        String tipoExpr = tipoBaseDe(tipoDeNodo(expr));
-        codigo += convertir(tipoExpr, tipoFuncion);
         return codigo + "  return\n";
     }
 
@@ -876,9 +873,6 @@ public class GeneradorWebAssembly {
         if (a.equals(b)) return "";
         if (b.equals("DOUBLEF") && a.equals("USHORTINT")) {
             return "  f64.convert_i32_u\n";
-        }
-        if (b.equals("USHORTINT") && a.equals("DOUBLEF")) {
-            return "  i32.trunc_f64_u\n";
         }
         return "";
     }
