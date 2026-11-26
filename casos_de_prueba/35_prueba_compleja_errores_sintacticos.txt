@@ -1,0 +1,77 @@
+{{Caso de Prueba Nro35: Codigo complejo sintacticamente incorrecto con los temas 11, 18, 20, 23, 27 y 29
+    ademas de abarcar los requisitos del TP2 para todos los grupos.}}
+{{Comportamiento Esperado del Compilador: Prueba sobre ausencia de valores o variables en definiciones de funciones, typedef o clases; mal uso de asignacion
+    en expresiones y demas sentencias invalidas para los demas temas.}}
+
+programa_incorrecto;
+
+{{Ausencia de valores en la definición de la enumeración 'typedef'}}
+typedef enum_erronea = [];
+
+typedef tipo_estado = [1$us, 2$us, 3$us]; 
+
+{{Clase con error de puntuación en sentencia friend}}
+class clase_servidor 
+    begin 
+        doublef carga_trabajo; 
+        private ushortint puerto_privado; 
+        {{Falta ';' al final de la declaración 'friend'}} 
+        friend auditor_seguridad 
+        friend funcion_revisora; 
+        private ushortint calcular_hash(ushortint val) 
+            begin 
+                ret (val + 1$us); 
+            end; 
+    end; 
+    
+class auditor_seguridad 
+    begin 
+        ushortint nivel_clave; 
+    end; 
+
+{{Declaración de función con error sintactico en lista de parámetros formales}}
+ushortint function funcion_revisora(ushortint p1, doublef, p2) 
+    ushortint contador_local; 
+    begin 
+        contador_local := p1; 
+        if (p1 > 0$us) 
+            ret (contador_local); 
+        else 
+            pout({Sin retorno}); 
+        end_if; 
+    end; 
+
+ushortint v_int1, v_int2; 
+doublef v_doble; 
+tipo_estado estado_var; 
+clase_servidor srv;
+
+begin
+    v_int1 := 10$us; 
+    v_int2 := 20$us;
+    v_doble := 5.0d+0;
+
+    {{Falta ']' de cierre en el acceso posicional al atributo}}
+    srv[0$us := 12.5d+0; 
+    srv.carga_trabajo := 10.0d+0;
+
+    {{Uso de ':=' en lugar de '=' en asignación de parámetro}} 
+    v_int1 := funcion_revisora(v_int1 := 5$us, v_doble, v_int2) [1$us, 2$us, 4];
+
+    {{Invocación válida sin corchetes para confirmar recuperación sintáctica}} 
+    v_int2 := funcion_revisora(v_int1, v_doble); 
+    
+    {{Ausencia de la palabra reservada 'repeat'}} 
+    while (v_int1 < v_int2) 
+        begin 
+            v_int1 := v_int1 + 1$us;
+            if (v_int1 == 15$us) 
+                pout({Mitad del proceso alcanzada}); 
+            else 
+                pout({Procesando iteracion}); 
+                {{Falta delimitador 'end_if' para cerrar la cláusula de selección}} 
+        end; 
+    
+    {{Falta de argumento en sentencia POUT}} 
+    pout();
+end;

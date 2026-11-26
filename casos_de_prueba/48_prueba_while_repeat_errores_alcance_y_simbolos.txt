@@ -1,0 +1,93 @@
+{{Caso de Prueba Nro48: Codigo complejo semanticamente incorrecto de sentencia 'WHILE-REPEAT'}}
+{{Comportamiento Esperado del Compilador: Prueba sobre errores semanticos en sentencias while por alcance (accediendo a metodos o atributos private o inexistentes) y simbolos}}
+
+programa_incorrecto;
+
+class cuenta_bancaria
+begin
+    doublef saldo;
+    private ushortint pin_privado;
+
+    private ushortint validar_pin(ushortint p)
+    begin
+        if (p == pin_privado)
+            ret (1$us);
+        else
+            ret (0$us);
+        end_if;
+    end;
+end;
+
+typedef estado_bucle = [1$us, 2$us, 3$us];
+
+ushortint function funcion_auxiliar(ushortint param_func)
+ushortint var_local_func;
+begin
+    var_local_func := param_func + 1$us;
+    ret (var_local_func);
+end;
+
+ushortint contador, limite, res;
+cuenta_bancaria c1;
+
+begin
+    contador := 1$us;
+    limite := 10$us;
+
+    {{'param_func' no es visible en 'main' (pertenece a 'funcion_auxiliar')}}
+    while (param_func < limite) repeat 
+    begin
+        {{'var_local_func' no es visible en 'main'}}
+        contador := contador + var_local_func;
+    end;
+
+    {{'var_tardia' se utiliza en la condición antes de su declaración}}
+    while (contador < var_tardia) repeat
+    begin
+        {{'funcion_tardia' se invoca dentro del bucle antes de declararse}}
+        res := funcion_tardia(contador); 
+        contador := contador + 1$us;
+    end;
+
+    {{Uso de nombre de CLASE como operando en la condición}}
+    while (cuenta_bancaria < 5$us) repeat
+    begin
+        contador := contador + 1$us;
+    end;
+
+    {{Uso de TYPEDEF como operando en la condición}}
+    while (estado_bucle == 1$us) repeat 
+    begin
+        contador := contador + 1$us;
+    end;
+
+    {{Uso de FUNCIÓN como operando directo sin invocación}}
+    while (funcion_auxiliar > 0$us) repeat 
+    begin
+        contador := contador + 1$us;
+    end;
+    while (contador < limite) repeat
+    begin
+        {{Atributo 'pin_privado' es private y 'main' no posee permisos 'friend'}}
+        res := c1.[$1us];
+        {{Método 'validar_pin' es private y 'main' no posee permisos 'friend'}}
+        res := c1.validar_pin(123$us);
+        contador := contador + 1$us;
+    end;
+    while (contador < limite) repeat
+    begin
+        {{Invocación a método no declarado en la clase}}
+        res := c1.metodo_inexistente(limite);
+        {{Invocación a función global inexistente}}
+        res := funcion_fantasma(contador);
+        contador := contador + 1$us;
+    end;
+end;
+
+{{Declaraciones tardías para forzar los errores de visibilidad secuencial}}
+ushortint var_tardia;
+
+ushortint function funcion_tardia(ushortint n)
+begin
+    ret (n * 2$us);
+end;

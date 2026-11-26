@@ -1,0 +1,79 @@
+{{Caso de Prueba Nro35: Codigo complejo sintacticamente incorrecto con los temas 11, 18, 20, 23, 27 y 29
+    ademas de abarcar los requisitos del TP2 para todos los grupos.}}
+{{Comportamiento Esperado del Compilador: Prueba que devuelve errores y warnings sobre variables, funciones y clases, excediendo la longitud
+    del identificador, ademas de probar errores sobre sentencias 'IF-ELSE' y 'WHILE-REPEAT', entre demas temas.}}
+
+programa_incorrecto;
+
+{{WARNING: Identificador de tipo typedef excede los 22 caracteres (27 caracteres)}}
+typedef enum_estado_sistema_global = [0$us, 1$us, 2$us]; 
+
+{{WARNING: Identificador de Clase excede los 22 caracteres (39 caracteres)}} 
+class clase_administradora_de_recursos_locales 
+    begin 
+        doublef ancho_banda; 
+        {{WARNING: Identificador de atributo excede los 22 caracteres (27 caracteres)}}
+        private ushortint clave_secreta_del_servidor; 
+        private doublef obtener_metrica(doublef entrada) 
+            begin 
+                ret (entrada * 2.0d+0); 
+            end;
+        friend modulo_seguridad_externo; 
+        friend funcion_de_procesamiento_de_datos; 
+    end;
+
+class modulo_seguridad_externo 
+    begin 
+        ushortint id_seguridad;
+    end;
+
+{{WARNING: Nombre de función y variable excede los 22 caracteres (36 caracteres)}}
+ushortint function funcion_de_procesamiento_de_datos(ushortint param_entrada_numerica, doublef param_factor) 
+    ushortint variable_acumuladora_interna; 
+    begin 
+        variable_acumuladora_interna := param_entrada_numerica; 
+        {{Ausencia de paréntesis '(' y ')' en la condición del IF}}
+        if param_factor >= 1.0d+0
+            ret (variable_acumuladora_interna); 
+        else 
+            pout({Procesando parametro con warning}); 
+        end_if; 
+    end; 
+
+ushortint var_contador1, var_contador2; 
+doublef var_factor_doble; 
+enum_estado_sistema_global estado_sistema; 
+clase_administradora_de_recursos_locales admin_obj;
+
+begin
+    var_contador1 := 1$us; 
+    var_contador2 := 20$us; 
+    var_factor_doble := 3.5d+0; 
+    var_contador1 := 300$us; 
+
+    {{Acceso posicional a atributos de objeto}}
+    admin_obj[0$us] := 100.0d+0;
+
+    {{Asignación '=' en parámetro e invocación con orden de evaluación [1, 3]}} 
+    var_contador1 := funci_de_procesamiento_de_datos(var_contador1 = 5$us, var_factor_doble) [1, 3];
+
+    var_contador1 := funcion_de_procesamiento_de_datos(var_contador1, var_factor_doble);
+
+    {{Falta de paréntesis '(' y ')' en la condición del WHILE}} 
+    WHILE var_contador1 < var_contador2 REPEAT
+        begin 
+            var_contador1 := var_contador1 + 1$us; 
+            var_contador2 = var_contador1 + 2$us; 
+            {{Uso de '=' para condicion en vez de '=='}}
+            if (var_contador1 = 10$us) 
+                pout({Condicion intermedia alcanzada}); 
+            else 
+                pout(var_contador1);
+
+                {{Sentencia 'POUT' sin parentesis de cierre ')'}}
+                pout(var_contador2; 
+            end_if;
+
+        {{Falta de ';' al final de la sentencia WHILE-REPEAT}}
+        end
+end;

@@ -1,0 +1,91 @@
+{{Caso de Prueba Nro50: Codigo complejo semanticamente incorrecto de asignaciones de identificadores o constantes en expresiones}}
+{{Comportamiento Esperado del Compilador: Prueba sobre errores semanticos en Símbolos No Declarados en L-Value y R-Value de Asignaciones con '=', Infracciones de Alcance, 
+    Visibilidad Secuencial, Uso Incorrecto de Símbolo (Atributo Uso) como L-Value en '=', Uso Incorrecto de Símbolo (Atributo Uso) como R-Value en '=', Infracciones de Encapsulamiento y Privacidad}}
+
+programa_incorrecto;
+
+class cuenta_ahorro
+begin
+    doublef saldo_publico;
+    private ushortint pin_secreto; 
+
+    private ushortint validar_pin(ushortint p)
+    begin
+        if (p == pin_secreto)
+            ret (1$us);
+        else
+            ret (0$us);
+        end_if;
+    end;
+end;
+
+typedef tipo_estado = [1$us, 2$us, 3$us]; 
+
+ushortint function funcion_auxiliar(ushortint param_func)
+ushortint var_local_func;
+begin
+    var_local_func := param_func + 10$us;
+    ret (var_local_func);
+end;
+
+ushortint val_int_a, val_int_b, res_int;
+doublef val_doble_a, res_doble;
+cuenta_ahorro cuenta_main;
+
+begin
+    val_int_a := 10$us;
+    val_int_b := 20$us;
+    val_doble_a := 5.0d+0;
+
+    {{L-Value no declarado en '=' dentro de expresión}}
+    res_int := (variable_fantasma_lvalue = 15$us) + 5$us;
+
+    {{R-Value no declarado dentro de la asignación con '='}}
+    res_int := (val_int_a = variable_fantasma_rvalue + 2$us);
+
+    {{Intentar usar el parámetro 'param_func' de 'funcion_auxiliar' como L-Value en '=' desde 'main'}}
+    res_int := (param_func = 50$us) + val_int_a;
+
+    {{Intentar usar la variable local 'var_local_func' como R-Value en '=' desde 'main'}}
+    res_int := (val_int_a = var_local_func + 1$us);
+
+    {{L-Value de '=' declarado posteriormente en el archivo}}
+    res_int := (var_tardia = 100$us);
+
+    {{R-Value de '=' que referencia a una función declarada posteriormente}}
+    res_int := (val_int_a = funcion_tardia(5$us));
+
+    {{Intentar usar una CLASE como L-Value en la asignación con '='}}
+    res_doble := (cuenta_ahorro = 100.0d+0);
+
+    {{Intentar usar una FUNCIÓN como L-Value en la asignación con '='}}
+    res_int := (funcion_auxiliar = 20$us);
+
+    {{Intentar usar un TYPEDEF (tipo enumerado) como L-Value en la asignación con '='}}
+    res_int := (tipo_estado = 1$us);
+
+    {{Asignar un nombre de CLASE como operando R-Value en '='}}
+    res_doble := (val_doble_a = cuenta_ahorro);
+
+    {{Asignar un nombre de FUNCIÓN sin invocar como operando R-Value en '='}}
+    res_int := (val_int_a = funcion_auxiliar);
+
+    {{Asignar un TYPEDEF como operando R-Value en '='}}
+    res_int := (val_int_a = tipo_estado);
+
+    {{Intentar asignar con '=' a un atributo privado ('pin_secreto') desde 'main'}}
+    res_int := val_int_a + (cuenta_main[1$us] = 123$us);
+
+    {{Intentar asignar con '=' a un método privado de clase}}
+    res_int := (cuenta_main.validar_pin(val_int_a) = 1$us);
+
+    pout({Prueba semantica de alcance y simbolos Tema 18 completada});
+end;
+
+{{Declaraciones tardías para evaluar visibilidad secuencial}}
+ushortint var_tardia;
+
+ushortint function funcion_tardia(ushortint entrada)
+begin
+    ret (entrada * 2$us);
+end;

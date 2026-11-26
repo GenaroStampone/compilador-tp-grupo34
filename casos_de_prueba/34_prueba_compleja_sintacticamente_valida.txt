@@ -1,0 +1,69 @@
+{{Caso de Prueba Nro34: Codigo complejo sintacticamente correcto con los temas 11, 18, 20, 23, 27 y 29
+    ademas de abarcar los requisitos del TP2 para todos los grupos.}}
+{{Comportamiento Esperado del Compilador: Tira de tokens completa, 0 errores y 0 warnings.}}
+
+programa_correcto;
+
+typedef estado_proceso = [0$us, 1$us, 2$us, 5$us]; 
+
+class procesador_base 
+    begin 
+        doublef factor_escala; 
+        private ushortint clave_interna; 
+        private doublef calcular_bonus(doublef base) 
+            begin 
+                if (base > 10.0d+0) 
+                    ret (base * 1.5d+0); 
+                else 
+                    ret (base); 
+                end_if; 
+            end; 
+        doublef ejecutar_escala(doublef v1, ushortint v2) 
+            begin 
+                ret (v1 * factor_escala + v2); 
+        end; 
+        friend auditor_sistema; 
+        friend funcion_auxiliar; 
+    end; 
+
+class auditor_sistema 
+    begin 
+        ushortint nivel_auditoria; 
+    end; 
+
+ushortint function funcion_auxiliar(ushortint p1, doublef p2, ushortint p3) 
+    ushortint resultado_local; 
+    begin 
+        resultado_local := p1 + p3; 
+        if (p2 >= 1.0d+0) 
+            ret (resultado_local); 
+        else 
+            pout({Modo de ejecucion estandar sin retorno explícito}); 
+        end_if; 
+    end; 
+
+ushortint val_int1, val_int2, res_func; 
+doublef val_doble1, res_doble; 
+estado_proceso estado_actual; 
+procesador_base proc;
+
+BEGIN
+    val_int1 := 5$us; 
+    val_int2 := 10$us; 
+    val_doble1 := 2.5d+0; 
+    estado_actual := 1$us; 
+    proc[0$us] := 2.0d+0; 
+    res_func := funcion_auxiliar(val_int1, val_doble1, val_int2 = 15$us) [1$us, 2$us, 3$us]; 
+    res_func := funcion_auxiliar(val_int1 = 2$us, 1.0d+0, val_int2); 
+    while (val_int1 < val_int2) repeat 
+        begin 
+            val_int1 := val_int1 + 1$us; 
+            if (val_int1 == 10$us) 
+                pout({Limite alcanzado en bucle de control}); 
+            else 
+                pout(proc.ejecutar_escala(val_doble1, val_int1)); 
+            end_if; 
+        end; 
+    res_doble := proc[0$us] + val_doble1; 
+    pout({Programa valido finalizado correctamente});
+end;

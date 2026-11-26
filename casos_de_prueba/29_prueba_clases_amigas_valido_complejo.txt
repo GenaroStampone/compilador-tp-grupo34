@@ -1,0 +1,52 @@
+{{Caso de Prueba Nro29: Codigo complejo sintacticamente correcto de clases amigas (SOLO SE INVOLUCRA DECLARACION POR DEFINICION DEL TP2).}}
+{{Comportamiento Esperado del Compilador: Tira de tokens completa, 0 errores y 0 warnings.}}
+
+programa_correcto;
+
+class sistema_bancario
+begin
+    private doublef reserva_fondo;
+    private ushortint codigo_sucursal;
+    doublef a;
+    private ushortint verificar_reserva (doublef monto_solicitado)
+    begin
+        if (reserva_fondo >= monto_solicitado)
+            ret (1$us);
+        else
+            ret (0$us);
+        end_if;
+    end;
+
+    friend auditor_externo;
+    friend procesar_transferencia;
+end;
+
+class auditor_externo
+begin
+    ushortint id_auditor;
+    sistema_bancario s;
+    
+    doublef auditar_sucursal (doublef balance_minimo)
+    begin
+        ret(balance_minimo * 1.1d+0);
+    end;
+end;
+
+ushortint function procesar_transferencia (ushortint origen, doublef monto)
+ushortint confirmacion;
+begin
+    if (monto > 0.0)
+        confirmacion := 1$us;
+    else
+        confirmacion := 0$us;
+    end_if;
+    ret (confirmacion);
+end;
+
+sistema_bancario banco_central;
+auditor_externo aud_1;
+ushortint resultado_transf;
+
+begin
+    resultado_transf := 0$us;
+end;

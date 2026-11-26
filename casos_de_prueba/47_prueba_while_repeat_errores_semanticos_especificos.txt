@@ -1,0 +1,79 @@
+{{Caso de Prueba Nro47: Codigo complejo semanticamente incorrecto de sentencia 'WHILE-REPEAT'}}
+{{Comportamiento Esperado del Compilador: Prueba sobre errores semanticos en expresion condicional del while, 
+    errores dentro del cuerpo ejecutable y errores de alcance y ambitos anidados.}}
+
+programa_incorrecto;
+
+class cuenta_usuario
+begin
+    doublef saldo_publico;
+    private ushortint pin_privado;
+end;
+
+typedef estado_sistema = [0$us, 1$us, 2$us];
+
+ushortint function funcion_obtener_limite(ushortint entrada)
+begin
+    ret (entrada + 5$us);
+end;
+
+ushortint contador, limite;
+doublef saldo_total;
+cuenta_usuario mi_cuenta;
+estado_sistema estado_actual;
+
+begin
+    contador := 0$us;
+    limite := 10$us;
+    saldo_total := 100.0d+0;
+
+    {{Usar una variable no declarada dentro de la condición del WHILE}}
+    while (variable_no_declarada < limite) repeat
+    begin
+        contador := contador + 1$us;
+    end;
+
+    {{Usar el identificador de una CLASE como condición del WHILE}}
+    while (cuenta_usuario) repeat
+    begin
+        contador := contador + 1$us;
+    end;
+
+    {{Usar un TYPEDEF (tipo enumerado) como operando directo en la condición}}
+    while (estado_sistema > 0$us) repeat
+    begin
+        contador := contador + 1$us;
+    end;
+
+    {{Usar el nombre de una FUNCIÓN como operando directo sin invocarla}}
+    while (funcion_obtener_limite < limite) repeat
+    begin
+        contador := contador + 1$us;
+    end;
+
+    {{Comparación relacional incompatible en la condición}}
+    while (mi_cuenta == limite) repeat
+    begin
+        contador := contador + 1$us;
+    end;
+    while (contador < limite) repeat
+    begin
+        {{Asignación a una variable no declarada dentro del cuerpo del WHILE}}
+        variable_fantasma_cuerpo := 5$us;
+
+        {{Intento de modificar una FUNCIÓN en el lado izquierdo (LHS) dentro del WHILE}}
+        funcion_obtener_limite := 10$us;
+
+        {{Intento de asignar un valor a un TYPEDEF dentro del cuerpo del WHILE}}
+        estado_sistema := 1$us;
+
+        {{Infracción de encapsulamiento/privacidad dentro del WHILE.}}
+        mi_cuenta.pin_privado := 1234$us;
+        contador := contador + 1$us;
+    end;
+    while (contador < 20$us) repeat
+    begin
+        {{Intento de acceder al parámetro formal 'entrada' de 'funcion_obtener_limite'}}
+        contador := contador + entrada;
+    end;
+end;

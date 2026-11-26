@@ -1,4 +1,4 @@
-{{Caso de Prueba Nro15: Pruebas sobre errores lexicos en un programa complejo incluyendo temas 2, 8 , 9 y 16}}
+{{Caso de Prueba Nro14: Pruebas sobre errores lexicos en un programa complejo incluyendo temas 2, 8 , 9 y 16}}
 {{Comportamiento Esperado del Compilador: Errores léxicos por variables fuera de rango, nombre de variables invalidas y malformacion de cadenas y comentarios multilinea}}
 
 programa_incorrecto;

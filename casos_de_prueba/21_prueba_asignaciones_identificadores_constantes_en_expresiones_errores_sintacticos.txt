@@ -1,5 +1,5 @@
-{{Caso de Prueba Nro19: Codigo sintacticamente incorrecto de asignaciones de identificadores o constantes en expresiones.}}
-{{Comportamiento Esperado del Compilador: Errores sintacticos sobre }}
+{{Caso de Prueba Nro21: Codigo sintacticamente incorrecto de asignaciones de identificadores o constantes en expresiones.}}
+{{Comportamiento Esperado del Compilador: Errores sintacticos sobre asignaciones mal formadas en expresiones}}
 
 programa_incorrecto;
 

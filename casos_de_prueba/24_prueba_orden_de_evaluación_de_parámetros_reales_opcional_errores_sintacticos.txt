@@ -1,5 +1,5 @@
-{{Caso de Prueba Nro19: Codigo sintacticamente incorrecto de asignaciones de identificadores o constantes en expresiones.}}
-{{Comportamiento Esperado del Compilador: Errores sintacticos sobre }}
+{{Caso de Prueba Nro24: Codigo sintacticamente incorrecto de orden de evaluacion de parametros reales opcional.}}
+{{Comportamiento Esperado del Compilador: Errores sintacticos sobre orden de evaluacion de parametros mal formadas.}}
 
 programa_incorrecto;
 
@@ -15,28 +15,31 @@ begin
     b := 2$us; 
 
     {Falta de corchete de cierre ']' en la lista de orden de evaluación} 
-    res := f_prueba(a, b)[1, 2;
+    res := f_prueba(a, b)[1$us, 2$us;
 
     {Falta de corchete de cierre '[' en la lista de orden de evaluación} 
-    res := f_prueba(a, b)1, 2];
+    res := f_prueba(a, b)1$us, 2$us];
+
+    {Constantes de orden de los corchetes sin '$us'}
+    res := f_prueba(a, b)[1, 2];
 
     {Menos Constantes de orden que parametros} 
-    res := f_prueba(a, b)[2];
+    res := f_prueba(a, b)[2$us];
 
     {Mas constantes de orden que de parametros}
-    res := f_prueba(a, b)[1, 2, 3];
+    res := f_prueba(a, b)[1$us, 2$us, 3$us];
 
     {Corchetes vacíos sin indicar las constantes de orden} 
     res := f_prueba(a, b) []; 
     
     {Coma faltante en el orden de constantes dentro de los corchetes}
-    res := f_prueba(a, b) [2 3]; 
+    res := f_prueba(a, b) [2$us 3$us]; 
     
     {Falta de coma separadora en los parámetros reales antes de los corchetes}
-    res := f_prueba(a b) [2, 3];
+    res := f_prueba(a b) [2$us, 3$us];
 
     {Falta de ';' al final de la linea}
-    res := f_prueba(a, b) [2, 3]
+    res := f_prueba(a, b) [2$us, 3$us]
 
     res := a + b;
 end;

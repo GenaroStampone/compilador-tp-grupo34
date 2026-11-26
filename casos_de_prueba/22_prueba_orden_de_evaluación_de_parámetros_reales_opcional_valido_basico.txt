@@ -1,4 +1,4 @@
-{{Caso de Prueba Nro20: Codigo sintacticamente correcto de orden de evaluacion de parametros reales opcional.}}
+{{Caso de Prueba Nro22: Codigo sintacticamente correcto de orden de evaluacion de parametros reales opcional.}}
 {{Comportamiento Esperado del Compilador: Tira de tokens completa, 0 errores y 0 warnings.}}
 
 programa_correcto;
@@ -14,8 +14,8 @@ begin
     a := 5.0; 
     b := 10.0; 
     c := 15.0; 
-    resultado := sumar_tres(a, b, c)[2, 1, 3]; 
-    resultado := sumar_tres(b, a, c)[3, 2, 1];
-    resultado := sumar_tres(a, b, c)[1, 2, 3];
+    resultado := sumar_tres(a, b, c)[2$us, 1$us, 3$us]; 
+    resultado := sumar_tres(b, a, c)[3$us, 2$us, 1$us];
+    resultado := sumar_tres(a, b, c)[1$us, 2$us, 3$us];
     resultado := sumar_tres(a, b, c);
 end;

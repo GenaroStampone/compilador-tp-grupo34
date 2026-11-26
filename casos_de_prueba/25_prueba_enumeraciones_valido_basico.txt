@@ -1,0 +1,35 @@
+{{Caso de Prueba Nro25: Codigo sintacticamente correcto de enumeraciones.}}
+{{Comportamiento Esperado del Compilador: Tira de tokens completa, 0 errores y 0 warnings.}}
+
+programa_correcto;
+
+typedef dias_laborales = [1$us, 2$us, 3$us, 4$us, 5$us]; 
+typedef estados_codigo = [0$us, 1$us, 2$us]; 
+dias_laborales dia_actual, dia_siguiente; 
+estados_codigo estado_proceso; 
+ushortint contador; 
+ushortint function es_dia_valido (ushortint dia_evaluar) 
+    begin 
+        if (dia_evaluar <= 5$us) 
+            ret (1$us); 
+        else 
+            ret (0$us); 
+        end_if; 
+    end;
+
+begin 
+    contador := 1$us; 
+    dia_actual := 3$us; 
+    estado_proceso := 0$us; 
+    if (es_dia_valido(dia_actual) == 1$us) 
+        begin 
+            pout({Dia laboral verificado correctamente}); 
+            estado_proceso := 1$us; 
+        end; 
+    else 
+        begin 
+            pout({Dia fuera de rango laboral}); 
+            estado_proceso := 2$us; 
+        end;
+    end_if;
+end;

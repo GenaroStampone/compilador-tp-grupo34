@@ -1,4 +1,4 @@
-{{Caso de Prueba Nro20: Codigo complejo sintacticamente correcto de orden de evaluacion de parametros reales opcional.}}
+{{Caso de Prueba Nro23: Codigo complejo sintacticamente correcto de orden de evaluacion de parametros reales opcional.}}
 {{Comportamiento Esperado del Compilador: Tira de tokens completa, 0 errores y 0 warnings.}}
 
 programa_correcto;
@@ -23,7 +23,7 @@ ushortint function evaluar_rangos (ushortint base, ushortint incremento, doublef
     end;
 
 ushortint x, y, res_int; 
-doublef d1, d2, d3, res_double; 
+doublef d1, d2, d3, res_double, factor_multiplicador; 
 procesador_matematico proc;
 
 begin 
@@ -33,8 +33,8 @@ begin
     d2 := 2.5d+0; 
     d3 := 4.0d+0; 
     factor_multiplicador := 2.0d+0; 
-    res_int := evaluar_rangos(x + 5$us, y * 2$us, factor_multiplicador) [1, 2, 3]; 
-    res_double := proc.calcular_promedio(d1, d2, d3) [1, 3, 2]; 
+    res_int := evaluar_rangos(x + 5$us, y * 2$us, factor_multiplicador)[1$us, 2$us, 3$us]; 
+    res_double := proc.calcular_promedio(d1, d2, d3)[1$us, 3$us, 2$us]; 
     if (res_double > 2.0d+0) 
         begin 
             pout({Calculo con orden de evaluacion exitoso}); 

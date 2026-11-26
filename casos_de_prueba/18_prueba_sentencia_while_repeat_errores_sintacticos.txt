@@ -1,4 +1,4 @@
-{{Caso de Prueba Nro19: Codigo sintacticamente incorrecto de sentencia WHILE-REPEAT}}
+{{Caso de Prueba Nro18: Codigo sintacticamente incorrecto de sentencia WHILE-REPEAT}}
 {{Comportamiento Esperado del Compilador: Errores sintacticos sobre falta de REPEAT, parentesis y bloques incompletos}}
 
 programa_incorrecto;

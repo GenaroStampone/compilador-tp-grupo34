@@ -1,4 +1,4 @@
-{{Caso de Prueba Nro18: Codigo complejo sintacticamente correcto de sentencia WHILE-REPEAT}}
+{{Caso de Prueba Nro17: Codigo complejo sintacticamente correcto de sentencia WHILE-REPEAT}}
 {{Comportamiento Esperado del Compilador: Tira de tokens completa, 0 errores y 0 warnings.}}
 
 programa_correcto;

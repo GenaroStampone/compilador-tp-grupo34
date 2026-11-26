@@ -1,4 +1,4 @@
-{{Caso de Prueba Nro12: Codigo lexicamente correcto de comentarios multilinea}}
+{{Caso de Prueba Nro11: Codigo lexicamente correcto de comentarios multilinea}}
 {{Comportamiento Esperado del Compilador: Tira de tokens completa, 0 errores y 0 warnings.}}
 
 programa_correcto;

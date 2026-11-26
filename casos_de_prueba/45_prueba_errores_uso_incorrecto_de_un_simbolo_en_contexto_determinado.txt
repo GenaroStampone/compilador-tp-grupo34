@@ -1,0 +1,76 @@
+{{Caso de Prueba Nro34: Codigo complejo semanticamente incorrecto de uso incorrecto de un simbolo en contexto determinado}}
+{{Comportamiento Esperado del Compilador: Prueba sobre errores semanticos donde se realizan chequeo sobre asignaciones, chequeo en operandos de expresiones,
+    chequeo en invocaciones y chequeo en miembros de clase, contemplando cada tipo de caso}}
+
+programa_incorrecto;
+
+{{Declaraciones válidas de símbolos con sus respectivos Roles (Atributo Uso)}}
+typedef tipo_estado = [1$us, 2$us, 3$us]; {{Uso = "nombre_typedef"}}
+
+class cuenta_cliente {{Uso = "nombre_clase"}}
+begin
+    doublef saldo_atributo; {{Uso = "atributo_clase"}}
+
+    doublef obtener_saldo_metodo(ushortint cod) {{Uso = "nombre_metodo"}}
+    begin
+        ret (saldo_atributo);
+    end;
+end;
+
+ushortint function calcular_total_funcion(ushortint base) {{Uso = "nombre_funcion"}}
+begin
+    ret (base + 10$us);
+end;
+
+{{Declaraciones de variables u objetos}}
+ushortint variable_entera;     {{Uso = "nombre_variable"}}
+doublef variable_doble;        {{Uso = "nombre_variable"}}
+cuenta_cliente objeto_cliente; {{Uso = "nombre_variable"}}
+tipo_estado estado_actual;     {{Uso = "nombre_variable"}}
+
+begin
+    variable_entera := 5$us;
+    variable_doble := 12.5d+0;
+    objeto_cliente.saldo_atributo := 100.0d+0;
+
+    {{Usar una FUNCIÓN como si fuera una VARIABLE}}
+    {{Asignar un valor a una función en el lado izquierdo (LHS)}}
+    calcular_total_funcion := 50$us;
+
+    {{Usar un nombre de función como operando directo en una expresión}}
+    variable_entera := calcular_total_funcion + 5$us;
+
+    {{Usar una CLASE como si fuera una VARIABLE u OPERANDO}}
+    {{Intentar asignar a un identificador de clase}}
+    cuenta_cliente := 100$us;
+
+    {{Usar un nombre de clase como operando en una expresión}}
+    variable_doble := cuenta_cliente + 1.0d+0;
+
+    {{Usar una VARIABLE como si fuera una FUNCIÓN o TIPO DE DATO}}
+    {{Intentar invocar una variable como si fuera una función}}
+    variable_entera := variable_entera(10$us);
+
+    {{Intentar invocar una variable de objeto como función}}
+    variable_entera := objeto_cliente(5$us);
+
+    {{Usar un TYPEDEF (Enumeración) como VARIABLE o FUNCIÓN}}
+    {{Asignar un valor a un tipo enumerado 'typedef'}}
+    tipo_estado := 1$us;
+
+    {{Usar un 'typedef' como operando dentro de una expresión}}
+    variable_entera := tipo_estado + 2$us;
+
+    {{Intentar invocar un 'typedef' como si fuera una función}}
+    variable_entera := tipo_estado(1$us);
+
+    {{Conflicto de Roles en MIEMBROS DE CLASE (Atributo vs Método)}}
+    {{Invocar un atributo de clase como si fuera un método}}
+    variable_doble := objeto_cliente[0$us](1$us);
+
+    {{Asignar un valor a un método de clase en el lado izquierdo}}
+    objeto_cliente.obtener_saldo_metodo := 200.0d+0;
+
+    {{Usar un método de clase como operando sin invocarlo}}
+    variable_doble := objeto_cliente.obtener_saldo_metodo + 10.0d+0;
+end;

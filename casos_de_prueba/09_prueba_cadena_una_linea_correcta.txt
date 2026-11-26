@@ -1,0 +1,16 @@
+{{Caso de Prueba Nro9: Codigo lexicamente correcto de cadenas de caracteres de una sola linea}}
+{{Comportamiento Esperado del Compilador: Tira de tokens completa, 0 errores y 0 warnings.}}
+
+programa_correcto;
+
+doublef a;
+
+begin
+    pout({Cadena bien escrita});
+    a := 1.0;
+    pout({ Cadena con caracteres y simbolos extraños "", @, *, ], [, !, #, $, %, &, /, (), =, <, >, +, -, _, ;, ~});
+    a := 2.0;
+    pout({});
+    a := 3.0;
+    pout({hola mundo});
+end;
