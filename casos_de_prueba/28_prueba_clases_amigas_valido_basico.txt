@@ -1,0 +1,45 @@
+{{Caso de Prueba Nro28: Codigo complejo sintacticamente correcto de clases amigas (SOLO SE INVOLUCRA DECLARACION POR DEFINICION DEL TP2).}}
+{{Comportamiento Esperado del Compilador: Tira de tokens completa, 0 errores y 0 warnings.}}
+
+programa_correcto;
+
+ushortint function validar_clave (ushortint codigo) 
+    begin 
+        if (codigo == 100$us) 
+            ret (1$us); 
+        else 
+            ret (0$us); 
+        end_if; 
+    end;
+
+class cuenta_usuario 
+    begin 
+        private ushortint pin_seguridad;
+        PRIVATE doublef obtener_interes (doublef tasa) 
+            begin 
+                ret (saldo_actual * tasa); 
+            end; 
+        friend gestor_auditoria; 
+        friend validar_clave;
+    end;
+
+class gestor_auditoria 
+    begin 
+        ushortint nivel_acceso;
+        private ushortint obtener_nivel(ushortint n)
+            begin
+                n := nivel_acceso;
+                ret(n);
+            end;
+    end;
+
+cuenta_usuario cuenta1;
+doublef saldo_actual;
+ushortint estado, nivel;
+
+
+begin 
+    nivel := 0;
+    saldo_actual := 1500.5d+0;
+    estado := 1;
+end;

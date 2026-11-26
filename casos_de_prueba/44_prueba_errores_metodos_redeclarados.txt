@@ -1,0 +1,90 @@
+{{Caso de Prueba Nro34: Codigo complejo semanticamente incorrecto de metodos redeclarados}}
+{{Comportamiento Esperado del Compilador: Prueba sobre errores semanticos en redeclaracion de metodos en clases con otro metodos, atributos o la misma clase}}
+
+programa_incorrecto;
+
+class calculador_financiero
+begin
+    doublef tasa_interes;
+
+    {{Método público original}}
+    doublef calcular_monto(doublef capital)
+    begin
+        ret (capital * tasa_interes);
+    end;
+
+    {{Redeclaración directa de un método con el mismo nombre y firma}}
+    doublef calcular_monto(doublef capital)
+    begin
+        ret (capital);
+    end;
+
+    {{Intento de sobrecarga de método (distinta firma/parámetros)}}
+    ushortint calcular_monto(ushortint capital_entero, ushortint meses)
+    begin
+        ret (capital_entero * meses);
+    end;
+
+    {{Redeclaración cambiando el modificador de visibilidad (private vs público)}}
+    private doublef calcular_monto(doublef base)
+    begin
+        ret (base);
+    end;
+end;
+
+class gestor_inventario
+begin
+    ushortint cantidad_stock;
+
+    {{Intentar declarar un método con el mismo nombre de un atributo existente ('cantidad_stock')}}
+    ushortint cantidad_stock(ushortint deposito)
+    begin
+        ret (deposito);
+    end;
+
+    doublef precio_unidad;
+
+    doublef obtener_precio(ushortint id_art)
+    begin
+        ret (precio_unidad);
+    end;
+
+    {{Intentar declarar un atributo con el mismo nombre de un método preexistente ('obtener_precio')}}
+    doublef obtener_precio;
+end;
+
+class servicio_autenticacion
+begin
+    ushortint nivel_acceso;
+
+    {{Declarar un método con el mismo nombre que la clase contenedora ('servicio_autenticacion')}}
+    ushortint servicio_autenticacion(ushortint token)
+    begin
+        ret (token);
+    end;
+end;
+
+class modulo_ventas
+begin
+    ushortint procesar(ushortint codigo)
+    begin
+        ret (codigo + 1$us);
+    end;
+end;
+
+class modulo_compras
+begin
+    {{'procesar' en 'modulo_compras' tiene la clave mangled 'procesar:main:modulo_compras', caso valido}}
+    ushortint procesar(ushortint codigo)
+    begin
+        ret (codigo + 2$us);
+    end;
+end;
+
+calculador_financiero calc;
+modulo_ventas v;
+modulo_compras c;
+
+begin
+    calc.tasa_interes := 1.05d+0;
+end;

@@ -1,0 +1,36 @@
+{{Caso de Prueba Nro30: Codigo sintacticamente incorrecto de clases amigas (SOLO SE INVOLUCRA DECLARACION POR DEFINICION DEL TP2).}}
+{{Comportamiento Esperado del Compilador: Prueba sobre mal formacion de declaraciones de funciones/clases amigas y atributos private}}
+
+programa_incorrecto;
+
+clase_amiga
+begin
+    ushortint a;
+end;
+
+class clase_error 
+    begin 
+        {Falta ';' al final de la declaracion friend} 
+        friend clase_amiga 
+        
+        friend clase_amiga;
+
+        {Palabra reservada private sin tipo ni identificador a continuacion}
+        private ; 
+        
+        {Uso incorrecto de friend sin especificar el identificador de la clase/funcion}
+        friend ;
+
+        {funcion/clase friend sin declarar}
+        friend sin_declarar;
+        
+        {Falta del ';' en la declaracion de un atributo privado} 
+        private ushortint atributo_privado_error 
+    
+    end;
+
+ushortint b;
+
+begin 
+    b := 1$us;
+end;

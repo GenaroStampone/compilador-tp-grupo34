@@ -1,0 +1,35 @@
+{{Caso de Prueba Nro34: Codigo sintacticamente correcto de acceso posicional a atributos}}
+{{Comportamiento Esperado del Compilador: Prueba sobre mal acceso posicional a atributos y acceso posicional invalido}}
+
+programa_incorrecto;
+
+class contenedor_datos 
+    begin 
+        ushortint val1; 
+        doublef val2; 
+    end; 
+
+contenedor_datos c1; 
+ushortint a;
+
+begin
+    {{Falta de corchete de cierre ']' en el acceso posicional}}
+    c1[0$us := 50$us; 
+
+    {{Falta de corchete de abrir '[' en el acceso posicional}}
+    c10$us]:= 50$us; 
+    
+    {{Corchetes vacios sin indicar la posicion del atributo}} 
+    c1[] := 10$us; 
+    
+    {{Falta del ';' al final de la asignacion posicional}} 
+    c1[1$us] := 12.0d+0 
+
+    c1[0$us] := 2$us;
+    
+    {{Expresion invalida o vacia dentro de la seleccion posicional}} 
+    a := c1[,];
+
+    {{Posicion invalida}}
+    c1[5$us] := 10$us;
+end;

@@ -1,0 +1,14 @@
+{{Caso de Prueba Nro4: Pruebas sobre errores lexicos sobre USHORTINT}}
+{{Comportamiento Esperado del Compilador: Errores léxicos por malformación de sufijo o sintaxis.}}
+
+programa_incorrecto;
+
+USHORTINT constante_con_mas_de_veintidos_caracteres, EN_MAYUSCULA, CoMbInAdO, @_valor_extraño;
+
+begin
+    constante_con_mas_de_veintidos_caracteres := 1$us;
+    EN_MAYUSCULA := 2$us;
+    CoMbInAdO := 3$us;
+    @_valor_extraño := 4$us;
+    no_declarada := 5$us;
+end

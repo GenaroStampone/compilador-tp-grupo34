@@ -1,0 +1,37 @@
+{{Caso de Prueba Nro27: Codigo sintacticamente correcto de enumeraciones.}}
+{{Comportamiento Esperado del Compilador: Errores sintacticos sobre enumeraciones mal formadas y valores de variables incorrectos.}}
+
+programa_incorrecto;
+
+{{Ausencia de valores dentro de la enumeracion (corchetes vacios)}}
+typedef enum_vacia = [];
+
+{{Falta del signo '=' en la definicion de typedef}}
+typedef dias_semana [1$us, 2$us, 3$us];
+
+{{Falta de corchete de cierre ']' en la lista de valores}}
+typedef estados_servidor = [0$us, 1$us, 2$us;
+
+{{Falta de corchete de abrir '[' en la lista de valores}}
+typedef temperatura = 0$us, 1$us, 2$us];
+
+{{Falta del ';' al final de la sentencia typedef}}
+typedef colores_rgb = [1$us, 2$us, 3$us]
+
+typedef valores =[1$us, 2$us, 3$us];
+
+ushortint a, b;
+valores val_1, val_2, val_3;
+
+begin 
+    a := 1$us;
+
+    {{valor incorrecto de variable typedef}}
+    val_1 := 4$us;
+    b := 2$us;
+
+    {{valor de otro tipo incorrecto en la variable de tipo typedef}}
+    val_2 := 1.0;
+
+    a := 3$us;
+end;

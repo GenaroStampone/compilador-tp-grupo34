@@ -1,0 +1,46 @@
+{{Caso de Prueba Nro33: Codigo sintacticamente correcto de acceso posicional a atributos}}
+{{Comportamiento Esperado del Compilador: Tira de tokens completa, 0 errores y 0 warnings.}}
+
+programa_correcto;
+
+class vector_bidimensional 
+    begin 
+        doublef componente_x; 
+        doublef componente_y; 
+        doublef calcular_magnitud (doublef escala) 
+            begin 
+                ret ((componente_x + componente_y) * escala); 
+            end; 
+    end; 
+
+ushortint function procesar_vectores (ushortint modo, doublef factor) 
+    ushortint resultado_operacion; 
+    begin 
+        if (factor >= 1.0d+0) 
+            resultado_operacion := modo; 
+        else 
+            resultado_operacion := 0$us; 
+        end_if; 
+        ret (resultado_operacion); 
+    end; 
+
+vector_bidimensional vec1, vec2; 
+doublef magnitud_total; 
+ushortint codigo_modo;
+
+begin 
+    vec1[0$us] := 3.0d+0; 
+    vec1[1$us] := 4.0d+0; 
+    vec2[0$us] := 1.5d+0; 
+    vec2[1$us] := 2.5d+0; 
+    magnitud_total := vec1[0$us] + vec2[0$us] + vec1[1$us]; 
+    codigo_modo := procesar_vectores(1$us, magnitud_total); 
+    if (codigo_modo == 1$us) 
+        begin 
+            pout({Calculo vectorial con acceso posicional realizado}); 
+            magnitud_total := vec1.calcular_magnitud(2.0d+0); 
+        end; 
+    else 
+        pout({Magnitud por debajo del umbral minimo}); 
+    end_if;
+end;

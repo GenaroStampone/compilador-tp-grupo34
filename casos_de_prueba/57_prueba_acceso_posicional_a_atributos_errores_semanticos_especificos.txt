@@ -1,0 +1,10 @@
+{{Caso de Prueba Nro57: Codigo complejo semanticamente incorrecto de }}
+{{Comportamiento Esperado del Compilador: Prueba sobre errores semanticos en }}
+
+programa_incorrecto;
+
+
+
+begin
+
+end;

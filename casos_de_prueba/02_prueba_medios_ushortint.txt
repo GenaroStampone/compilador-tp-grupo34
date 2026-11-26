@@ -1,0 +1,14 @@
+{{Caso de Prueba Nro2: Codigo lexicamente correcto de valores medios sobre USHORTINT}}
+{{Comportamiento Esperado del Compilador: Tira de tokens completa, 0 errores y 0 warnings.}}
+
+programa_correcto;
+
+USHORTINT medio_1, medio_2, medio_3, medio_4, medio_5;
+
+begin
+    medio_1 := 1$us;
+    medio_2 := 34$us;
+    medio_3 := 100$us;
+    medio_4 := 203$us;
+    medio_5 := 254$us;
+end;

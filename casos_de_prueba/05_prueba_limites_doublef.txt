@@ -1,0 +1,14 @@
+{{Caso de Prueba Nro5: Pruebas sobre errores lexicos de valores fuera de rango sobre DOUBLEF}}
+{{Comportamiento Esperado del Compilador: Tira de tokens completa, 0 errores y 0 warnings.}}
+
+programa_correcto;
+
+DOUBLEF limite_inf_pos, limite_sup_pos, limite_inf_neg, limite_sup_neg, cero;
+
+begin
+    limite_inf_pos := 2.2250738585072014d-308;
+    limite_sup_pos := 1.7976931348623157d+308;
+    limite_inf_neg := -1.7976931348623157d+308;
+    limite_sup_neg := -2.2250738585072014d-308;
+    cero := 0.0;
+end;

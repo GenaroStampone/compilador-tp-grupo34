@@ -1,0 +1,99 @@
+{{Caso de Prueba Nro34: Codigo complejo semanticamente incorrecto de metodos no declarados o no visibles}}
+{{Comportamiento Esperado del Compilador: Prueba sobre errores semanticos en metodos no declarados o no visibles sobre una clase, funcion o uso incorrecto con un metodo privado sobre un ambito global}}
+
+programa_incorrecto;
+
+class cuenta_cliente
+begin
+    doublef saldo_publico;
+    private ushortint pin_privado;
+
+    {{Metodo publico valido}}
+    doublef obtener_saldo(ushortint codigo)
+    begin
+        if (validar_pin_interno(codigo) == 1$us)
+            ret (saldo_publico);
+        else
+            ret (0.0);
+        end_if;
+    end;
+
+    {{Metodo privado valido}}
+    private ushortint validar_pin_interno(ushortint intento)
+    begin
+        if (intento == pin_privado)
+            ret (1$us);
+        else
+            ret (0$us);
+        end_if;
+    end;
+
+    friend gestor_autorizado;
+    friend funcion_auditora;
+end;
+
+class gestor_autorizado
+begin
+    ushortint id_gestor;
+
+    doublef operacion_gestor(cuenta_cliente c, ushortint p)
+    begin
+        {{'gestor_autorizado' es una clase amiga (friend), puede invocar el método privado, caso valido}}
+        if (c.validar_pin_interno(p) == 1$us)
+            ret (c.saldo_publico);
+        else
+            ret (0.0);
+        end_if;
+    end;
+end;
+
+{{Clase no declarada como amiga}}
+class clase_no_amiga
+begin
+    ushortint id_externo;
+
+    doublef operacion_no_permitida(cuenta_cliente c, ushortint p)
+    begin
+        {{Intento de invocar un método privado ('validar_pin_interno')}}
+        ret (c.validar_pin_interno(p));
+    end;
+end;
+
+ushortint function funcion_auditora(ushortint cod)
+cuenta_cliente cuenta_temp;
+begin
+    {{'funcion_auditora' es friend, tiene acceso al método privado, caso valido}}
+    ret (cuenta_temp.validar_pin_interno(cod));
+end;
+
+{{Función global NO amiga}}
+ushortint function funcion_comun(ushortint cod)
+cuenta_cliente cuenta_temp;
+begin
+    {{Intento de invocar un método privado desde una función global que NO es friend}}
+    ret (cuenta_temp.validar_pin_interno(cod));
+end;
+
+cuenta_cliente cliente1;
+ushortint n_entero;
+doublef saldo_res;
+
+begin
+    cliente1.saldo_publico := 500.0d+0;
+    n_entero := 10$us;
+
+    {{Invocación a un método totalmente inexistente en la clase 'cuenta_cliente'}}
+    saldo_res := cliente1.metodo_inexistente(n_entero);
+
+    {{Intento de invocar un método privado ('validar_pin_interno') desde el ámbito 'main'}}
+    saldo_res := cliente1.validar_pin_interno(1234$us);
+
+    {{Uso incorrecto de un atributo como si fuera un método}}
+    saldo_res := cliente1.saldo_publico(100$us);
+
+    {{Intento de invocar un método sobre una variable de tipo básico ('n_entero')}}
+    saldo_res := n_entero.obtener_saldo(1$us);
+
+    {{Intento de invocar un método sobre un objeto cuya clase no ha sido declarada}}
+    saldo_res := objeto_fantasma.ejecutar_metodo();
+end;

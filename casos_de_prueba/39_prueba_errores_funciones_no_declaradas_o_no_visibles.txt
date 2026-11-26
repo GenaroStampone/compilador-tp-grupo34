@@ -1,0 +1,42 @@
+{{Caso de Prueba Nro34: Codigo complejo semanticamente incorrecto de funciones no declaradas o no visibles}}
+{{Comportamiento Esperado del Compilador: Prueba sobre errores semanticos en llamados a funciones inexistentes o no alcanzables por su ambito}}
+
+programa_incorrecto;
+
+ushortint function proceso_a(ushortint entrada) 
+    ushortint temp; 
+    ushortint function sub_proceso_a(ushortint val) 
+        begin 
+            ret (val * 2$us); 
+        end; 
+    begin 
+        {{Funcion'proceso_b' está definida más abajo en el archivo y aún no es visible}} 
+        temp := proceso_b(entrada); 
+        temp := sub_proceso_a(entrada); 
+        ret (temp); 
+    end;
+
+ushortint function proceso_b(ushortint factor) 
+    ushortint res; 
+    begin 
+        {{Intento de llamar a 'sub_proceso_a', que está anidada en 'proceso_a'}}
+        res := sub_proceso_a(factor); 
+        
+        {{Invocación a una función totalmente inexistente en el programa}} 
+        res := funcion_fantasma_inexistente(factor); 
+        
+        ret (res); 
+    end;
+
+ushortint codigo_global, res_main; 
+
+begin
+    codigo_global := 10$us; 
+    serv_main.tarifa_base := 15.0d+0; 
+    
+    {{Intento de invocar la función anidada 'sub_proceso_a' desde main}} 
+    res_main := sub_proceso_a(codigo_global); 
+    
+    {{Intento de invocar una variable ('codigo_global') como si fuera una función}} 
+    res_main := codigo_global(100$us);
+end;

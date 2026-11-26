@@ -1,0 +1,24 @@
+{{Caso de Prueba Nro21: Codigo sintacticamente incorrecto de asignaciones de identificadores o constantes en expresiones.}}
+{{Comportamiento Esperado del Compilador: Errores sintacticos sobre asignaciones mal formadas en expresiones}}
+
+programa_incorrecto;
+
+ushortint a, b = c; 
+doublef x, y; 
+
+begin 
+    {Uso del operador ':= ' dentro de una expresión (se debe usar '=')}
+    a := b := 10$us; 
+    
+    {Uso del operador ':=' dentro de la condición de un IF}
+    if (a := 5$us == 5$us) 
+        b := 1$us; 
+    end_if; 
+    
+    {Uso del operador '=' para la asignación principal de la sentencia}
+    a = b + 2$us; 
+    
+    {Uso de ':=' dentro de los parámetros de una función}
+    pout({Prueba de error}); 
+    x := y + (a := 2$us); 
+end;

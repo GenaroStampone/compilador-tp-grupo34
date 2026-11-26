@@ -1,0 +1,73 @@
+{{Caso de Prueba Nro49: Codigo complejo semanticamente incorrecto de asignaciones de identificadores o constantes en expresiones}}
+{{Comportamiento Esperado del Compilador: Prueba sobre errores semanticos en asignaciones en expresiones indicando L-Value Inválido en la Asignación con '=' dentro de Expresiones, 
+    Incompatibilidad de Tipos en la Asignación con '=', Símbolos No Declarados o Fuera de Alcance en Asignaciones con '=', Violación de Encapsulamiento y Visibilidad y Uso Incorrecto de Símbolo como Valor Asignado (R-Value) en '='}}
+
+programa_incorrecto;
+
+class cuenta_bancaria
+begin
+    doublef saldo_publico;
+    private ushortint pin_privado; 
+
+    doublef obtener_saldo(ushortint cod)
+    begin
+        ret (saldo_publico);
+    end;
+end;
+
+typedef estado_enum = [1$us, 2$us, 3$us];
+
+ushortint function funcion_calculo(ushortint entrada)
+begin
+    ret (entrada + 5$us);
+end;
+
+ushortint val_entero_a, val_entero_b, res_entero;
+doublef val_doble_a, val_doble_b, res_doble;
+cuenta_bancaria mi_cuenta;
+
+begin
+    val_entero_a := 10$us;
+    val_entero_b := 20$us;
+    val_doble_a := 5.0d+0;
+    val_doble_b := 15.5d+0;
+
+    {{Intentar asignar a una CONSTANTE en el lado izquierdo de '='}}
+    res_entero := 5$us = val_entero_a + 2$us;
+
+    {{Intentar asignar a un nombre de FUNCIÓN en el lado izquierdo de '='}}
+    res_entero := funcion_calculo = 10$us + val_entero_a;
+
+    {{Intentar asignar a un nombre de CLASE en el lado izquierdo de '='}}
+    res_doble := cuenta_bancaria = 50.0d+0;
+
+    {{Intentar asignar a un TYPEDEF (tipo enumerado) en el lado izquierdo de '='}}
+    res_entero := estado_enum = 1$us;
+
+    {{Intentar asignar a un MÉTODO de clase sin invocarlo}}
+    res_doble := mi_cuenta.obtener_saldo = 100.0d+0;
+
+    {{Incompatibilidad de tipos en '=' (asignar un 'doublef' a una variable 'ushortint')}}
+    res_entero := val_entero_a = val_doble_a + 5.0d+0;
+
+    {{Incompatibilidad de tipos en '=' dentro de la condición de un IF}}
+    if (val_entero_a = val_doble_b == 10$us)
+    begin
+        res_entero := 1$us;
+    end_if;
+
+    {{L-Value no declarado en la asignación con '='}}
+    res_entero := variable_inexistente = 10$us;
+
+    {{R-Value no declarado dentro de la asignación con '='}}
+    res_entero := val_entero_a = valor_no_declarado + 2$us;
+
+    {{Intentar asignar con '=' a un atributo privado ('pin_privado')}}
+    res_entero := val_entero_a + (mi_cuenta[1$us] = 123$us);
+
+    {{Asignar el nombre de una FUNCIÓN sin invocarla como valor en '='}}
+    res_entero := val_entero_a = funcion_calculo;
+
+    {{Asignar el nombre de una CLASE como valor en '='}}
+    res_doble := val_doble_a = cuenta_bancaria;
+end;

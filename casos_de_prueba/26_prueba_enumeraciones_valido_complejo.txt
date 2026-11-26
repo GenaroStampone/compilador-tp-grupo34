@@ -1,0 +1,55 @@
+{{Caso de Prueba Nro26: Codigo complejo sintacticamente correcto de enumeraciones.}}
+{{Comportamiento Esperado del Compilador: Tira de tokens completa, 0 errores y 0 warnings.}}
+
+programa_correcto;
+
+typedef niveles_prioridad = [1$us, 2$us, 3$us, 4$us];
+typedef puntuacion = [5.0, 10.0]
+
+class gestor_tareas 
+    begin 
+        doublef calcular_costo (doublef base, ushortint multiplicador) 
+            begin 
+                if (multiplicador > 1$us)  
+                    ret (base \* 2.0d+0); 
+                else 
+                    ret (base); 
+                end_if; 
+            end; 
+    end;
+
+ushortint function verificar_prioridad (niveles_prioridad nivel, doublef limite) 
+    ushortint codigo_resultado; 
+    begin 
+        if (limite <= 10.0d+0) 
+            codigo_resultado := 1$us; 
+        else 
+            codigo_resultado := 0$us; 
+        end_if; 
+        ret (codigo_resultado); 
+    end; 
+
+niveles_prioridad prio_actual; 
+ushortint res_verificacion; 
+doublef costo_final, factor_carga; 
+gestor_tareas gestor;
+puntuacion caracteristica;
+
+begin 
+    prio_actual := 2$us;
+    factor_carga := 15.5d+0; 
+    res_verificacion := verificar_prioridad(prio_actual, factor_carga); 
+    if (res_verificacion == 1$us) 
+        begin 
+            costo_final := gestor.calcular_costo(factor_carga, 2$us);
+            caracteristica := 10.0;
+            pout({Procesamiento de tarea con alta prioridad exitoso}); 
+        end; 
+    else 
+        begin 
+            costo_final := gestor.calcular_costo(factor_carga, 1$us); 
+            caracteristica := 5.0;
+            pout({Tarea procesada con prioridad estandar});
+        end; 
+    end_if;
+end;

@@ -1,0 +1,24 @@
+{{Caso de Prueba Nro14: Pruebas sobre errores lexicos en un programa complejo incluyendo temas 2, 8 , 9 y 16}}
+{{Comportamiento Esperado del Compilador: Errores léxicos por variables fuera de rango, nombre de variables invalidas y malformacion de cadenas y comentarios multilinea}}
+
+programa_incorrecto;
+
+USHORTINT entero_corto, var_valida, var_in@lida;
+DOUBLEF flotante_doble;
+
+BEGIN 
+    { variables fuera de rango
+    entero_corto := 300$us;
+    flotante_doble := 1.0d+309;
+    variable valida de retorno }
+    var_v@lida := 11$us;
+    var_valida := 204$us;
+    { variable invalida
+    var_valida := -2$us;
+    {{
+        variable de retorno
+    flotante_doble := 2.0;
+    { variable invalida
+    var_v@lida := 2$us;
+    {{ fin del programa
+end;

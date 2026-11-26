@@ -1,0 +1,14 @@
+{{Caso de Prueba Nro6: Codigo lexicamente correcto de valores medios sobre DOUBLEF}}
+{{Comportamiento Esperado del Compilador: Tira de tokens completa, 0 errores y 0 warnings.}}
+
+programa_correcto;
+
+DOUBLEF medio_1, medio_2, medio_3, medio_4, medio_5, medio_6, medio_7;
+
+BEGIN 
+    medio_1 := 1.3;
+    medio_2 := .2;
+    medio_3 := .2d-5;
+    medio_4 := 1.2d+10;
+    medio_5 := -15.2d-5;
+END;

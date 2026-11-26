@@ -1,0 +1,83 @@
+{{Caso de Prueba Nro51: Codigo complejo semanticamente incorrecto de orden de evaluacion de parametros reales opcional}}
+{{Comportamiento Esperado del Compilador: Prueba sobre errores semanticos en Coincidencia en la cantidad de índices, Constantes en rango válido, Permutación sin duplicados, 
+    Compatibilidad de tipos tras permutación y Chequeo del rol del receptor }}
+
+programa_incorrecto;
+
+class servicio_calculo
+begin
+    doublef factor_escala;
+    private ushortint clave_privada; 
+
+    doublef calcular_monto(ushortint codigo, doublef tasa)
+    begin
+        ret (codigo * tasa * factor_escala);
+    end;
+end;
+
+ushortint function funcion_tres_params(ushortint p1, doublef p2, ushortint p3)
+ushortint res_local;
+begin
+    res_local := p1 + p3;
+    if (p2 > 0.0d+0)
+        ret (res_local);
+    else
+        ret (0$us);
+    end_if;
+end;
+
+ushortint function funcion_dos_params(ushortint p1, ushortint p2)
+begin
+    ret (p1 + p2);
+end;
+
+ushortint v_int1, v_int2, v_int3, res_int;
+doublef v_doble1, v_doble2, res_doble;
+servicio_calculo calc_obj;
+
+begin
+    v_int1 := 1$us;
+    v_int2 := 2$us;
+    v_int3 := 3$us;
+    v_doble1 := 10.5d+0;
+    v_doble2 := 2.0d+0;
+
+    {{Se pasan menos constantes en [...] que los parámetros requeridos (2 constantes para 3 parámetros)}}
+    res_int := funcion_tres_params(v_int1, v_doble1, v_int2)[1$us, 2$us];
+
+    {{Se pasan más constantes en [...] que los parámetros requeridos (4 constantes para 3 parámetros)}}
+    res_int := funcion_tres_params(v_int1, v_doble1, v_int2)[1$us, 2$us, 3$us, 4$us];
+
+    {{Discrepancia de cantidad de constantes en invocación a método de clase (3 constantes para 2 parámetros)}}
+    res_doble := calc_obj.calcular_monto(v_int1, v_doble1)[1$us, 2$us, 3$us];
+
+    {{Uso de índice '0' en [...] (el rango válido de parámetros es de 1 a N)}}
+    res_int := funcion_tres_params(v_int1, v_doble1, v_int2)[2$us, 3$us];
+
+    {{Uso de un índice mayor al número de parámetros formales (índice 4 para N=3)}}
+    res_int := funcion_tres_params(v_int1, v_doble1, v_int2)[1$us, 2$us, 4$us];
+
+    {{Constantes de orden duplicadas en [...] (se repite el índice 2)}}
+    res_int := funcion_tres_params(v_int1, v_doble1, v_int2)[1$us, 2$us];
+
+    {{Constantes duplicadas en invocación de 2 parámetros ([1$us])}}
+    res_int := funcion_dos_params(v_int1, v_int2)[1$us];
+
+    {{Tras aplicar la permutación, el 1er parámetro formal ('ushortint p1')}}
+    res_int := funcion_tres_params(v_int1, v_doble1, v_int2)[1$us, 2$us, 3$us];
+
+    {{Pasar un argumento de tipo 'doublef' a un parámetro de tipo 'ushortint' en invocación directa}}
+    res_int := funcion_dos_params(v_doble1, v_int1)[1$us, 2$us];
+
+    {{Intentar usar sintaxis de orden de parámetros [...] sobre una variable entera}}
+    res_int := v_int1(1$us, 2$us)[1$us, 2$us];
+
+    {{Intentar usar sintaxis [...] sobre un identificador de CLASE}}
+    res_int := servicio_calculo(1$us)[1$us];
+
+    {{Incompatibilidad de tipo en asignación con '=' dentro del parámetro real permutado}}
+    res_int := funcion_tres_params(v_int1 = v_doble1, v_doble2, v_int2)[1$us, 2$us, 3$us];
+
+    {{Infracción de privacidad dentro de la expresión del parámetro permutado}}
+    res_int := funcion_dos_params(v_int1, calc_obj.clave_privada)[1$us, 2$us];
+end;
