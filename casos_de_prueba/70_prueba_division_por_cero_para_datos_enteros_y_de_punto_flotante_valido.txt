@@ -1,0 +1,73 @@
+{{Caso de Prueba Nro70: Codigo correcto sobre division por cero para datos enteros y de punto flotante}}
+{{Comportamiento Esperado del Compilador: Tira de tokens completa, 0 errores y 0 warnings.}}
+
+programa_correcto;
+
+class base_calculo
+begin
+    ushortint min_divisor_entero;
+    doublef min_divisor_flotante;
+
+    doublef dividir_metodo_base(doublef num, doublef den)
+    begin
+        if (den != 0.0d+0)
+            ret (num / den);
+        else
+            ret (0.0d+0);
+        end_if;
+    end;
+end;
+
+class procesador_divisiones
+begin
+    ushortint max_dividendo_entero;
+    extends base_calculo;
+    ushortint calcular_cociente(ushortint dividendo, ushortint divisor)
+    begin
+        if (divisor > 0$us)
+            ret (dividendo / divisor);
+        else
+            ret (0$us);
+        end_if;
+    end;
+end;
+
+doublef function dividir_promocion(doublef acumulado, ushortint divisor_int)
+begin
+    if (divisor_int != 0$us)
+        ret (acumulado / divisor_int);
+    else
+        ret (0.0d+0);
+    end_if;
+end;
+
+procesador_divisiones proc_div;
+ushortint entero_dividendo, entero_divisor, res_entero;
+doublef doble_dividendo, doble_divisor, res_doble;
+
+begin
+    entero_dividendo := 255$us;
+    entero_divisor := 1$us;
+    doble_dividendo := 1000.0d+0;
+    doble_divisor := 0.000001d+0;
+    proc_div[0$us] := 1$us;
+    proc_div[1$us] := 0.0001d+0;
+    proc_div[2$us] := 255$us;
+    res_entero := 0$us / 5$us;
+    res_doble := 0.0d+0 / 125.5d+0;
+    res_entero := 0$us / entero_divisor;
+    res_entero := proc_div[2$us] / proc_div[0$us];
+    res_entero := entero_dividendo / 255$us;
+    res_entero := 255$us / 5$us;
+    {{División por un divisor positivo extremadamente pequeño (sin llegar a 0.0d+0)}}
+    res_doble := doble_dividendo / doble_divisor;
+    {{División con número decimal pequeño en numerador}}
+    res_doble := 0.00001d+0 / 2.0d+0;
+    res_doble := doble_dividendo / entero_divisor;
+    res_doble := entero_dividendo / doble_divisor;
+    res_doble := dividir_promocion(500.0d+0, 10$us);
+    res_entero := 100$us / proc_div[0$us];
+    res_doble := 50.0d+0 / proc_div[1$us];
+    res_entero := proc_div.calcular_cociente(80$us, 4$us);
+    res_doble := proc_div.dividir_metodo_base(200.0d+0, 50.0d+0);
+end;

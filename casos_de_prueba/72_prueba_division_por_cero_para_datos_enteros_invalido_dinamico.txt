@@ -1,0 +1,51 @@
+{{Caso de Prueba Nro72: Codigo incorrecto de division por cero para datos enteros}}
+{{Comportamiento Esperado del Compilador: Prueba sobre errores en divisor en variable entera con valor '0$us', divisor calculado mediante expresion en ejecucion, division en cuerpo de funcion global por pasaje de parametro 0$us,
+    division en metodo de clase por pasaje de parametro nulo, division por atributo de objeto inicializado en cero, division mediante acceso posicional y division por asignacion en expresion.}}
+
+programa_incorrecto;
+
+class calculadora_entera
+begin
+    ushortint divisor_atributo;
+
+    ushortint ejecutar_div_metodo(ushortint num, ushortint den)
+    begin
+        ret (num / den);
+    end;
+end;
+
+ushortint function dividir_global(ushortint dividendo, ushortint divisor_param)
+begin
+    ret (dividendo / divisor_param);
+end;
+
+calculadora_entera calc;
+ushortint num_base, divisor_var, res_int;
+
+begin
+    num_base := 100$us;
+    divisor_var := 0$us;
+    calc[0$us] := 0$us;
+
+    {{El compilador ve 'divisor_var' y compila. En runtime, divisor_var vale 0}}
+    res_int := num_base / divisor_var;
+
+    {{La expresión (10$us - 10$us) guardada en variable resulta en 0$us dinámico}}
+    divisor_var := 10$us - 10$us;
+    res_int := num_base / divisor_var;
+
+    {{División en Cuerpo de Función Global por Pasaje de Parámetro 0$us}}
+    res_int := dividir_global(num_base, divisor_var);
+
+    {{División en Método de Clase por Pasaje de Parámetro Nulo}}
+    res_int := calc.ejecutar_div_metodo(50$us, 0$us);
+
+    {{División por Atributo de Objeto Inicializado en Cero}}
+    res_int := num_base / calc[0$us];
+
+    {{División mediante Acceso Posicional [0$us] (Tema 29)}}
+    res_int := num_base / calc[0$us];
+
+    {{División por Asignación en Expresión '='}}
+    res_int := num_base / (divisor_var = 0$us);
+end;

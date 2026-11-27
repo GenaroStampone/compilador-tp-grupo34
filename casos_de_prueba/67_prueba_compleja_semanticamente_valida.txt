@@ -1,4 +1,4 @@
-{{Caso de Prueba Nro64: Codigo complejo semanticamente correcto}}
+{{Caso de Prueba Nro67: Codigo complejo semanticamente correcto}}
 {{Comportamiento Esperado del Compilador: Tira de tokens completa, 0 errores y 0 warnings.}}
 
 programa_correcto;
