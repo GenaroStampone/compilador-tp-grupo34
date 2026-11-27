@@ -59,6 +59,7 @@ declaracion
     | declaracion_funcion
     | error ';'
       {
+        yyerrflag = 0;;
         yyerror("Declaración inválida; se resincroniza en ';'.");
         $$ = new ParserVal((Object) null);
       }
@@ -278,6 +279,7 @@ miembro_clase
       }
     | error ';'
       {
+        yyerrflag = 0;
         yyerror("Miembro de clase inválido; se resincroniza en ';'.");
       }
     ;
@@ -333,6 +335,7 @@ sentencia
     | sentencia_retorno
     | error ';'
       {
+        yyerrflag = 0;
         yyerror("Sentencia inválida; se resincroniza en ';'.");
         $$ = new ParserVal((Object) null);
       }
@@ -398,16 +401,22 @@ rama_else
       { $$ = new ParserVal((Object) null); }
     ;
 
-sentencia_while
-    : WHILE '(' condicion ')' REPEAT bloque_compuesto
-      {
-        NodoArbol cond = gen.crearNodoAST("cond", (NodoArbol) $3.obj, null);
-        NodoArbol cuerpo = gen.crearNodoAST("cuerpo", (NodoArbol) $6.obj, null);
-        NodoArbol nodo = gen.crearNodoAST("WHILE", cond, cuerpo);
-        registrarEstructura("Sentencia WHILE-REPEAT");
-        $$ = new ParserVal(nodo);
-      }
-    ;
+sentencia_while 
+    : WHILE '(' condicion ')' REPEAT bloque_compuesto { 
+        NodoArbol cond = gen.crearNodoAST("cond", (NodoArbol) $3.obj, null); 
+        NodoArbol cuerpo = gen.crearNodoAST("cuerpo", (NodoArbol) $6.obj, null); 
+        NodoArbol nodo = gen.crearNodoAST("WHILE", cond, cuerpo); 
+        registrarEstructura("Sentencia WHILE-REPEAT"); 
+        $$ = new ParserVal(nodo); 
+    }
+    | WHILE error REPEAT bloque_compuesto { 
+        yyerrflag = 0; /* Reinicia la bandera interna de error en BYACC/J (equivalente a yyerrok en Java) */
+        yyerror("[RECUPERACIÓN] Error sintáctico en la condición del WHILE; resincronizado en REPEAT."); 
+        NodoArbol cond = gen.crearNodoAST("cond", null, null); 
+        NodoArbol cuerpo = gen.crearNodoAST("cuerpo", (NodoArbol) $4.obj, null); 
+        NodoArbol nodo = gen.crearNodoAST("WHILE", cond, cuerpo); 
+        $$ = new ParserVal(nodo); 
+    }
 
 sentencia_retorno
     : RET '(' expresion ')' ';'
