@@ -36,11 +36,11 @@ class gestor_autorizado
 begin
     ushortint id_gestor;
 
-    doublef operacion_gestor(cuenta_cliente c, ushortint p)
+    doublef operacion_gestor(cuenta_cliente aux_c, ushortint aux_p)
     begin
         {{'gestor_autorizado' es una clase amiga (friend), puede invocar el método privado, caso valido}}
-        if (c.validar_pin_interno(p) == 1$us)
-            ret (c.saldo_publico);
+        if (c.validar_pin_interno(aux_p) == 1$us)
+            ret (c[0$us]);
         else
             ret (0.0);
         end_if;
@@ -52,10 +52,10 @@ class clase_no_amiga
 begin
     ushortint id_externo;
 
-    doublef operacion_no_permitida(cuenta_cliente c, ushortint p)
+    doublef operacion_no_permitida(cuenta_cliente aux_c, ushortint aux_p)
     begin
         {{Intento de invocar un método privado ('validar_pin_interno')}}
-        ret (c.validar_pin_interno(p));
+        ret (aux_c.validar_pin_interno(aux_p));
     end;
 end;
 
@@ -79,14 +79,14 @@ ushortint n_entero;
 doublef saldo_res;
 
 begin
-    cliente1.saldo_publico := 500.0d+0;
+    cliente1[0$us] := 500.0d+0;
     n_entero := 10$us;
 
     {{Invocación a un método totalmente inexistente en la clase 'cuenta_cliente'}}
     saldo_res := cliente1.metodo_inexistente(n_entero);
 
     {{Intento de invocar un método privado ('validar_pin_interno') desde el ámbito 'main'}}
-    saldo_res := cliente1.validar_pin_interno(1234$us);
+    saldo_res := cliente1.validar_pin_interno(123$us);
 
     {{Uso incorrecto de un atributo como si fuera un método}}
     saldo_res := cliente1.saldo_publico(100$us);

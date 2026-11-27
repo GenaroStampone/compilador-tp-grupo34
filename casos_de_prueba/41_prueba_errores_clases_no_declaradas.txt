@@ -15,7 +15,7 @@ class dispositivo_valido
     end;
 
 {{Intento de instanciar 'clase_futura' antes de ser declarada en 'main'}} 
-clase_futura objeto_prematuro; 
+clase_futura objeto_prematuro;
 
 class clase_futura 
     begin 
@@ -35,7 +35,7 @@ class gestor_seguridad
         private ushortint token_privado; 
         
         {{Declaración de 'friend' sobre una clase que no existe en ningún ámbito}} 
-        friend clase_amiga_inexistente; 
+        friend clase_amiga_inexist; 
         
         {{Declaración friend válida sobre clase existente}} 
         friend dispositivo_valido; 
@@ -52,9 +52,9 @@ dispositivo_valido disp_ok;
 
 begin
     variable_entera_global := 10$us; 
-    disp_ok.voltaje := 12.5d+0; 
+    disp_ok[1$us] := 12.5d+0; 
     {{Intento de acceder a un atributo a través de un objeto ('mi_servidor')}} 
-    mi_servidor[1$us] := 8080$us; 
+    mi_servidor[1$us] := 80$us; 
     {{Intento de invocar un método a través de un objeto de clase no declarada}} 
     pout(mi_servidor.conectar(mi_servidor));
 end;
