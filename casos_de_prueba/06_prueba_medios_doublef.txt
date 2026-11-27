@@ -3,7 +3,7 @@
 
 programa_correcto;
 
-DOUBLEF medio_1, medio_2, medio_3, medio_4, medio_5, medio_6, medio_7;
+DOUBLEF medio_1, medio_2, medio_3, medio_4, medio_5, medio_6, medio_7, cero;
 
 BEGIN 
     medio_1 := 1.3;
@@ -11,4 +11,5 @@ BEGIN
     medio_3 := .2d-5;
     medio_4 := 1.2d+10;
     medio_5 := -15.2d-5;
+    cero := 0.0;
 END;
