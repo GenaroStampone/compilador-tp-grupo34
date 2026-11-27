@@ -11,8 +11,8 @@ import java.util.Set;
  * Generador de código WebAssembly textual (.wat) a partir del AST.
  *
  * Grupo 34 - TP4. Controles incluidos: a (división por cero entera y
- * flotante), b (overflow de suma entera), c (overflow de suma flotante),
- * f (resta negativa ushortint) y h (valor inválido de enumeración).
+ * flotante), b (overflow de suma entera), c (overflow de suma flotante)
+ * y h (valor inválido de enumeración).
  */
 public class GeneradorWebAssembly {
     private static final double MAX_DOUBLEF = 1.7976931348623157e+308;
