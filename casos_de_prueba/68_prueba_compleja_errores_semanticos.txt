@@ -1,0 +1,104 @@
+{{Caso de Prueba Nro66: Codigo complejo semanticamente incorrecto de errores}}
+{{Comportamiento Esperado del Compilador: Prueba sobre errores semanticos en clases derivadas y errores en clausulas 'friend' y 'extends', funciones globales para retornos y parametros,
+    errores en enumeraciones y privacidad, errores en acceso posicional, errores en conversiones implicitas y asignaciones, errores en pasaje de parametros e invocaciones y errores en estructuras de control y roles de simbolos}}
+
+programa_incorrecto;
+
+typedef tipo_estado = [10$us, 20$us, 30$us];
+
+ushortint variable_global_entera;
+
+class base_alfa
+begin
+    ushortint id_alfa; 
+    private doublef clave_privada; 
+
+    ushortint procesar_alfa(ushortint val)
+    begin
+        ret (val + 1$us);
+    end;
+end;
+
+class base_beta
+begin
+    doublef saldo_beta;
+    doublef clave_privada;
+
+    ushortint procesar_alfa(ushortint val)
+    begin
+        ret (val + 2$us);
+    end;
+end;
+
+{{Intentar heredar de una variable en lugar de una clase}}
+class derivada_error_extends
+begin
+    ushortint dato_propio;
+    extends variable_global_entera;
+end;
+
+class servidor_central
+begin
+    ushortint codigo_servidor;
+    extends base_alfa, base_beta;
+
+    {{Intentar declarar como 'friend' un typedef en vez de clase/función}}
+    friend tipo_estado;
+end;
+
+ushortint function evaluar_metricas(ushortint cod, doublef factor)
+doublef variable_flot_local;
+begin
+    variable_flot_local := 15.5d+0;
+
+    {{Retornar 'doublef' en una función declarada con retorno 'ushortint'}}
+    ret (variable_flot_local);
+end;
+
+servidor_central s_main;
+tipo_estado estado_actual;
+
+{{Redeclaración de variable en 'main'}}
+ushortint v_entero, v_entero;
+doublef v_flotante;
+
+begin
+    v_entero := 5$us;
+    v_flotante := 10.0d+0;
+
+    {{Asignar una constante (99$us) fuera del conjunto [10$us, 20$us, 30$us]}}
+    estado_actual := 99$us;
+
+    {{Opción 1 busca 'clave_privada' en 'base_alfa'}}
+    v_flotante := s_main[1$us];
+
+    {{Acceso posicional a una variable entera básica (no es objeto)}}
+    v_entero := v_entero[0$us];
+
+    {{Índice posicional fuera de rango [10$us] en el objeto 's_main'}}
+    v_flotante := s_main[10$us];
+
+    {{Asignación directa con democión no permitida (doublef -> ushortint)}}
+    v_entero := v_flotante;
+
+    {{Incompatibilidad de tipos en asignación en expresión '='}}
+    v_flotante := (v_entero = v_flotante);
+
+    {{Enviar argumento 1 como 'doublef' (v_flotante) a parámetro 1 'ushortint'}}
+    v_entero := evaluar_metricas(v_flotante, 20.0d+0);
+
+    {{Mismatched parameter count (se envían 3 argumentos a función de 2 parámetros)}}
+    v_entero := evaluar_metricas(1$us, 2.0d+0, 3$us);
+
+    {{Variable 'variable_inexistente' no declarada en condición WHILE}}
+    while (variable_inexistente > 0$us) repeat
+    begin
+        v_entero := v_entero - 1$us;
+    end;
+
+    {{Intentar asignar un valor a un nombre de función en L-Value}}
+    evaluar_metricas := 50$us;
+
+    {{Intentar invocar un atributo como si fuera una función}}
+    v_entero := s_main.codigo_servidor(10$us);
+end;

@@ -1,10 +1,60 @@
-{{Caso de Prueba Nro53: Codigo complejo semanticamente incorrecto de }}
-{{Comportamiento Esperado del Compilador: Prueba sobre errores semanticos en }}
+{{Caso de Prueba Nro53: Codigo complejo semanticamente incorrecto de enumeraciones}}
+{{Comportamiento Esperado del Compilador: Prueba sobre errores semanticos en registro de tipo, existencia del tipo, chequeo de rango y control de simbolos}}
 
 programa_incorrecto;
 
+typedef pares_diez = [2$us, 4$us, 6$us, 8$us, 10$us];
+typedef dias_habiles = [1$us, 2$us, 3$us, 4$us, 5$us];
 
+{{Intentar redeclarar el tipo 'pares_diez' en el mismo ámbito}}
+typedef pares_diez = [12$us, 14$us];
+
+ushortint variable_existente;
+
+{{Intentar definir un 'typedef' usando un identificador de variable preexistente}}
+typedef variable_existente = [1$us, 3$us];
+
+{{Intentar declarar variables usando un 'typedef' que no fue declarado}}
+tipo_inexistente var_invalida;
+
+pares_diez mi_par;
+dias_habiles mi_dia;
+ushortint res_entero;
+
+ushortint function procesar_jornada(dias_habiles dia_param)
+begin
+    ret (1$us);
+end;
 
 begin
+    {{Casos validos}}
+    mi_par := 4$us;     
+    mi_dia := 2$us;
 
+    {{Asignar una constante válida del tipo base (ushortint) pero NO presente en la enumeración}}
+    mi_par := 7$us;
+
+    {{Asignar el valor '0' que no pertenece a los días hábiles [1$us..5$us]}}
+    mi_dia := 0$us;
+
+    {{Incompatibilidad de tipo básica (asignar 'doublef' a un typedef de 'ushortint')}}
+    mi_par := 12.5d+0;
+
+    {{Intentar usar un nombre de 'typedef' como L-Value en una asignación común (:=)}}
+    pares_diez := 2$us;
+
+    {{Intentar usar un nombre de 'typedef' como L-Value en una asignación en expresión (=)}}
+    res_entero := (dias_habiles = 1$us);
+
+    {{Intentar usar el nombre de un 'typedef' como operando en una expresión}}
+    res_entero := pares_diez + 2$us;
+
+    {{Intentar invocar un 'typedef' como si fuera una función}}
+    res_entero := pares_diez(4$us);
+
+    {{Pasar una constante que NO pertenece a la enumeración del parámetro formal}}
+    res_entero := procesar_jornada(9$us);
+
+    {{Pasar una variable de un 'typedef' incompatible}}
+    res_entero := procesar_jornada(mi_par);
 end;

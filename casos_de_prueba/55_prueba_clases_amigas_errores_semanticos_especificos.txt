@@ -1,10 +1,139 @@
-{{Caso de Prueba Nro55: Codigo complejo semanticamente incorrecto de }}
-{{Comportamiento Esperado del Compilador: Prueba sobre errores semanticos en }}
+{{Caso de Prueba Nro55: Codigo complejo semanticamente incorrecto de clases amigas}}
+{{Comportamiento Esperado del Compilador: Prueba sobre errores semanticos en acceso a atributo 'private' desde un ambito no amigo, invocacion a metodo 'private' desde un ambito no amigo, acceso posicional a un atributo 'private' sin permisos 'friend', 
+    declaracion de amistad sobre entidades inexistentes o invalidos, uso de miembros 'private' dentro de condiciones o argumentos permutados desde ambitos no amigos y casos validos de contraste}}
 
 programa_incorrecto;
 
+ushortint function funcion_amiga_autorizada(ushortint cod)
+begin
+    ret (cod + 1$us);
+end;
 
+ushortint function funcion_comun_no_amiga(ushortint cod)
+begin
+    ret (cod);
+end;
+
+class clase_amiga_autorizada
+begin
+    ushortint id_gestor;
+end;
+
+class clase_no_amiga
+begin
+    ushortint id_externo;
+end;
+
+class cuenta_bancaria
+begin
+    doublef saldo_publico;
+    private ushortint pin_privado;
+    private doublef tasa_bonificacion;  
+
+    doublef consultar_saldo(ushortint intento)
+    begin
+        {{Método de la propia clase puede acceder a sus atributos/métodos privados, caso valido}}
+        if (validar_pin_interno(intento) == 1$us)
+            ret (saldo_publico);
+        else
+            ret (0.0d+0);
+        end_if;
+    end;
+
+    private ushortint validar_pin_interno(ushortint p)
+    begin
+        if (p == pin_privado)
+            ret (1$us);
+        else
+            ret (0$us);
+        end_if;
+    end;
+
+    friend clase_amiga_autorizada;
+    friend funcion_amiga_autorizada;
+
+    {{Declarar como friend a una clase que no existe en la Tabla de Símbolos}}
+    friend clase_fantasma_inexistente;
+
+    {{Declarar como friend a una función que no existe}}
+    friend funcion_fantasma_inexistente;
+end;
+
+class procesador_autorizado
+begin
+    doublef operar(cuenta_bancaria c, ushortint p)
+    begin
+        {{clase_amiga_autorizada fue registrada como friend, caso valido}}
+        ret (c[0$us]);
+    end;
+end;
+
+class auditor_no_autorizado
+begin
+    doublef auditar(cuenta_bancaria c, ushortint p)
+    doublef temp;
+    begin
+        {{Acceso a atributo privado ('pin_privado') desde clase NO amiga}}
+        temp := c[1$us];
+
+        {{Modificación de atributo privado ('tasa_bonificacion') desde clase NO amiga}}
+        c[2$us] := 1.5d+0;
+
+        {{Invocación a método privado ('validar_pin_interno') desde clase NO amiga}}
+        if (c.validar_pin_interno(p) == 1$us)
+            ret (c[0$us]);
+        else
+            ret (0.0d+0);
+        end_if;
+
+        {{Acceso posicional a atributo privado sin permisos friend}}
+        temp := c[1$us];
+    end;
+end;
+
+ushortint function auditoria_global_no_amiga(cuenta_bancaria c, ushortint p)
+ushortint res;
+begin
+    {{Acceso a atributo privado desde función global NO amiga}}
+    res := c[1$us];
+
+    {{Invocación a método privado desde función global NO amiga}}
+    res := c.validar_pin_interno(p);
+
+    ret (res);
+end;
+
+cuenta_bancaria mi_cuenta;
+ushortint res_entero;
+doublef res_doble;
 
 begin
+    mi_cuenta.saldo_publico := 100.0d+0;
 
+    {{Lectura directa de atributo privado ('pin_privado') desde 'main'}}
+    res_entero := mi_cuenta[1$us];
+
+    {{Escritura/Asignación común (:=) a atributo privado desde 'main'}}
+    mi_cuenta[1$us] := 43$us;
+
+    {{Asignación en expresión (=) a atributo privado desde 'main'}}
+    res_entero := (mi_cuenta[1$us] = 123$us);
+
+    {{Invocación a método privado ('validar_pin_interno') desde 'main'}}
+    res_entero := mi_cuenta.validar_pin_interno(123$us);
+
+    {{Acceso posicional a atributo privado ('pin_privado') desde 'main'}}
+    mi_cuenta[1$us] := 99$us;
+
+    {{Uso de miembro privado en la condición de un IF desde 'main'}}
+    if (mi_cuenta[1$us] == 123$us)
+    begin
+        res_entero := 1$us;
+    end_if;
+
+    {{Uso de miembro privado en la condición de un WHILE desde 'main'}}
+    while (mi_cuenta.validar_pin_interno(123$us) == 0$us) repeat
+    begin
+        mi_cuenta[0$us] := mi_cuenta[0$us] + 1.0d+0;
+    end;
 end;

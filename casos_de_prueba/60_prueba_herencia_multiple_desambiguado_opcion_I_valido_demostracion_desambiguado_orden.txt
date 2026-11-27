@@ -1,0 +1,105 @@
+{{Caso de Prueba Nro60: Codigo semanticamente correcto de herencia multiple desambiguado opcion I}}
+{{Comportamiento Esperado del Compilador: Tira de tokens completa, 0 errores y 0 warnings.}}
+
+programa_correcto;
+
+class base_alfa
+begin
+    ushortint codigo_sistema;
+    ushortint id_alfa;
+
+    ushortint procesar_datos(ushortint aux)
+    begin
+        ret (100$us);
+    end;
+
+    ushortint obtener_id_alfa(ushortint aux)
+    begin
+        ret (id_alfa);
+    end;
+end;
+
+class base_beta
+begin
+    ushortint codigo_sistema;
+    doublef saldo_beta;
+
+    ushortint procesar_datos(ushortint aux)
+    begin
+        ret (200$us);
+    end;
+
+    doublef obtener_saldo_beta(ushortint aux)
+    begin
+        ret (saldo_beta);
+    end;
+end;
+
+class base_gamma
+begin
+    ushortint nivel_prioridad;
+
+    ushortint obtener_prioridad(ushortint aux)
+    begin
+        ret (nivel_prioridad);
+    end;
+end;
+
+class derivada_orden_alfa
+begin
+    ushortint id_derivada_a;
+    extends base_alfa, base_beta;
+end;
+
+class derivada_orden_beta
+begin
+    ushortint id_derivada_b;
+    extends base_beta, base_alfa;
+end;
+
+class derivada_sobrescribe
+begin
+    ushortint id_derivada_c;
+    extends base_alfa, base_beta;
+    ushortint procesar_datos(aux)
+    begin
+        ret (200$i);
+    end;
+end;
+
+class derivada_triple
+begin
+    ushortint id_derivada_d;
+    extends base_alfa, base_beta, base_gamma;
+end;
+
+derivada_orden_alfa obj_a;
+derivada_orden_beta obj_b;
+derivada_sobrescribe obj_c;
+derivada_triple obj_d;
+
+ushortint res_entero, aux;
+doublef res_doble;
+
+begin
+    aux := 0$us;
+    obj_a[1$us] := 10$us;
+    obj_a[3$us] := 50.0d+0;
+    obj_a[0$us] := 1$us; 
+    res_entero := obj_a.procesar_datos(aux);
+    res_entero := obj_a.obtener_id_alfa(aux);
+    res_doble := obj_a.obtener_saldo_beta(aux);
+    obj_a[0$i] := 5$us;
+    res_entero := obj_a[1$us];
+    obj_b[3$us] := 20$us;
+    obj_b[1$us] := 100.0d+0;
+    obj_b[0$us] := 2$us;
+    res_entero := obj_b.procesar_datos(aux);
+    obj_c[0$us] := 3$us;
+    res_entero := obj_c.procesar_datos(aux);
+    obj_d[1$us] := 30$us;   
+    obj_d[3$us] := 150.0d+0;
+    obj_d[4$us] := 9$us;
+    res_entero := obj_d.obtener_prioridad(aux);
+    res_entero := obj_d.procesar_datos(aux);
+end;

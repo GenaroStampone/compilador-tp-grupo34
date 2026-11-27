@@ -79,5 +79,5 @@ begin
     res_int := funcion_tres_params(v_int1 = v_doble1, v_doble2, v_int2)[1$us, 2$us, 3$us];
 
     {{Infracción de privacidad dentro de la expresión del parámetro permutado}}
-    res_int := funcion_dos_params(v_int1, calc_obj.clave_privada)[1$us, 2$us];
+    res_int := funcion_dos_params(v_int1, calc_obj[1$us])[1$us, 2$us];
 end;

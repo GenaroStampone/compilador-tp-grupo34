@@ -1,0 +1,105 @@
+{{Caso de Prueba Nro66: Codigo complejo semanticamente incorrecto de errores}}
+{{Comportamiento Esperado del Compilador: Prueba sobre errores semanticos en clases derivadas y errores en clausulas 'extends' y 'friend', funciones globales para retornos y parametros, errores en acceso posicional,
+    errores en conversiones implicitas y asignaciones, errores en pasaje de parametros e invocaciones y errores en estructuras de control y roles de simbolos}}
+
+programa_incorrecto;
+
+typedef tipo_prioridad = [10$us, 20$us, 30$us];
+
+ushortint variable_global_config;
+
+class clase_motor
+begin
+    ushortint id_motor;
+    private doublef presion_interna;
+
+    ushortint encender_motor(ushortint clave)
+    begin
+        ret (clave + 1$us);
+    end;
+end;
+
+class clase_chasis
+begin
+    ushortint peso_chasis;
+    ushortint presion_interna;
+end;
+
+{{Intentar heredar de un identificador con Uso='nombre_variable'}}
+class error_herencia_var
+begin
+    ushortint dato_extra;
+    extends variable_global_config;
+end;
+
+class vehiculo_industrial
+begin
+    ushortint codigo_vin;
+    extends clase_motor, clase_chasis;
+
+    {{Intentar declarar como 'friend' un typedef en vez de clase o función}}
+    friend tipo_prioridad;
+end;
+
+ushortint function calcular_potencia(ushortint rpm, doublef torque)
+doublef val_flotante_aux;
+begin
+    val_flotante_aux := 45.8d+0;
+
+    {{Retornar 'doublef' en una función declarada con retorno 'ushortint'}}
+    ret (val_flotante_aux);
+end;
+
+vehiculo_industrial mi_auto;
+tipo_prioridad prioridad_actual;
+
+{{Redeclaración de variable en 'main'}}
+ushortint v_entero, v_entero; 
+doublef v_doble;
+
+{{Identificador que supera el límite de caracteres (se trunca)}}
+ushortint identificador_demasiado_largo_para_el_grupo34;
+
+begin
+    v_entero := 5$us;
+    v_doble := 12.0d+0;
+
+    {{Operador transpuesto '=:' corregido automáticamente por el léxico a ':='}}
+    v_entero := 10$us;
+
+    {{Asignar una constante (88$us) fuera del conjunto [10$us, 20$us, 30$us]}}
+    prioridad_actual := 88$us;
+
+    {{Opción 1 busca 'presion_interna' en 'clase_motor'}}
+    v_doble := mi_auto[3$us];
+
+    {{Intentar aplicar acceso posicional a un tipo básico 'ushortint'}}
+    v_entero := v_entero[0$us];
+
+    {{Índice posicional fuera de rango [12$us] sobre 'mi_auto'}}
+    v_doble := mi_auto[12$us];
+
+    {{Asignación directa con democión prohibida (doublef -> ushortint)}}
+    v_entero := v_doble;
+
+    {{Incompatibilidad de tipos en asignación en expresión '='}}
+    v_doble := (v_entero = v_doble);
+
+    {{Enviar argumento 1 como 'doublef' (v_doble) a parámetro 'ushortint'}}
+    v_entero := calcular_potencia(v_doble, 100.0d+0);
+
+    {{Mismatched parameter count (se envían 3 argumentos a función de 2 parámetros)}}
+    v_entero := calcular_potencia(10$us, 20.0d+0, 30$us);
+
+    {{Variable 'variable_fantasma' no declarada en condición WHILE}}
+    while (variable_fantasma > 0$us) repeat
+    begin
+        v_entero := v_entero - 1$us;
+    end;
+
+    {{Intentar asignar un valor a un nombre de función en L-Value}}
+    calcular_potencia := 50$us;
+
+    {{Intentar invocar un atributo de objeto como si fuera un método}}
+    v_entero := mi_auto.codigo_vin(5$us);
+end;

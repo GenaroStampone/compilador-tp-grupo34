@@ -1,0 +1,101 @@
+{{Caso de Prueba Nro61: Codigo complejo semanticamente incorrecto de herencia multiple desambiguado opcion I}}
+{{Comportamiento Esperado del Compilador: Prueba sobre errores semanticos en existencia de clases base, visibilidad secuencial, chequeo de rol de simbolo, prohibicion de autoherencia y ciclos,
+    sin clases base duplicadas y unicidad de nombres}}
+
+programa_incorrecto;
+
+typedef mi_enumeracion = [1$us, 2$us, 3$us];
+ushortint variable_global;
+
+ushortint function funcion_global(ushortint p)
+begin
+    ret (p + 1$us);
+end;
+
+class clase_base_a
+begin
+    ushortint id_a;
+end;
+
+class clase_base_b
+begin
+    ushortint id_b;
+end;
+
+{{Intentar heredar de una clase inexistente en la Tabla de Símbolos}}
+class error_clase_inexist
+begin
+    ushortint val;
+    extends clase_fantasma;
+end;
+
+{{Intentar heredar de una clase declarada posteriormente (visibilidad secuencial)}}
+class error_uso_tardio
+begin
+    ushortint val;
+    extends clase_declarada_despues;
+end;
+
+{{Intentar heredar de un identificador de VARIABLE (Uso='nombre_variable')}}
+class error_hereda_variable
+begin
+    ushortint val;
+    extends variable_global;
+end;
+
+{{Intentar heredar de un TYPEDEF / Enumeración (Uso='nombre_typedef')}}
+class error_hereda_typedef
+begin
+    ushortint val;
+    extends mi_enumeracion;
+end;
+
+{{Intentar heredar de un nombre de FUNCIÓN (Uso='nombre_funcion')}}
+class error_hereda_funcion
+begin
+    ushortint val;
+    extends funcion_global;
+end;
+
+{{Autoherencia directa (una clase intenta heredar de sí misma)}}
+class error_auto_herencia
+begin
+    ushortint val;
+    extends error_auto_herencia;
+end;
+
+class clase_ciclo_padre
+begin
+    ushortint val;
+    extends clase_ciclo_hija;
+end;
+
+{{Ciclo de herencia indirecto / circularidad}}
+class clase_ciclo_hija
+begin
+    ushortint val;
+    extends clase_ciclo_padre;
+end;
+
+{{Repetir la misma clase base en la lista de 'extends'}}
+class error_base_duplicada
+begin
+    ushortint val;
+    extends clase_base_a, clase_base_a;
+end;
+
+{{Redeclarar una clase con un nombre que ya existe en el ámbito 'main'}}
+class clase_base_a
+begin
+    ushortint atributo_extra;
+end;
+
+{{Declaración tardía usada para probar visibilidad secuencial}}
+class clase_declarada_despues
+begin
+    ushortint id_tardio;
+end;
+
+begin
+    pout({Prueba de errores semanticos en declaracion Tema 30 completada});
+end;
