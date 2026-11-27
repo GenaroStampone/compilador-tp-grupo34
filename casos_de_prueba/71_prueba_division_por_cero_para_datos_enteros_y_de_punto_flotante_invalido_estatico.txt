@@ -1,0 +1,72 @@
+{{Caso de Prueba Nro71: Codigo incorrecto de division por cero para datos enteros y de punto flotante}}
+{{Comportamiento Esperado del Compilador: Prueba sobre errores de division por cero mixta, division estatica directa por literal cero, division por subexpresiones constantes que evaluan a cero,
+    division estatica sobre atributos y notacion posicional, division por cero en condiciones de estructuras de control y division por cero en asignaciones en expresion '='}}
+
+programa_incorrecto;
+
+class contenedor_calculo
+begin
+    ushortint val_entero;
+    doublef val_flotante;
+
+    ushortint probar_ret_cero_entero(ushortint aux)
+    begin
+        {{División por cero literal dentro de una sentencia RET entero}}
+        ret (100$us / 0$us);
+    end;
+
+    doublef probar_ret_cero_float(ushortint aux)
+    begin
+        {{División por cero literal dentro de una sentencia RET flotante}}
+        ret (50.0d+0 / 0.0d+0);
+    end;
+end;
+
+doublef function funcion_div_invalida(doublef entrada)
+begin
+    {{Operación mixta donde el divisor entero 0$us se promueve}}
+    ret (entrada / 0$us);
+end;
+
+contenedor_calculo mi_obj;
+ushortint res_entero, v_int_aux;
+doublef res_flotante, v_float_aux;
+
+begin
+    v_int_aux := 10$us;
+    v_float_aux := 20.0d+0;
+    mi_obj[0$us] := 50$us;
+    mi_obj[1$us] := 100.0d+0;
+
+    {{División entera estática directa por constante cero (0$us)}}
+    res_entero := 200$us / 0$us;
+
+    {{División flotante estática directa por constante cero (0.0d+0)}}
+    res_flotante := 150.5d+0 / 0.0d+0;
+
+    {{Plegado de constantes enteras: (10$us - 10$us) evalúa estáticamente a 0$us}}
+    res_entero := 50$us / (10$us - 10$us);
+
+    {{Plegado de constantes flotantes: (5.0d+0 * 0.0d+0) evalúa estáticamente a 0.0d+0}}
+    res_flotante := 80.0d+0 / (5.0d+0 * 0.0d+0);
+
+    {{Operación sobre acceso posicional (val_entera) dividido por constante nula}}
+    res_entero := mi_obj[0$us] / 0$us;
+
+    {{Operación con acceso posicional [1$us] (val_flotante) dividido por constante nula}}
+    res_flotante := mi_obj[1$us] / 0.0d+0;
+
+    {{División por cero estática dentro de la condición de un IF}}
+    if ((100$us / 0$us) > 5$us)
+        res_entero := 1$us;
+    end_if;
+
+    {{División por cero estática dentro de la condición de un WHILE}}
+    while ((50.0d+0 / 0.0d+0) > 1.0d+0) repeat
+    begin
+        res_flotante := res_flotante - 1.0d+0;
+    end;
+
+    {{Asignación en expresión con divisor cero literal}}
+    res_flotante := (v_float_aux = 10.0d+0 / 0.0d+0);
+end;

@@ -1,0 +1,86 @@
+{{Caso de Prueba Nro54: Codigo complejo semanticamente incorrecto de }}
+{{Comportamiento Esperado del Compilador: Prueba sobre errores semanticos en infracciones de alcance y visibilidad, infracciones del rol de simbolo, 
+    conflicto de roles al asignar a variables enumeradas e infracciones de encapsulamiento y privacidad}}
+
+programa_incorrecto;
+
+class sistema_seguridad
+begin
+    private ushortint codigo_privado;
+    doublef nivel_acceso;
+
+    private ushortint verificar_acceso(ushortint cod)
+    begin
+        if (cod == codigo_privado)
+            ret (1$us);
+        else
+            ret (0$us);
+        end_if;
+    end;
+end;
+
+typedef tipo_prioridad = [1$us, 2$us, 3$us];
+
+ushortint function funcion_interna(ushortint param_a)
+typedef tipo_local = [10$us, 20$us];
+tipo_local var_enum_local;
+tipo_prioridad var_enum_global;
+begin
+    var_enum_local := 10$us;
+    var_enum_global := 1$us;
+    ret (param_a + 1$us);
+end;
+
+tipo_prioridad prioridad_main;
+ushortint val_entero;
+sistema_seguridad sistema_main;
+
+begin
+    prioridad_main := 1$us;
+    val_entero := 5$us;
+
+    {{Intentar declarar una variable usando un 'typedef'}}
+    tipo_local var_invalida;
+
+    {{Acceder a la variable local 'var_enum_local' de 'funcion_interna' desde 'main'}}
+    val_entero := var_enum_local;
+
+    {{Usar un 'typedef' antes de su declaración formal (visibilidad secuencial)}}
+    tipo_tardio var_tardia;
+
+    {{Usar el nombre de un 'typedef' como L-Value en una asignación común (:=)}}
+    tipo_prioridad := 2$us;
+
+    {{Usar el nombre de un 'typedef' como L-Value en asignación en expresión (=)}}
+    val_entero := (tipo_prioridad = 1$us);
+
+    {{Usar el nombre de un 'typedef' como operando R-Value en una expresión}}
+    val_entero := tipo_prioridad + 5$us;
+
+    {{Usar el nombre de un 'typedef' como condición de una sentencia condicional}}
+    if (tipo_prioridad)
+    begin
+        val_entero := 1$us;
+    end_if;
+
+    {{Intentar invocar un 'typedef' como si fuera una función}}
+    val_entero := tipo_prioridad(1$us);
+
+    {{Asignar el nombre de una CLASE a una variable enumerada}}
+    prioridad_main := sistema_seguridad;
+
+    {{Asignar el nombre de una FUNCIÓN sin invocar a una variable enumerada}}
+    prioridad_main := funcion_interna;
+
+    {{Asignar un identificador de 'typedef' a una variable enumerada}}
+    prioridad_main := tipo_prioridad;
+
+    {{Intentar acceder a un atributo privado ('codigo_privado') desde 'main'}}
+    prioridad_main := sistema_main[0$us];
+
+    {{Intentar invocar un método privado ('verificar_acceso') desde ámbito no amigo}}
+    prioridad_main := sistema_main.verificar_acceso(1234$us);
+end;
+
+{{Declaración tardía de un typedef para forzar error de visibilidad secuencial}}
+typedef tipo_tardio = [100$us, 200$us];

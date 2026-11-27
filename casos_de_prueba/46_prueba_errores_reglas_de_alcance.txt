@@ -1,0 +1,189 @@
+{{Caso de Prueba Nro34: Codigo complejo semanticamente incorrecto de reglas de alcance}}
+{{Comportamiento Esperado del Compilador: Prueba sobre errores semanticos en reglas de alcance sobre visibilidad por ambito y secuencia, 
+    mismo nombre en ambitos diferentes, mismo nombre en el mismo ambito y control de acceso a miembros}}
+
+programa_incorrecto;
+
+ushortint v_comun;
+
+class clase_alfa
+begin
+    doublef dato;
+    private ushortint clave_privada;
+
+    doublef ejecutar(doublef p)
+    begin
+        ret (p * dato);
+    end;
+
+    private ushortint validar_clave(ushortint c)
+    begin
+        if (c == clave_privada)
+            ret (1$us);
+        else
+            ret (0$us);
+        end_if;
+    end;
+
+    friend func_amiga;
+end;
+
+{{Clase B con método homónimo 'ejecutar' en ÁMBITO DIFERENTE, caso valido}}
+class clase_beta
+begin
+    ushortint dato;
+
+    ushortint ejecutar(ushortint p)
+    begin
+        ret (p + dato);
+    end;
+end;
+
+{{Función A con variable local homónima 'v_comun', caso valido}}
+ushortint function func_a(ushortint param_a)
+ushortint v_comun;
+ushortint local_a;
+
+    {{Función anidada 'sub_proceso', caso valido}}
+    ushortint function sub_proceso(ushortint n)
+    begin
+        ret (n + 1$us);
+    end;
+
+begin
+    v_comun := param_a + 5$us;
+    local_a := sub_proceso(v_comun);
+    ret (local_a);
+end;
+
+{{Función B en ámbito hermano con símbolos homónimos, caso valido}}
+ushortint function func_b(ushortint param_b)
+doublef v_comun;
+
+    {{Función anidada homónima en ÁMBITO DIFERENTE, caso valido}}
+    doublef function sub_proceso(doublef x)
+    begin
+        ret (x * 2.0d+0);
+    end;
+
+begin
+    v_comun := sub_proceso(10.0d+0);
+    
+    {{Intento de acceder a 'local_a' (variable local de func_a).}}
+    param_b := local_a + 1$us;
+
+    {{Intento de acceder al parámetro formal 'param_a' de func_a.}}
+    param_b := param_a;
+
+    {{Intento de llamar a 'sub_proceso' en su versión anidada dentro de func_a.}}
+    param_b := func_a.sub_proceso(5$us);
+
+    ret (param_b);
+end;
+
+{{Función Amiga válida}}
+ushortint function func_amiga(clase_alfa obj_a, ushortint k)
+begin
+    {{func_amiga está declarada como friend en clase_alfa, caso valido}}
+    ret (obj_a.validar_clave(k));
+end;
+
+{{Redeclaración de Clases en el mismo ámbito 'main'}}
+class clase_duplicada
+begin
+    ushortint val1;
+end;
+
+{{Redeclaración de la clase 'clase_duplicada' en el ámbito 'main'.}}
+class clase_duplicada
+begin
+    doublef val2;
+end;
+
+{{Redeclaración de Funciones en el mismo ámbito 'main'}}
+ushortint function func_duplicada(ushortint x)
+begin
+    ret (x);
+end;
+
+{{Redeclaración de la función 'func_duplicada' en el ámbito 'main'.}}
+doublef function func_duplicada(doublef y)
+begin
+    ret (y);
+end;
+
+{{Redeclaración de Parámetros, Variables Locales y Métodos}}
+{{Parametro p1 redeclarado}}
+ushortint function func_con_conflictos(ushortint p1, doublef p1)
+ushortint var_local;
+
+{{Variable local 'var_local' redeclarada en la misma función.}}
+doublef var_local;
+
+{{Variable local colisiona con el parámetro formal 'p1'.}}
+ushortint p1;
+begin
+    ret (1$us);
+end;
+
+class clase_con_conflictos
+begin
+    ushortint atributo1;
+
+    {{Atributo 'atributo1' redeclarado en la misma clase.}}
+    doublef atributo1;
+
+    ushortint metodo1(ushortint a)
+    begin
+        ret (a);
+    end;
+
+    {{Método 'metodo1' redeclarado dentro de la misma clase.}}
+    doublef metodo1(doublef b)
+    begin
+        ret (b);
+    end;
+
+    {{Método con el mismo nombre de un atributo existente ('atributo1').}}
+    ushortint atributo1(ushortint c)
+    begin
+        ret (c);
+    end;
+end;
+
+{{Variables del programa principal}}
+clase_alfa alfa_instancia;
+clase_beta beta_instancia;
+ushortint res_eval;
+
+begin
+    {{Uso de la variable global 'var_tardia' antes de su declaración.}}
+    res_eval := var_tardia;
+
+    {{Invocación a 'func_tardia' antes de su declaración.}}
+    res_eval := func_tardia(10$us);
+
+    {{Instanciación de objeto de 'clase_tardia' antes de su declaración.}}
+    clase_tardia objeto_invalido;
+    
+    alfa_instancia[0$us] := 12.0d+0;
+
+    {{Intento de acceder al atributo privado 'clave_privada' desde 'main'.}}
+    res_eval := alfa_instancia[1$us];
+
+    {{Intento de invocar el método privado 'validar_clave' desde 'main'.}}
+    res_eval := alfa_instancia.validar_clave(123$us);
+end;
+
+{{Declaraciones tardías para forzar los errores de uso previo a declaración}}
+ushortint var_tardia;
+
+ushortint function func_tardia(ushortint ent)
+begin
+    ret (ent + 1$us);
+end;
+
+class clase_tardia
+begin
+    ushortint id_tardio;
+end;

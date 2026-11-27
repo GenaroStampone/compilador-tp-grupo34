@@ -1,0 +1,101 @@
+{{Caso de Prueba Nro67: Codigo complejo semanticamente correcto}}
+{{Comportamiento Esperado del Compilador: Tira de tokens completa, 0 errores y 0 warnings.}}
+
+programa_correcto;
+
+typedef tipo_estado = [1$us, 2$us, 3$us];
+
+class base_alfa
+begin
+    doublef saldo_alfa;
+    private ushortint pin_alfa;
+
+    doublef calcular_bono(doublef base_calc)
+    begin
+        ret (base_calc + 10.0d+0);
+    end;
+
+    ushortint verificar_pin_propio(ushortint entrada_pin)
+    begin
+        if (entrada_pin == pin_alfa)
+            ret (1$us);
+        else
+            ret (0$us);
+        end_if;
+    end;
+end;
+
+class base_beta
+begin
+    ushortint nivel_beta;
+
+    doublef calcular_bono(doublef base_calc)
+    begin
+        ret (base_calc + 50.0d+0);
+    end;
+
+    doublef obtener_factor_beta(ushortint aux)
+    begin
+        ret (2.5d+0);
+    end;
+end;
+
+class auditor_amigo
+begin
+    ushortint id_auditor;
+end;
+
+ushortint function funcion_amiga_global(ushortint cod)
+begin
+    ret (cod + 100$us);
+end;
+
+class procesador_central
+begin
+    ushortint codigo_proceso;
+    extends base_alfa, base_beta;
+    friend auditor_amigo;
+    friend funcion_amiga_global;
+    doublef ejecutar_control(doublef factor_inicial, ushortint limite_pasos)
+    ushortint contador;
+    doublef acumulador;
+    begin
+        contador := 1$us;
+        acumulador := factor_inicial;
+        while (contador <= limite_pasos) repeat
+        begin
+            acumulador := (acumulador = acumulador + contador * 1.5d+0);
+            contador := contador + 1$us;
+        end;
+        ret (acumulador);
+    end;
+end;
+
+class auditor_amigo_impl
+begin
+    doublef auditar_sistema(procesador_central p)
+    begin
+        ret (p[0$us]);
+    end;
+end;
+doublef function calcular_rendimiento(doublef tasa, ushortint periodo)
+begin
+    ret (tasa / periodo);
+end;
+
+procesador_central mi_procesador;
+auditor_amigo_impl mi_auditor;
+tipo_estado estado_actual;
+ushortint v_entero;
+doublef v_flotante, resultado_final;
+
+begin
+    estado_actual := 2$us;
+    mi_procesador[3$us] := 100$us;
+    mi_procesador[2$us] := 5$us;
+    mi_procesador[0$us] := 750.0d+0;
+    v_flotante := mi_procesador.calcular_bono(20$us);
+    v_flotante := mi_procesador.ejecutar_control(10.0d+0, 3$us);
+    resultado_final := mi_auditor.auditar_sistema(mi_procesador);
+    resultado_final := calcular_rendimiento(100$us, 2$us);
+end;

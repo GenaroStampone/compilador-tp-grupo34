@@ -1,0 +1,76 @@
+{{Caso de Prueba Nro59: Codigo semanticamente correcto de herencia multiple desambiguado opcion I}}
+{{Comportamiento Esperado del Compilador: Tira de tokens completa, 0 errores y 0 warnings.}}
+
+programa_correcto;
+
+class base_alfa
+begin
+    ushortint id_alfa;
+    ushortint codigo_compartido; 
+
+    ushortint ejecutar_proceso(ushortint aux) 
+    begin
+        ret (100$us);
+    end;
+
+    ushortint calcular_alfa(ushortint val)
+    begin
+        ret (val + 10$us);
+    end;
+end;
+
+class base_beta
+begin
+    doublef saldo_beta;
+    ushortint codigo_compartido;
+
+    ushortint ejecutar_proceso(ushortint aux)
+    begin
+        ret (200$us);
+    end;
+
+    doublef calcular_beta(doublef val)
+    begin
+        ret (val * 2.0d+0);
+    end;
+end;
+
+class derivada_orden_alfa
+begin
+    ushortint dato_propio;
+    extends base_alfa, base_beta;
+
+    ushortint obtener_resumen(ushortint aux)
+    begin
+        ret (dato_propio);
+    end;
+end;
+
+class derivada_orden_beta
+begin
+    ushortint dato_propio;
+    extends base_beta, base_alfa;
+    ushortint ejecutar_proceso(ushortint aux)
+    begin
+        ret (123$us);
+    end;
+end;
+derivada_orden_alfa obj_alfa;
+derivada_orden_beta obj_beta;
+ushortint res_entero;
+doublef res_doble;
+
+begin
+    res_entero := 0$us;
+    obj_alfa[4$us] := 5$us;
+    obj_beta[4$us] := 15$us;
+    obj_alfa[0$us] := 1$us;
+    obj_alfa[2$us] := 50.0d+0;
+    obj_alfa[1$us] := 10$us;
+    obj_beta[1$us] := 20$us;
+    res_entero := obj_alfa.ejecutar_proceso(res_entero);
+    res_entero := obj_beta.ejecutar_proceso(res_entero);
+    res_entero := obj_alfa.calcular_alfa(5$us);
+    res_doble := obj_alfa.calcular_beta(10.0d+0);
+    res_entero := obj_alfa.obtener_resumen(res_entero);
+end;

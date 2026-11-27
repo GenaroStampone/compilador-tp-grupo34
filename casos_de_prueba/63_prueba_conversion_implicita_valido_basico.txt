@@ -1,0 +1,33 @@
+{{Caso de Prueba Nro63: Codigo semanticamente correcto de conversion implicita}}
+{{Comportamiento Esperado del Compilador: Tira de tokens completa, 0 errores y 0 warnings.}}
+
+programa_correcto;
+
+doublef function calcular_factor(doublef base_doble)
+ushortint entero_local;
+begin
+    entero_local := 5$us;
+
+    if (base_doble > 10.0d+0)
+        ret (entero_local);
+    else
+        ret (base_doble + 1.0d+0);
+    end_if;
+end;
+
+ushortint v_int1, v_int2;
+doublef v_doble1, v_doble2, res_doble;
+
+begin
+    v_int1 := 10$us;
+    v_int2 := 4$us;
+    v_doble1 := 2.5d+0;
+    res_doble := v_int1 + v_doble1;
+    res_doble := v_doble2 - v_int2;
+    res_doble := v_int1 * 3.0d+0;
+    res_doble := v_doble2 / v_int2;
+    if (v_doble1 < v_int1)
+        res_doble := res_doble + 1.0d+0;
+    end_if;
+    res_doble := calcular_factor(v_int1);
+end;

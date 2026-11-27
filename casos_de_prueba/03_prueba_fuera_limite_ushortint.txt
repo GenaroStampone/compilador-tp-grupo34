@@ -1,0 +1,13 @@
+{{Caso de Prueba Nro3: Pruebas sobre errores lexicos de valores fuera de rango sobre USHORTINT}}
+{{Comportamiento Esperado del Compilador: Errores léxicos por constantes fuera de rango.}}
+
+programa_incorrecto;
+
+USHORTINT error_1, error_2, error_3, error_4;
+
+BEGIN 
+    error_1 := -1$us;
+    error_2 := -302$us;
+    error_3 := 256$us;
+    error_4 := 502$us;
+END;

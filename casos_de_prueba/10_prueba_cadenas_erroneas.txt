@@ -1,0 +1,16 @@
+{{Caso de Prueba Nro10: Pruebas sobre errores lexicos en cadenas}}
+{{Comportamiento Esperado del Compilador: Errores léxicos por malformación de cadenas y errores lexicos sobre ellas.}}
+
+programa_incorrecto;
+
+USHORTINT prueba;
+
+BEGIN 
+    pout({Esta cadena no se cierra antes del fin de linea );
+    prueba := 10$us;
+    pout({Cadena 
+    multilinea incorrecta});
+    pout({Cadena con ';' al final};);
+    prueba := 1$us;
+    pout({error con cadena y simbolos '{' y '}' dentro});
+end;

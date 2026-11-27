@@ -1,0 +1,52 @@
+{{Caso de Prueba Nro64: Codigo semanticamente correcto de conversion implicita}}
+{{Comportamiento Esperado del Compilador: Tira de tokens completa, 0 errores y 0 warnings.}}
+
+programa_correcto;
+
+class evaluador_financiero
+begin
+    doublef saldo_acumulado;
+    doublef registrar_interes(doublef tasa, ushortint periodo)
+    ushortint constante_base;
+    begin
+        constante_base := 2$us;
+        saldo_acumulado := saldo_acumulado + (tasa * periodo) / constante_base;
+        if (saldo_acumulado > 100.0d+0)
+            ret (saldo_acumulado);
+        else
+            ret (constante_base);
+        end_if;
+    end;
+end;
+
+doublef function procesar_metricas(doublef limite_max, doublef factor_escalar)
+ushortint contador_entero;
+doublef acumulador;
+begin
+    contador_entero := 4$us;
+    acumulador := 10.5d+0;
+    acumulador := (limite_max + contador_entero) * (20$us - factor_escalar);
+    if (acumulador >= contador_entero)
+        limite_max := (acumulador = contador_entero + factor_escalar);
+    end_if;
+    ret (contador_entero + 1$us);
+end;
+
+evaluador_financiero mi_evaluador;
+ushortint entero_base, contador_iteraciones;
+doublef res_doble, tasa_anual;
+
+begin
+    entero_base := 10$us;
+    contador_iteraciones := 1$us;
+    tasa_anual := 0.5d+0;
+    mi_evaluador[0$us] := 500.0d+0;
+    res_doble := mi_evaluador.registrar_interes(entero_base, 3$us);
+    res_doble := procesar_metricas(entero_base, contador_iteraciones);
+    while (res_doble > contador_iteraciones) repeat
+    begin
+        res_doble := res_doble - (contador_iteraciones * 2.5d+0);
+        contador_iteraciones := contador_iteraciones + 1$us;
+    end;
+    res_doble := mi_evaluador[0$us] + entero_base;
+end;

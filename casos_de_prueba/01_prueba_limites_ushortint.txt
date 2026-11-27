@@ -1,0 +1,11 @@
+{{Caso de Prueba Nro1: Codigo lexicamente correcto de limites sobre USHORTINT}}
+{{Comportamiento Esperado del Compilador: Tira de tokens completa, 0 errores y 0 warnings.}}
+
+programa_correcto;
+
+USHORTINT limite_inferior, limite_superior;
+
+begin
+    limite_inferior := 0$us;
+    limite_superior := 255$us;
+end;

@@ -1,0 +1,71 @@
+{{Caso de Prueba Nro66: Codigo complejo semanticamente incorrecto de conversiones implicitas}}
+{{Comportamiento Esperado del Compilador: Prueba sobre errores semanticos en retornos invalidos, pasaje de parametros incompatibles en funciones globales,
+    pasaje de parametros incompatibles en metodos de clases y asignaciones en expresiones como argumentos}}
+
+programa_incorrecto;
+
+class calculador_auxiliar
+begin
+    ushortint id_metodo;
+    ushortint procesar_metodo(ushortint param_int)
+    doublef val_doble_local;
+    begin
+        val_doble_local := 4.5d+0;
+
+        {{Retornar una variable 'doublef' en un método que retorna 'ushortint'}}
+        ret (val_doble_local);
+    end;
+end;
+
+doublef function obtener_flotante(ushortint aux)
+begin
+    ret (100.25d+0);
+end;
+
+ushortint function funcion_entera_param(ushortint p1, ushortint p2)
+begin
+    ret (p1 + p2);
+end;
+
+ushortint function funcion_entera_retorno(doublef f_in)
+doublef d_aux;
+begin
+    d_aux := 50.0d+0;
+
+    {{Retornar una constante literal 'doublef' en función 'ushortint'}}
+    ret (12.8d+0);
+
+    {{Retornar una expresión aritmética 'doublef' en función 'ushortint'}}
+    ret (f_in * d_aux);
+
+    {{Retornar la invocación a una función 'doublef' en una función 'ushortint'}}
+    ret (obtener_flotante(1$us));
+end;
+
+calculador_auxiliar mi_calc;
+ushortint res_entero, v_int;
+doublef v_doble1, v_doble2;
+
+begin
+    v_int := 10$us;
+    v_doble1 := 20.5d+0;
+    v_doble2 := 3.0d+0;
+
+    {{Pasar una variable 'doublef' a un parámetro formal 'ushortint'}}
+    res_entero := funcion_entera_param(v_doble1, v_int);
+
+    {{Pasar una constante literal 'doublef' (5.5d+0) a un parámetro 'ushortint'}}
+    res_entero := funcion_entera_param(v_int, 5.5d+0);
+
+    {{Pasar el resultado de una expresión 'doublef' (v_doble1 + v_doble2) a un parámetro 'ushortint'}}
+    res_entero := funcion_entera_param(v_doble1 + v_doble2, v_int);
+
+    {{Pasar el retorno de una función 'doublef' a un parámetro 'ushortint'}}
+    res_entero := funcion_entera_param(v_int, obtener_flotante(1$us));
+
+    {{Pasar una variable 'doublef' a un método que requiere 'ushortint'}}
+    res_entero := mi_calc.procesar_metodo(v_doble1);
+
+    {{Asignar 'doublef' dentro de 'v_int=v_doble1' donde el parámetro formal es 'ushortint'}}
+    res_entero := funcion_entera_param(v_int = v_doble1, v_int);
+end;

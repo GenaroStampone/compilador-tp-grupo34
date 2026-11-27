@@ -1,0 +1,60 @@
+{{Caso de Prueba Nro34: Codigo complejo semanticamente incorrecto de clases no declaradas}}
+{{Comportamiento Esperado del Compilador: Prueba sobre errores semanticos en clases no declaradas sobre clases, funciones, parametros y ambito global}}
+
+programa_incorrecto;
+
+{{Clase válida para uso en el programa}}
+class dispositivo_valido 
+    begin 
+        ushortint id_dispositivo; 
+        doublef voltaje; 
+        doublef obtener_voltaje(ushortint canal) 
+            begin 
+                ret (voltaje); 
+            end; 
+    end;
+
+{{Intento de instanciar 'clase_futura' antes de ser declarada en 'main'}} 
+clase_futura objeto_prematuro; 
+
+class clase_futura 
+    begin 
+        ushortint estado; 
+    end;
+
+{{'clase_fantasma' no está declarada en la Tabla de Símbolos}} 
+ushortint function procesar_registro(clase_fantasma objeto_param, ushortint codigo) 
+    ushortint resultado; 
+    begin 
+        resultado := codigo + 1$us; 
+        ret (resultado); 
+    end;
+
+class gestor_seguridad 
+    begin 
+        private ushortint token_privado; 
+        
+        {{Declaración de 'friend' sobre una clase que no existe en ningún ámbito}} 
+        friend clase_amiga_inexistente; 
+        
+        {{Declaración friend válida sobre clase existente}} 
+        friend dispositivo_valido; 
+    end;
+
+ushortint variable_entera_global; 
+
+{{Se intenta usar 'variable_entera_global' como tipo de clase para declarar 'obj_error'}} 
+variable_entera_global obj_error;
+
+{{Instanciación directa de una clase inexistente 'servidor_remoto'}} 
+servidor_remoto mi_servidor; 
+dispositivo_valido disp_ok;
+
+begin
+    variable_entera_global := 10$us; 
+    disp_ok.voltaje := 12.5d+0; 
+    {{Intento de acceder a un atributo a través de un objeto ('mi_servidor')}} 
+    mi_servidor[1$us] := 8080$us; 
+    {{Intento de invocar un método a través de un objeto de clase no declarada}} 
+    pout(mi_servidor.conectar(mi_servidor));
+end;

@@ -1,0 +1,38 @@
+{{Caso de Prueba Nro31: Codigo complejo sintacticamente correcto de acceso posicional a atributos}}
+{{Comportamiento Esperado del Compilador: Tira de tokens completa, 0 errores y 0 warnings.}}
+
+programa_correcto;
+
+class datos_registro 
+    begin 
+        ushortint codigo_id; 
+        doublef valor_lectura; 
+    end; 
+
+ushortint function evaluar_posicion (ushortint pos) 
+    begin 
+        if (pos == 1$us) 
+            ret (1$us); 
+        else 
+            ret (0$us); 
+        end_if; 
+    end; 
+    
+datos_registro reg; 
+ushortint estado;
+
+begin 
+    reg[0$us] := 100$us; 
+    reg[1$us] := 45.5d+0; 
+    if (reg[1$us] == 100$us) 
+        begin 
+            pout({Acceso posicional al primer atributo exitoso}); 
+            estado := evaluar_posicion(1$us); 
+        end; 
+    else 
+        begin 
+            pout({Error en la lectura del atributo posicional}); 
+            estado := evaluar_posicion(0$us); 
+        end;
+    end_if;
+end;

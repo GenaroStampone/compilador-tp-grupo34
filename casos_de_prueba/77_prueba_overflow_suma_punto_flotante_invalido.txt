@@ -1,0 +1,71 @@
+{{Caso de Prueba Nro75: Codigo incorrecto sobre overflow en suma de punto flotante}}
+{{Comportamiento Esperado del Compilador: Prueba de errores sobre overflow en casos estaticos y dinamicos en tiempo de ejecucion}}
+
+programa_incorrecto;
+
+class gestor_float_invalido
+begin
+    doublef acumulado_attr;
+
+    doublef probar_ret_static_inv(ushortint aux)
+    begin
+        {{Suma constante (1.5d+308 + 1.5d+308 = 3.0d+308 > MAX_DOUBLE)}}
+        ret (1.5d+308 + 1.5d+308);
+    end;
+
+    doublef probar_ret_dinamico(doublef val_a, doublef val_b)
+    begin
+        {{Falla dinámica si (val_a + val_b) genera Inf / NaN en tiempo de corrida}}
+        ret (val_a + val_b);
+    end;
+end;
+
+doublef function sumar_float_global(doublef f1, doublef f2)
+begin
+    ret (f1 + f2);
+end;
+
+gestor_float_invalido mi_gestor;
+doublef f_var1, f_var2, res_flotante;
+ushortint v_int_aux;
+
+begin
+    f_var1 := 1.5d+308;
+    f_var2 := 1.5d+308;
+    v_int_aux := 100$us;
+    mi_gestor[0$us] := 1.6d+308;
+
+    {{Suma constante directa desbordada: 1.5d+308 + 1.5d+308 = 3.0d+308}}
+    res_flotante := 1.5d+308 + 1.5d+308;
+
+    {{Plegado de constantes (Constant Folding): (1.0d+308 + 0.5d+308) + 0.5d+308 = 2.0d+308}}
+    res_flotante := (1.0d+308 + 0.5d+308) + 0.5d+308;
+
+    {{Suma constante asignada al atributo posicional [0$us]}}
+    mi_gestor[0$us] := 1.2d+308 + 0.8d+308;
+
+    {{Asignación en expresión con '=' desbordada: (f_var1 = 1.0d+308 + 1.0d+308)}}
+    res_flotante := (f_var1 = 1.0d+308 + 1.0d+308);
+
+    {{Invocación enviando suma constante desbordada por argumento}}
+    res_flotante := sumar_float_global(1.5d+308, 0.5d+308);
+
+    {{Suma directa de variables (1.5d+308 + 1.5d+308 = 3.0d+308 > MAX_DOUBLE)}}
+    res_flotante := f_var1 + f_var2;
+
+    {{Incremento en bucle WHILE acumulando hasta desbordar la FPU}}
+    res_flotante := 1.0d+308;
+    while (res_flotante < 2.0d+308) repeat
+    begin
+        res_flotante := res_flotante + 0.5d+308;
+    end;
+
+    {{Pasaje de variables a función global desbordando la suma interna FPU}}
+    res_flotante := sumar_float_global(f_var1, f_var2);
+
+    {{Suma con atributo posicional de objeto [0$us] (1.6d+308 + 0.5d+308 = 2.1d+308)}}
+    res_flotante := mi_gestor[0$us] + f_var2;
+
+    {{Suma mixta con promoción implícita en runtime}}
+    res_flotante := (f_var1 + f_var2) + v_int_aux;
+end;

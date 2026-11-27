@@ -1,0 +1,47 @@
+{{Caso de Prueba Nro65: Codigo complejo semanticamente incorrecto de conversiones implicitas}}
+{{Comportamiento Esperado del Compilador: Prueba sobre errores semanticos en asignaciones directas e incompatibilidad de constantes literales, asignacion de expresiones evaluadas 'doublef',
+    asignaciones sobre atributos de objetos y notacion posicional y asignacion en expresion con '='}}
+
+programa_incorrecto;
+
+class contenedor_datos
+begin
+    ushortint campo_entero;
+end;
+
+doublef function obtener_factor_doble(ushortint aux)
+begin
+    ret (3.14d+0);
+end;
+
+ushortint v_int1, v_int2;
+doublef v_doble1, v_doble2;
+contenedor_datos mi_obj;
+
+begin
+    v_int1 := 5$us;
+    v_doble1 := 12.5d+0;
+    v_doble2 := 2.0d+0;
+    mi_obj[0$us] := 10$us;
+
+    {{Asignación directa de variable 'doublef' a variable 'ushortint'}}
+    v_int1 := v_doble1;
+
+    {{Asignación de constante literal 'doublef' (12.5d+0) a variable 'ushortint'}}
+    v_int2 := 12.5d+0;
+
+    {{Asignar el resultado de una expresión flotante pura (doublef + doublef) a 'ushortint'}}
+    v_int1 := v_doble1 + v_doble2;
+
+    {{Asignar el resultado de una expresión mixta (ushortint + doublef, promovida a doublef) a 'ushortint'}}
+    v_int2 := v_int1 + v_doble1;
+
+    {{Asignar el retorno de una función de tipo 'doublef' a una variable 'ushortint'}}
+    v_int1 := obtener_factor_doble(1$us);
+
+    {{Asignar 'doublef' a un atributo 'ushortint' mediante acceso posicional [0$us]}}
+    mi_obj[0$us] := 25.5d+0;
+
+    {{Intentar asignar 'v_doble1' (doublef) a 'v_int1' (ushortint) dentro de una asignación en expresión '='}}
+    v_doble2 := (v_int1 = v_doble1);
+end;

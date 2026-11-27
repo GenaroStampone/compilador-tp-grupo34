@@ -1,0 +1,13 @@
+{{Caso de Prueba Nro5: Pruebas sobre errores léxicos y semánticos por valores fuera de rango en DOUBLEF}}
+{{Comportamiento Esperado del Compilador: Rechazo y emisión de errores por violación de los límites estrictos (no inclusivos) de DOUBLEF.}}
+
+programa_correcto;
+
+DOUBLEF limite_inf_pos, limite_sup_pos, limite_inf_neg, limite_sup_neg;
+
+begin
+    limite_inf_pos := 2.2250738585072014d-308;
+    limite_sup_pos := 1.7976931348623157d+308;
+    limite_inf_neg := -1.7976931348623157d+308;
+    limite_sup_neg := -2.2250738585072014d-308;
+end;

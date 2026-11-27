@@ -1,0 +1,129 @@
+{{Caso de Prueba Nro62: Codigo complejo semanticamente incorrecto de herencia multiple desambiguado opcion I}}
+{{Comportamiento Esperado del Compilador: Prueba sobre errores semanticos en declaracion y uso de miembros heredados}}
+
+programa_incorrecto;
+
+typedef enum_grupo34 = [1$us, 2$us, 3$us];
+ushortint variable_global;
+
+ushortint function funcion_global(ushortint p)
+begin
+    ret (p + 1$us);
+end;
+
+class clase_padre_alfa
+begin
+    ushortint id_alfa;
+    private ushortint secreto_alfa;
+
+    ushortint calcular_alfa(ushortint x)
+    begin
+        ret (x + 10$us);
+    end;
+end;
+
+class clase_padre_beta
+begin
+    ushortint id_beta;
+    ushortint secreto_alfa;
+
+    ushortint calcular_beta(doublef val)
+    begin
+        ret (1$us);
+    end;
+end;
+
+{{Intentar heredar de una clase inexistente en la Tabla de Símbolos}}
+class error_clase_inexist
+begin
+    ushortint val;
+    extends clase_fantasma;
+end;
+
+{{Intentar heredar de una clase declarada posteriormente (visibilidad secuencial)}}
+class error_uso_tardio
+begin
+    ushortint val;
+    extends clase_declarada_desps;
+end;
+
+{{Intentar heredar de una VARIABLE (Uso='nombre_variable')}}
+class error_hereda_variable
+begin
+    ushortint val;
+    extends variable_global;
+end;
+
+{{Intentar heredar de un TYPEDEF (Uso='nombre_typedef')}}
+class error_hereda_typedef
+begin
+    ushortint val;
+    extends enum_grupo34;
+end;
+
+{{Intentar heredar de una FUNCIÓN (Uso='nombre_funcion')}}
+class error_hereda_funcion
+begin
+    ushortint val;
+    extends funcion_global;
+end;
+
+{{Autoherencia directa (una clase intenta heredar de sí misma)}}
+class error_auto_herencia
+begin
+    ushortint val;
+    extends error_auto_herencia;
+end;
+
+class clase_ciclo_padre
+begin
+    ushortint val;
+    extends clase_ciclo_hija;
+end;
+
+{{Ciclo de herencia circular (A extends B y B extends A)}}
+class clase_ciclo_hija
+begin
+    ushortint val;
+    extends clase_ciclo_padre;
+end;
+
+{{Clase base duplicada en la misma cláusula 'extends'}}
+class error_base_duplicada
+begin
+    ushortint val;
+    extends clase_padre_alfa, clase_padre_alfa;
+end;
+
+class clase_derivada_valida
+begin
+    ushortint dato_propio;
+    extends clase_padre_alfa, clase_padre_beta;
+end;
+
+clase_derivada_valida obj_derivado;
+ushortint res_entero;
+doublef val_doble;
+
+begin
+    obj_derivado[4$us] := 5$us;
+    val_doble := 10.0d+0;
+
+    {{Acceder a un atributo que no existe en la clase propia ni en las clases heredadas}}
+    res_entero := obj_derivado[5$us];
+
+    {{Invocación a un método que no existe en la clase propia ni en las clases heredadas}}
+    res_entero := obj_derivado.metodo_inexistente(1$us);
+
+    {{Interacción de Opción 1 con Privacidad}}
+    res_entero := obj_derivado[1$us];
+
+    {{Incompatibilidad de tipos al asignar un 'doublef' a un atributo heredado de tipo 'ushortint'}}
+    obj_derivado[0$us] := val_doble;
+end;
+
+{{Declaración tardía}}
+class clase_declarada_desps
+begin
+    ushortint id_tardio;
+end;

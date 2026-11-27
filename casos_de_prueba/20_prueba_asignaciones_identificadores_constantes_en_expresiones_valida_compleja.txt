@@ -1,0 +1,37 @@
+{{Caso de Prueba Nro20: Codigo complejo sintacticamente correcto de asignaciones de identificadores o constantes en expresiones.}}
+{{Comportamiento Esperado del Compilador: Tira de tokens completa, 0 errores y 0 warnings.}}
+
+programa_correcto;
+
+class conversor_datos 
+    begin 
+        doublef factor_escala; 
+        doublef acum; 
+    end; 
+
+ushortint function procesar_val (ushortint base, doublef ratio) 
+    ushortint temp; 
+    begin 
+        ret (temp = base + 5$us); 
+    end; 
+
+ushortint val_1, val_2, resultado;
+doublef valor;
+
+conversor_datos conv; 
+
+begin 
+    val_1 := 20$us; 
+    conv.factor_escala := valor = 1.5d+0; 
+    resultado := procesar_val(val_2 = 10$us, conv.factor_escala); 
+    if (val_1 = val_2 == 10$us) 
+        begin
+            pout({Valores coincidentes tras asignacion interna}); 
+            conv.acum := conv.factor_escala = 3.0d+0 + 1.0d+0; 
+        end; 
+    else 
+        begin 
+            pout({Valores no coincidentes}); 
+        end
+    end_if; 
+end;

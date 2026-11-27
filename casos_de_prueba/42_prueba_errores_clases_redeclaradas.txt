@@ -1,0 +1,68 @@
+{{Caso de Prueba Nro34: Codigo complejo semanticamente incorrecto de clases redeclaradas}}
+{{Comportamiento Esperado del Compilador: Prueba sobre errores semanticos en clases redeclaradas como clases, funciones, typedef o variables}}
+
+programa_incorrecto;
+
+{{Declaraciones Validas}}
+ushortint variable_global_existente; 
+
+ushortint function funcion_global_existente(ushortint entrada) 
+    begin 
+        ret (entrada + 1$us); 
+    end; 
+
+typedef tipo_enum_existente = [1$us, 2$us, 3$us]; 
+
+class clase_base_original 
+    begin 
+        ushortint id_atributo; 
+        doublef valor_atributo; 
+    end;
+
+{{Intentar definir la clase 'clase_base_original' por segunda vez}} 
+class clase_base_original 
+    begin 
+        ushortint otro_campo; 
+    end;
+
+{{'variable_global_existente' ya fue registrada como variable en 'main'}} 
+class variable_global_existente 
+    begin 
+        doublef atributo_x; 
+    end;
+
+{{'funcion_global_existente' ya fue registrada como función en 'main'}} 
+class funcion_global_existente 
+    begin 
+        ushortint atributo_y; 
+    end;
+
+{{'tipo_enum_existente' ya fue registrado como typedef en 'main'}} 
+class tipo_enum_existente 
+    begin 
+        doublef atributo_z; 
+    end;
+
+{{Intentar declarar una variable global con el nombre de una clase ya registrada ('clase_base_original')}} 
+ushortint clase_base_original; 
+
+{{Intentar declarar una función global con el nombre de una clase ya registrada}} 
+doublef function clase_base_original(doublef parametro) 
+    begin 
+        ret (parametro); 
+    end; 
+
+{{Intentar definir un typedef con el nombre de una clase ya registrada}} 
+typedef clase_base_original = [10$us, 20$us];
+
+ushortint function funcion_demostracion(ushortint val) 
+    {{La variable local 'clase_base_original' pertenece al ámbito interno, caso valido}} 
+    ushortint clase_base_original; 
+    begin 
+        clase_base_original := val + 5$us; 
+        ret (clase_base_original); 
+    end;
+
+begin
+    variable_global_existente := 100$us;
+end;

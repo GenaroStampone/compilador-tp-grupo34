@@ -1,0 +1,67 @@
+{{Caso de Prueba Nro57: Codigo complejo semanticamente incorrecto de acceso posicional a atributos}}
+{{Comportamiento Esperado del Compilador: Prueba sobre errores semanticos en chequeo del receptor, limites posicionales, tipo del indice, encapsulamiento y privacidad y compatibilidad de tipos}}
+
+programa_incorrecto;
+
+typedef estado_enum = [1$us, 2$us, 3$us];
+
+class cuenta_cliente
+begin
+    doublef saldo_publico;
+    private ushortint pin_privado;
+end;
+
+ushortint function funcion_auxiliar(ushortint entrada)
+begin
+    ret (entrada + 1$us);
+end;
+
+cuenta_cliente cliente1;
+ushortint n_entero;
+doublef n_doble;
+estado_enum estado_actual;
+
+begin
+    cliente1.saldo_publico := 500.0d+0;
+    n_entero := 10$us;
+    n_doble := 20.0d+0;
+
+    {{Acceso a la posición 2 (la clase solo tiene 2 atributos: idx 0 y idx 1)}}
+    n_doble := cliente1[2$us];
+
+    {{Acceso a la posición 10 totalmente fuera de rango}}
+    n_entero := cliente1[10$us];
+
+    {{Intentar usar acceso posicional sobre una variable de tipo básico ('ushortint')}}
+    n_entero := n_entero[0$us];
+
+    {{Intentar usar acceso posicional sobre un identificador de CLASE}}
+    n_doble := cuenta_cliente[0$us];
+
+    {{Intentar usar acceso posicional sobre un TYPEDEF (enumeración)}}
+    n_entero := estado_enum[0$us];
+
+    {{Intentar usar acceso posicional sobre el nombre de una FUNCIÓN}}
+    n_entero := funcion_auxiliar[0$us];
+
+    {{Intentar usar un valor 'doublef' como índice posicional (se requiere ushortint)}}
+    n_doble := cliente1[1.5d+0];
+
+    {{Asignar 'doublef' al atributo posicional 1 ('pin_privado' que es ushortint)}}
+    cliente1[1$us] := 15.5d+0;
+
+    {{Asignar el resultado de la posición 0 ('saldo_publico' que es doublef) a 'ushortint'}}
+    n_entero := cliente1[0$us];
+
+    {{Lectura del atributo en posición 1 ('pin_privado') que es 'private' desde 'main'}}
+    n_entero := cliente1[1$us];
+
+    {{Escritura (:=) en el atributo posicional 1 ('pin_privado' private) desde 'main'}}
+    cliente1[1$us] := 123$us;
+
+    {{Asignación en expresión (=) sobre atributo posicional 1 private desde 'main'}}
+    n_doble := (cliente1[1$us] = 1234$us);
+
+    {{Intentar invocar un acceso posicional como si fuera un método}}
+    n_doble := cliente1[0$us](5$us);
+end;

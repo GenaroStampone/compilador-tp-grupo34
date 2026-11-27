@@ -1,0 +1,42 @@
+{{Caso de Prueba Nro34: Codigo complejo semanticamente incorrecto de variables redeclaradas}}
+{{Comportamiento Esperado del Compilador: Prueba sobre errores semanticos en redeclaracion de variables sobre parametros, clases, funciones, y global}}
+
+programa_incorrecto;
+
+class procesador_datos 
+    begin 
+        ushortint capacidad; 
+
+        {{Redeclaración de atributo en el mismo ámbito de la clase}} 
+        ushortint capacidad; 
+        doublef frecuencia; 
+    end;
+
+{{Parámetro formal 'limite' redeclarado en la cabecera de la función}} 
+ushortint function calcular_total(ushortint limite, doublef limite) 
+    ushortint acumulador; 
+    
+    {{Intentar declarar una variable local con el mismo nombre de un parámetro ('limite')}} 
+    ushortint limite; 
+    
+    {{Variable local 'acumulador' redeclarada en el mismo ámbito de la función}} 
+    doublef acumulador; 
+    begin 
+        acumulador := 10$us; 
+        ret (acumulador); 
+    end;
+
+{{Variable 'valor_comun' ya declarada pero en otro ambito, caso valido}}
+ushortint function funcion_valida(ushortint entrada) 
+    ushortint valor_comun; 
+    begin 
+        valor_comun := entrada + 1$us; 
+        ret (valor_comun); 
+    end;
+
+ushortint contador_global, valor_comun, calcular_total, procesar_datos;
+
+begin
+    {{Variable 'contador_global' redeclarada dentro del bloque ejecutable del mismo ámbito}}
+    contador_global := 5$us;
+end;

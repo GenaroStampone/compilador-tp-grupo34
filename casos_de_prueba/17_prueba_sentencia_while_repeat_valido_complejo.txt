@@ -1,0 +1,40 @@
+{{Caso de Prueba Nro17: Codigo complejo sintacticamente correcto de sentencia WHILE-REPEAT}}
+{{Comportamiento Esperado del Compilador: Tira de tokens completa, 0 errores y 0 warnings.}}
+
+programa_correcto;
+
+class procesador_datos 
+    begin 
+        doublef factor; 
+    end;
+
+ushortint function calcular_iteraciones (ushortint base, doublef umbral) 
+    ushortint i; 
+    begin 
+        i := 0$us; 
+        while (i < base) repeat 
+            begin 
+                if (umbral >= 1.0) 
+                    i := i + 2$us; 
+                else 
+                    i := i + 1$us; 
+                end_if; 
+            end; 
+        ret (i); 
+    end;
+
+ushortint total, limite_global; 
+procesador_datos proc;
+
+begin
+    total := 0$us; 
+    limite_global := 20$us; 
+    proc.factor := 2.5d+0; 
+    
+    {Invocación a función y métodos dentro de la estructura general} 
+    while (total < limite_global) repeat 
+        begin 
+            total := calcular_iteraciones(total, proc.factor); 
+            pout({Procesando en bucle complejo...}); 
+        end;
+end;

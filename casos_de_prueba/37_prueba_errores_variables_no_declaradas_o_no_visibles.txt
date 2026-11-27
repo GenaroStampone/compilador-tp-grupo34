@@ -1,0 +1,49 @@
+{{Caso de Prueba Nro34: Codigo complejo semanticamente incorrecto de variables no declaradas o no visibles}}
+{{Comportamiento Esperado del Compilador: Prueba sobre errores semanticos en variables que no se declaran o no son visibles por su alcance}}
+
+programa_incorrecto;
+
+class cuenta_bancaria 
+    begin 
+        doublef saldo_publico; 
+        private ushortint pin_secreto; 
+    end;
+
+ushortint function calcular_impuesto(ushortint monto_base) 
+    ushortint impuesto_local; 
+    begin 
+        impuesto_local := monto_base + 10$us;
+
+        {{Uso de una variable totalmente inexistente (jamás declarada en ningún ámbito)}} 
+        monto_base := impuesto_local + variable_inexistente; 
+        ret (impuesto_local); 
+    end;
+
+doublef function procesar_pago(doublef monto_pago) 
+    doublef recargo; 
+    begin 
+        recargo := monto_pago * 1.1d+0; 
+
+        {{Intento de acceder a 'impuesto_local', que es una variable local de 'calcular_impuesto'}} 
+        monto_pago := monto_pago + impuesto_local; 
+        
+        {{Intento de acceder al parámetro formal 'monto_base' de otra función}} 
+        if (monto_pago > 100.0d+0) 
+            recargo := recargo + monto_base; 
+        end_if; 
+        ret (recargo); 
+    end;
+
+ushortint total_global; 
+cuenta_bancaria mi_cuenta;
+
+begin
+    total_global := 50$us; 
+    mi_cuenta.saldo_publico := 1000.0d+0; 
+
+    {{Intento de acceder a 'recargo' (variable local de 'procesar_pago')}} 
+    total_global := total\_global + recargo;
+
+    {{Variable usada antes de ser declarada en el mismo ámbito global}} 
+    total_global := variable_declarada_tarde;
+end;

@@ -11,8 +11,8 @@ import java.util.Set;
  * Generador de código WebAssembly textual (.wat) a partir del AST.
  *
  * Grupo 34 - TP4. Controles incluidos: a (división por cero entera y
- * flotante), b (overflow de suma entera), c (overflow de suma flotante),
- * f (resta negativa ushortint) y h (valor inválido de enumeración).
+ * flotante), b (overflow de suma entera), c (overflow de suma flotante)
+ * y h (valor inválido de enumeración).
  */
 public class GeneradorWebAssembly {
     private static final double MAX_DOUBLEF = 1.7976931348623157e+308;
@@ -34,7 +34,6 @@ public class GeneradorWebAssembly {
     private final Map<String, String> nombreFuncion = new HashMap<>();
     private final Set<String> nombresUsados = new LinkedHashSet<>();
     private final Map<String, Integer> datos = new LinkedHashMap<>();
-    private int contadorIds = 0;
     private int siguienteObjeto = 0;
     private int siguienteDato = 0;
 
@@ -321,8 +320,6 @@ public class GeneradorWebAssembly {
                 return compilarRetorno(nodo, ctx);
             case "CALL":
                 return compilarLlamada(nodo, ctx) + "\n  drop\n";
-            case "ENUM_CHECK":
-                return compilarSecuencia(nodo.getIzq(), ctx);
             default:
                 return "";
         }
@@ -355,9 +352,10 @@ public class GeneradorWebAssembly {
         String condCode = compilarExpresion(cond, ctx);
         String thenCode = compilarSecuencia(thenNode, ctx);
         String elseCode = compilarSecuencia(elseNode, ctx);
+        String bloqueElse = elseCode.isEmpty() ? "" : " else\n" + indentar(elseCode);
         return condCode
                 + "  if\n" + indentar(thenCode)
-                + "  else\n" + indentar(elseCode)
+                + bloqueElse
                 + "  end\n";
     }
 
@@ -381,10 +379,7 @@ public class GeneradorWebAssembly {
 
     private String compilarRetorno(NodoArbol nodo, Ctx ctx) {
         NodoArbol expr = nodo.getIzq();
-        String tipoFuncion = tipoBaseDe(nodo.getTipoToken());
         String codigo = compilarExpresion(expr, ctx);
-        String tipoExpr = tipoBaseDe(tipoDeNodo(expr));
-        codigo += convertir(tipoExpr, tipoFuncion);
         return codigo + "  return\n";
     }
 
@@ -878,9 +873,6 @@ public class GeneradorWebAssembly {
         if (a.equals(b)) return "";
         if (b.equals("DOUBLEF") && a.equals("USHORTINT")) {
             return "  f64.convert_i32_u\n";
-        }
-        if (b.equals("USHORTINT") && a.equals("DOUBLEF")) {
-            return "  i32.trunc_f64_u\n";
         }
         return "";
     }

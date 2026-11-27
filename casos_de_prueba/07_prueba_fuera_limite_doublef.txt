@@ -1,0 +1,17 @@
+{{Caso de Prueba Nro7: Pruebas sobre errores lexicos de valores fuera de rango sobre DOUBLEF}}
+{{Comportamiento Esperado del Compilador: Errores léxicos por constantes fuera de rango.}}
+
+programa_incorrecto;
+
+DOUBLEF error_1, error_2, error_3, error_4, error_5, error_6, error_7, error_8;
+
+BEGIN 
+    error_1 := 1.7976931348623158d+308;
+    error_2 := 1.0d+309;
+    error_3 := 2.2250738585072013d-308;
+    error_4 := 1.0d-309;
+    error_5 := -1.0d-309;
+    error_6 := -1.0d+309;
+    error_7 := 1.0d+999;
+    error_8 := 1.0d-999;
+END;

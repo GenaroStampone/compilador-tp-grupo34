@@ -1,0 +1,50 @@
+{{Caso de Prueba Nro74: Codigo correcto sobre overflow en suma de enteros}}
+{{Comportamiento Esperado del Compilador: Tira de tokens completa, 0 errores y 0 warnings.}}
+
+programa_correcto;
+
+class acumulador_base
+begin
+    ushortint valor_base;
+
+    ushortint sumar_al_limite(ushortint a, ushortint b)
+    begin
+        ret (a + b);
+    end;
+end;
+
+class gestor_sumas
+begin
+    ushortint tope_maximo;
+    extends acumulador_base;
+end;
+
+ushortint function sumar_tres_operandos(ushortint x, ushortint y, ushortint z)
+begin
+    ret (x + y + z);
+end;
+
+gestor_sumas mi_gestor;
+ushortint val1, val2, val3, res_suma, contador;
+
+begin
+    val1 := 200$us;
+    val2 := 55$us;
+    val3 := 0$us;
+    contador := 0$us;
+    mi_gestor[0$us] := 150$us;
+    mi_gestor[1$us] := 255$us;
+    res_suma := val1 + val2;
+    res_suma := mi_gestor[1$us] + val3;
+    res_suma := sumar_tres_operandos(100$us, 100$us, 55$us);
+    contador := 250$us;
+    while (contador < 255$us) repeat
+    begin
+        contador := contador + 1$us;
+    end;
+    res_suma := contador;
+    res_suma := mi_gestor[0$us] + 0$us;
+    res_suma := mi_gestor[1$us] + 105$us;
+    res_suma := (val3 = 120$us + 135$us);
+    res_suma := mi_gestor.sumar_al_limite(254$us, 1$us);
+end;
