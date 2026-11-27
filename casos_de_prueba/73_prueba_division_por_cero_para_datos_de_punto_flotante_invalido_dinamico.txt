@@ -1,0 +1,54 @@
+{{Caso de Prueba Nro73: Codigo incorrecto de division por cero para datos de punto flotante}}
+{{Comportamiento Esperado del Compilador: Prueba sobre errores en divisor en variable flotante con valor '0.0d+0', divisor calculado mediante expresion flotante en ejecucion, division en funcion global por pasaje de parametro nula,
+    division en metodo de clase por pasaje de parametro nulo, division mediante acceso posicional, division por asignacion en expresion y division mixta con promocion implicita}}
+
+programa_incorrecto;
+
+class calculadora_flotante
+begin
+    ushortint id_calc;              
+    doublef divisor_flotante_attr;
+
+    doublef ejecutar_div_metodo(doublef num, doublef den)
+    begin
+        ret (num / den);
+    end;
+end;
+
+doublef function dividir_float_global(doublef dividendo, doublef divisor_param)
+begin
+    ret (dividendo / divisor_param);
+end;
+
+calculadora_flotante calc;
+doublef f_num, f_div, val_a, res_double;
+ushortint v_int_cero;
+
+begin
+    f_num := 100.0d+0;
+    f_div := 0.0d+0;
+    val_a := 15.5d+0;
+    v_int_cero := 0$us;
+    calc[1$us] := 0.0d+0;
+
+    {{Divisor en Variable Flotante 'doublef' con Valor 0.0d+0}}
+    res_double := f_num / f_div;
+
+    {{Divisor Calculado Mediante Expresión Flotante en Ejecución}}
+    res_double := f_num / (val_a - val_a);
+
+    {{División en Función Global por Pasaje de Parámetro 0.0d+0}}
+    res_double := dividir_float_global(f_num, f_div);
+
+    {{División en Método de Clase por Pasaje de Parámetro Nulo}}
+    res_double := calc.ejecutar_div_metodo(50.0d+0, 0.0d+0);
+
+    {{División mediante Acceso Posicional [1$us]}}
+    res_double := f_num / calc[1$us];
+
+    {{División por Asignación en Expresión '='}}
+    res_double := f_num / (f_div = 0.0d+0);
+
+    {{División Mixta con Promoción Implícita}}
+    res_double := f_num / v_int_cero;
+end;

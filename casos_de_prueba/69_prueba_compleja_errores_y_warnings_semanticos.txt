@@ -1,4 +1,4 @@
-{{Caso de Prueba Nro66: Codigo complejo semanticamente incorrecto de errores}}
+{{Caso de Prueba Nro69: Codigo complejo semanticamente incorrecto de errores}}
 {{Comportamiento Esperado del Compilador: Prueba sobre errores semanticos en clases derivadas y errores en clausulas 'extends' y 'friend', funciones globales para retornos y parametros, errores en acceso posicional,
     errores en conversiones implicitas y asignaciones, errores en pasaje de parametros e invocaciones y errores en estructuras de control y roles de simbolos}}
 

@@ -1,0 +1,74 @@
+{{Caso de Prueba Nro75: Codigo incorrecto sobre overflow en suma de enteros}}
+{{Comportamiento Esperado del Compilador: Prueba de errores sobre overflow en suma de enteros en casos estaticos y dinamicos}}
+
+programa_incorrecto;
+
+class gestor_acumulaciones
+begin
+    ushortint valor_acumulado;
+
+    ushortint probar_ret_static_inv(ushortint aux)
+    begin
+        {{ERROR SEMÁNTICO: Suma literal constante 200$us + 100$us = 300 > 255}}
+        ret (200$us + 100$us);
+    end;
+
+    ushortint probar_re_dinamico(ushortint val_a, ushortint val_b)
+    begin
+        ret (val_a + val_b);
+    end;
+end;
+
+ushortint function funcion_sumar_global(ushortint a, ushortint b)
+begin
+    ret (a + b);
+end;
+
+gestor_acumulaciones mi_gestor;
+ushortint var_a, var_b, res_entero, contador;
+
+begin
+    var_a := 200$us;
+    var_b := 100$us;
+    mi_gestor[0$us] := 250$us;
+
+    {{Suma directa de constantes: 200$us + 100$us = 300 > 255}}
+    res_entero := 200$us + 100$us;
+
+    {{Suma directa sobre la frontera: 255$us + 1$us = 256 > 255}}
+    res_entero := 255$us + 1$us;
+
+    {{Plegado de constantes (Constant Folding): (100$us + 100$us) + 60$us = 260}}
+    res_entero := (100$us + 100$us) + 60$us;
+
+    {{Asignación a atributo posicional [0$us] con constante desbordada (180$us + 90$us = 270)}}
+    mi_gestor[0$us] := 180$us + 90$us;
+
+    {{Asignación en expresión con '=' desbordada: (var_a = 240$us + 20$us)}}
+    res_entero := (var_a = 240$us + 20$us);
+
+    {{Suma directa de variables (200$us + 100$us = 300 > 255)}}
+    res_entero := var_a + var_b;
+
+    {{Incremento excesivo dentro de un bucle WHILE}}
+    contador := 250$us;
+    while (contador <= 260$us) repeat
+    begin
+        contador := contador + 10$us;
+    end;
+    var_a := 260$us;
+    while (contador <= var_a)
+    begin
+        pout({while con variable mayor al limite});
+    end;
+    while (contador <= mi_gestor[0$us])
+    begin
+        pout({while con variable mayor al limite});
+    end;
+
+    {{Pasaje de variables a función global desbordando la suma interna}}
+    res_entero := funcion_sumar_global(var_a, var_b);
+
+    {{Suma con atributo de objeto mediante acceso posicional [0$us]}}
+    res_entero := mi_gestor[0$us] + 20$us;
+end;

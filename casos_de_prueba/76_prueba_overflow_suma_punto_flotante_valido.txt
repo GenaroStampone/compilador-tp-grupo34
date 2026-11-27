@@ -1,0 +1,50 @@
+{{Caso de Prueba Nro76: Codigo correcto sobre overflow en suma de punto flotante}}
+{{Comportamiento Esperado del Compilador: Tira de tokens completa, 0 errores y 0 warnings.}}
+
+programa_correcto;
+
+class acumulador_float_base
+begin
+    doublef limite_frontera;
+
+    doublef sumar_en_metodo(doublef f1, doublef f2)
+    begin
+        ret (f1 + f2);
+    end;
+end;
+
+class gestor_flotantes
+begin
+    doublef base_calculo;
+    extends acumulador_float_base;
+end;
+
+doublef function sumar_tres_flotantes(doublef a, doublef b, doublef c)
+begin
+    ret (a + b + c);
+end;
+
+gestor_flotantes mi_gestor;
+ushortint entero_aux;
+doublef f_val1, f_val2, f_val3, res_doble;
+
+begin
+    f_val1 := 1.0d+308;
+    f_val2 := 0.5d+308;
+    f_val3 := 0.2d+308;
+    entero_aux := 10$us;
+    mi_gestor[0$us] := 1.7d+308;
+    mi_gestor[1$us] := 0.05d+308;
+    res_doble := f_val1 + f_val2;
+    res_doble := mi_gestor[0$us] + mi_gestor[1$us];
+    res_doble := sumar_tres_flotantes(f_val1, f_val2, f_val3);
+    res_doble := res_doble + entero_aux;
+    res_doble := 1.0d+308;
+    while (res_doble < 1.4d+308) repeat
+    begin
+        res_doble := res_doble + 0.1d+308;
+    end;
+    res_doble := mi_gestor[0$us] + mi_gestor[1$us];
+    res_doble := (f_val3 = 1.2d+308 + 0.4d+308);
+    res_doble := mi_gestor.sumar_en_metodo(1.1d+308, 0.6d+308);
+end;
