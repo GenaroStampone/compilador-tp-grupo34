@@ -34,7 +34,6 @@ public class GeneradorWebAssembly {
     private final Map<String, String> nombreFuncion = new HashMap<>();
     private final Set<String> nombresUsados = new LinkedHashSet<>();
     private final Map<String, Integer> datos = new LinkedHashMap<>();
-    private int contadorIds = 0;
     private int siguienteObjeto = 0;
     private int siguienteDato = 0;
 
@@ -321,8 +320,6 @@ public class GeneradorWebAssembly {
                 return compilarRetorno(nodo, ctx);
             case "CALL":
                 return compilarLlamada(nodo, ctx) + "\n  drop\n";
-            case "ENUM_CHECK":
-                return compilarSecuencia(nodo.getIzq(), ctx);
             default:
                 return "";
         }
@@ -355,9 +352,10 @@ public class GeneradorWebAssembly {
         String condCode = compilarExpresion(cond, ctx);
         String thenCode = compilarSecuencia(thenNode, ctx);
         String elseCode = compilarSecuencia(elseNode, ctx);
+        String bloqueElse = elseCode.isEmpty() ? "" : " else\n" + indentar(elseCode);
         return condCode
                 + "  if\n" + indentar(thenCode)
-                + "  else\n" + indentar(elseCode)
+                + bloqueElse
                 + "  end\n";
     }
 
@@ -381,10 +379,7 @@ public class GeneradorWebAssembly {
 
     private String compilarRetorno(NodoArbol nodo, Ctx ctx) {
         NodoArbol expr = nodo.getIzq();
-        String tipoFuncion = tipoBaseDe(nodo.getTipoToken());
         String codigo = compilarExpresion(expr, ctx);
-        String tipoExpr = tipoBaseDe(tipoDeNodo(expr));
-        codigo += convertir(tipoExpr, tipoFuncion);
         return codigo + "  return\n";
     }
 
@@ -878,9 +873,6 @@ public class GeneradorWebAssembly {
         if (a.equals(b)) return "";
         if (b.equals("DOUBLEF") && a.equals("USHORTINT")) {
             return "  f64.convert_i32_u\n";
-        }
-        if (b.equals("USHORTINT") && a.equals("DOUBLEF")) {
-            return "  i32.trunc_f64_u\n";
         }
         return "";
     }
