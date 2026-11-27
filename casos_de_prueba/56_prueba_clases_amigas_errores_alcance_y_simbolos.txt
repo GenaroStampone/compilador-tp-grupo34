@@ -1,10 +1,140 @@
-{{Caso de Prueba Nro56: Codigo complejo semanticamente incorrecto de }}
-{{Comportamiento Esperado del Compilador: Prueba sobre errores semanticos en }}
+{{Caso de Prueba Nro56: Codigo complejo semanticamente incorrecto de clases amigas}}
+{{Comportamiento Esperado del Compilador: Prueba sobre errores semanticos en conflicto de roles en la clausula 'friend', no transitividad de la amistad, 
+    infraccion de alcance en funciones anidadas, conflicto de roles al invocar o asignar miembros privados y acceso a miembros privados de objetos no declarados}}
 
 programa_incorrecto;
 
+typedef tipo_enum = [1$us, 2$us, 3$us];
+ushortint variable_global;
 
+class clase_alfa
+begin
+    doublef saldo_alfa;
+    private ushortint pin_alfa;
+end;
+
+class clase_beta
+begin
+    ushortint id_beta;
+    private doublef secreto_beta;
+
+    doublef obtener_secreto()
+    begin
+        ret (secreto_beta);
+    end;
+
+    friend clase_alfa;
+end;
+
+class clase_gamma
+begin
+    ushortint id_gamma;
+end;
+
+ushortint function funcion_amiga_padre(ushortint entrada)
+ushortint local_padre;
+
+    ushortint function funcion_hija_anidada(ushortint sub_in)
+    begin
+        ret (sub_in + 1$us);
+    end;
 
 begin
+    local_padre := entrada + 5$us;
+    ret (local_padre);
+end;
+class servidor_central
+begin
+    doublef tarifa;
+    private ushortint clave_privada;
 
+    private ushortint validar_clave(ushortint k)
+    begin
+        if (k == clave_privada)
+            ret (1$us);
+        else
+            ret (0$us);
+        end_if;
+    end;
+    friend clase_beta;
+    friend funcion_amiga_padre;
+
+
+    {{Intentar declarar como friend a una VARIABLE (Uso='nombre_variable')}}
+    friend variable_global;
+
+    {{Intentar declarar como friend a un TYPEDEF (Uso='nombre_typedef')}}
+    friend tipo_enum;
+
+    {{Intentar declarar como friend a una variable de objeto instanciada}}
+    friend objeto_instanciado_invalido;
+end;
+
+servidor_central objeto_instanciado_invalido;
+
+class clase_no_transitiva
+begin
+    doublef verificar_acceso_indirecto(servidor_central s, ushortint cod)
+    begin
+        {{'clase_alfa' es amiga de 'clase_beta', y 'clase_beta' es amiga de 'servidor_central'.}}
+        ret (s[1$us]);
+    end;
+end;
+
+ushortint function funcion_amiga_padre_real(servidor_central s, ushortint p)
+ushortint local_p;
+
+    ushortint function sub_funcion_anidada(ushortint k)
+    begin
+        {{La función anidada 'sub_funcion_anidada' NO hereda la amistad otorgada a 'funcion_amiga_padre_real'.}}
+        ret (s[1$us] + k);
+    end;
+
+begin
+    {{'funcion_amiga_padre_real' es friend, caso valido}}
+    local_p := s[1$us];
+    ret (local_p);
+end;
+
+class consumidor_tardio
+begin
+    ushortint probar_tardio(servidor_central s)
+    begin
+        {{Intentar acceder a miembros privados desde una clase que no es friend}}
+        ret (s[1$us]);
+    end;
+end;
+
+class auditor_roles
+begin
+    doublef auditar_roles(servidor_central s)
+    doublef res;
+    begin
+        {{Intentar invocar un ATRIBUTO privado ('clave_privada') como si fuera un método}}
+        res := s.clave_privada(10$us);
+
+        {{Intentar asignar un valor a un MÉTODO privado ('validar_clave') en el lado izquierdo}}
+        s.validar_clave := 100$us;
+
+        {{Intentar usar el nombre de una CLASE como objeto receptor del miembro privado}}
+        res := servidor_central[1$us];
+
+        {{Intentar acceder a un miembro privado sobre un objeto NO DECLARADO}}
+        res := objeto_inexistente[1$us];
+
+        ret (res);
+    end;
+end;
+
+servidor_central s_main;
+ushortint res_m;
+
+begin
+    s_main[0$us] := 50.0d+0;
+
+    {{Intentar acceder al parámetro 'p' de 'funcion_amiga_padre_real' fuera de su ámbito}}
+    res_m := s_main[1$us] + p;
+
+    {{Intentar acceder a la variable local 'local_p' fuera de su ámbito}}
+    res_m := local_p;
 end;

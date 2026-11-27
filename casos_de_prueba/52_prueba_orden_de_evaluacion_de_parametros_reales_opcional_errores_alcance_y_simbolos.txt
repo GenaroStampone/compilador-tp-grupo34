@@ -1,10 +1,101 @@
-{{Caso de Prueba Nro52: Codigo complejo semanticamente incorrecto de }}
-{{Comportamiento Esperado del Compilador: Prueba sobre errores semanticos en }}
+{{Caso de Prueba Nro52: Codigo complejo semanticamente incorrecto de orden de evaluacion de parametros reales opcional}}
+{{Comportamiento Esperado del Compilador: Prueba sobre errores semanticos en invocaciones a funciones con '[]' a simbolos no declarados o invisibles, uso incorrecto de rol de simbolo,
+    simbolos no declarados o fuera de alcance dentro de los argumentos, infracciones de encapsulamiento y privacidad y uso incorrecto de rol de simbolo dentro de los argumentos}}
 
 programa_incorrecto;
 
+class servicio_autenticacion
+begin
+    doublef tarifa_base;
+    private ushortint pin_secreto;
+    private ushortint validar_credencial(ushortint token, doublef monto)
+    begin
+        if (token == pin_secreto)
+            ret (1$us);
+        else
+            ret (0$us);
+        end_if;
+    end;
+end;
 
+typedef estado_enum = [1$us, 2$us, 3$us];
+
+ushortint function funcion_interna(ushortint param_a, doublef param_b)
+    ushortint var_local_a;
+    ushortint function sub_proceso_anidado(ushortint x)
+    begin
+        ret (x + 1$us);
+    end;
 
 begin
+    var_local_a := param_a + 5$us;
+    ret (var_local_a);
+end;
 
+ushortint function funcion_hermana(ushortint val)
+begin
+    ret (val);
+end;
+
+ushortint v_int1, v_int2, res_int;
+doublef v_doble1, res_doble;
+servicio_autenticacion servicio_main;
+
+begin
+    v_int1 := 10$us;
+    v_int2 := 20$us;
+    v_doble1 := 5.0d+0;
+
+    {{Invocación con [...] a una función global totalmente inexistente}}
+    res_int := funcion_fantasma(v_int1, v_doble1);
+
+    {{Invocación con [...] a una función declarada posteriormente (visibilidad secuencial)}}
+    res_int := funcion_tardia(v_int1, v_int2);
+
+    {{Invocación con [...] a la función anidada 'sub_proceso_anidado' desde 'main'}}
+    res_int := sub_proceso_anidado(v_int1);
+
+    {{Intentar usar sintaxis de invocación con [...] sobre una VARIABLE entera}}
+    res_int := v_int1(1$us, 2.0d+0);
+
+    {{Intentar usar sintaxis de invocación con [...] sobre un identificador de CLASE}}
+    res_int := servicio_autenticacion(1$us, 2.0d+0);
+
+    {{Intentar usar sintaxis de invocación con [...] sobre un TYPEDEF (enumeración)}}
+    res_int := estado_enum(1$us, 2$us);
+
+    {{Variable no declarada usada como argumento real en invocación con [...]}}
+    res_int := funcion_interna(var_inexistente, v_doble1);
+
+    {{Intentar usar el parámetro formal 'param_a' de 'funcion_interna' desde 'main'}}
+    res_int := funcion_hermana(param_a);
+
+    {{Intentar usar la variable local 'var_local_a' de 'funcion_interna' desde 'main'}}
+    res_int := funcion_hermana(var_local_a);
+
+    {{Argumento real que referencia a una variable declarada posteriormente}}
+    res_int := funcion_hermana(var_tardia);
+
+    {{Acceso a atributo privado ('pin_secreto') dentro del argumento real permutado}}
+    res_int := funcion_interna(servicio_main[1$us], v_doble1);
+
+    {{Invocación a método privado ('validar_credencial') con [...] desde ámbito no amigo ('main')}}
+    res_int := servicio_main.validar_credencial(v_int1, v_doble1);
+
+    {{Usar el nombre de una CLASE como argumento real en invocación con [...]}}
+    res_int := funcion_interna(servicio_autenticacion, v_doble1);
+
+    {{Usar el nombre de un TYPEDEF como argumento real en invocación con [...]}}
+    res_int := funcion_interna(estado_enum, v_doble1);
+
+    {{Usar el nombre de una FUNCIÓN sin invocar como argumento real en [...]}}
+    res_int := funcion_interna(funcion_hermana, v_doble1);
+end;
+
+{{Declaraciones tardías para evaluar visibilidad secuencial}}
+ushortint var_tardia;
+
+ushortint function funcion_tardia(ushortint a, ushortint b)
+begin
+    ret (a + b);
 end;
