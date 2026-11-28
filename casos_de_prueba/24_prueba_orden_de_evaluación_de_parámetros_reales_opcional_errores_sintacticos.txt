@@ -20,9 +20,6 @@ begin
     {Falta de corchete de cierre '[' en la lista de orden de evaluación} 
     res := f_prueba(a, b)1$us, 2$us];
 
-    {Constantes de orden de los corchetes sin '$us'}
-    res := f_prueba(a, b)[1, 2];
-
     {Menos Constantes de orden que parametros} 
     res := f_prueba(a, b)[2$us];
 

@@ -18,7 +18,7 @@ typedef temperatura = 0$us, 1$us, 2$us];
 {{Falta del ';' al final de la sentencia typedef}}
 typedef colores_rgb = [1$us, 2$us, 3$us]
 
-typedef valores =[1$us, 2$us, 3$us];
+typedef valores = [1$us, 2$us, 3$us];
 
 ushortint a, b;
 valores val_1, val_2, val_3;

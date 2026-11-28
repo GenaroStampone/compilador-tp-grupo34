@@ -15,7 +15,7 @@ ushortint function validar_clave (ushortint codigo)
 class cuenta_usuario 
     begin 
         private ushortint pin_seguridad;
-        PRIVATE doublef obtener_interes (doublef tasa) 
+        PRIVATE doublef obtener_interes (doublef tasa, doublef saldo_actual) 
             begin 
                 ret (saldo_actual * tasa); 
             end; 
@@ -39,7 +39,7 @@ ushortint estado, nivel;
 
 
 begin 
-    nivel := 0;
+    nivel := 0$us;
     saldo_actual := 1500.5d+0;
-    estado := 1;
+    estado := 1$us;
 end;
