@@ -1,6 +1,7 @@
 #!/bin/bash
 # ==============================================================================
-# SUITE DE PRUEBAS AUTOMATIZADA - COMPILADOR GRUPO 34 (TP2)
+# SUITE DE PRUEBAS AUTOMATIZADA - COMPILADOR GRUPO 34
+# Uso: ./tu_script.sh [carpeta_de_pruebas]
 # ==============================================================================
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -10,12 +11,24 @@ else
     cd "$SCRIPT_DIR" || exit 1
 fi
 
+# Carpeta relativa (por defecto: casos_de_prueba)
+CARPETA="${1:-casos_de_prueba}"
+CARPETA="${CARPETA#./}"
+CARPETA="${CARPETA%/}"
+
+if [ ! -d "$CARPETA" ]; then
+    echo -e "\033[0;31mERROR: No se encontró la carpeta '$CARPETA' dentro de $(pwd).\033[0m"
+    echo "Uso: $0 [carpeta_de_pruebas]"
+    exit 1
+fi
+
 echo "================================================================================"
 echo "         INICIANDO COMPILACIÓN Y EJECUCIÓN DE LA SUITE DE PRUEBAS               "
 echo "================================================================================"
 
 # 1. Compilación del proyecto completo
 echo -e "\n[PASO 1] Compilando el código fuente del proyecto..."
+mkdir -p bin
 javac -d bin src/*.java
 if [ $? -ne 0 ]; then
     echo "ERROR CRÍTICO: Falló la compilación de los archivos Java."
@@ -23,74 +36,81 @@ if [ $? -ne 0 ]; then
 fi
 echo "Compilación exitosa (0 errores de compilación Java)."
 
-# 2. Definición de casos de prueba y su resultado esperado
-# Formato: ARCHIVO | TIPO_ESPERADO (VALIDO=0 / INVALIDO=1) | DESCRIPCION
-declare -a PRUEBAS=(
-    "casos_de_prueba/01_prueba_correcto.txt:VALIDO:Prueba facil de sintaxis general y constantes"
-    "casos_de_prueba/02_prueba_warnings_id.txt:VALIDO:Prueba facil de truncado de identificadores"
-    "casos_de_prueba/03_prueba_errores_constantes.txt:INVALIDO:Prueba facil de errores de rango numerico"
-    "casos_de_prueba/04_prueba_errores_simbolos.txt:INVALIDO:Prueba de caracteres invalidos"
-    "casos_de_prueba/05_prueba_cadenas_y_comentarios.txt:VALIDO:Prueba de cadenas POUT y comentarios multilinea cerrados correctamente"
-    "casos_de_prueba/06_prueba_errores_sintacticos_base.txt:INVALIDO:Prueba de errores sintacticos simples y recuperacion con ';'"
-    "casos_de_prueba/07_programa_integral_valido.txt:VALIDO:Programa complejo integral con los 12 temas"
-    "casos_de_prueba/08_programa_complejo_errores.txt:INVALIDO:Programa complejo con errores sintacticos resincronizados"
-    "casos_de_prueba/09_prueba_declaraciones_y_poo.txt:VALIDO:Programa complejo de declaraciones, TYPEDEF, clases y herencia"
-)
-
-TOTAL_PRUEBAS=${#PRUEBAS[@]}
+# 2. Ejecución automática sobre todos los .txt de la carpeta
+TOTAL_PRUEBAS=0
 PASADAS=0
 FALLADAS=0
+declare -a LISTA_FALLADAS=()
 
 echo -e "\n================================================================================"
-echo "                   EJECUTANDO CASOS DE PRUEBA DEL COMPILADOR                    "
+echo "  EJECUTANDO PRUEBAS EN: $CARPETA/"
 echo "================================================================================"
 
-for item in "${PRUEBAS[@]}"; do
-    IFS=":" read -r archivo tipo desc <<< "$item"
-    echo -e "\n--------------------------------------------------------------------------------"
-    echo "PRUEBA: $archivo"
-    echo "DESCRIPCIÓN: $desc"
-    echo "COMPORTAMIENTO ESPERADO: $tipo"
-    echo "--------------------------------------------------------------------------------"
+while IFS= read -r archivo; do
+    ((TOTAL_PRUEBAS++))
 
-    # Ejecutar el compilador guardando la salida en una variable
+    ruta_lower=$(echo "$archivo" | tr '[:upper:]' '[:lower:]')
+    nombre_lower=$(basename "$ruta_lower")
+
+    # Deducir comportamiento esperado (prioridad: subcarpeta -> nombre de archivo)
+    if [[ "$ruta_lower" == *"/invalidos/"* || "$ruta_lower" == *"/invalido/"* || "$ruta_lower" == *"/errores/"* || "$ruta_lower" == *"/invalida/"* ]]; then
+        tipo="INVALIDO"
+    elif [[ "$ruta_lower" == *"/validos/"* || "$ruta_lower" == *"/valido/"* ]]; then
+        tipo="VALIDO"
+    elif [[ "$nombre_lower" == *"invalido"* || "$nombre_lower" == *"error"* || "$nombre_lower" == *"fail"* || "$nombre_lower" == *"errores"* || "$nombre_lower" == *"invalidos"* || "$nombre_lower" == *"invalidas"* || "$ruta_lower" == *"/invalida/"* ]]; then
+        tipo="INVALIDO"
+    else
+        tipo="VALIDO"
+    fi
+
+    # Ejecuta exactamente: ./compilador casos_de_prueba/archivo.txt
     SALIDA=$(./compilador "$archivo" 2>&1)
     RET_CODE=$?
 
     if [ "$tipo" == "VALIDO" ]; then
         if [ $RET_CODE -eq 0 ]; then
-            echo -e ">>> RESULTADO: \033[0;32m[PASS]\033[0m - El programa válido finalizó correctamente (Código 0)."
+            echo -e "\033[0;32m[PASS]\033[0m ($tipo)   $archivo"
             ((PASADAS++))
         else
-            echo -e ">>> RESULTADO: \\033[0;31m[FAIL]\033[0m - El programa válido falló con código $RET_CODE."
-            echo -e "--- DETALLE DE SALIDA DEL COMPILADOR ---\n$SALIDA\n---------------------------------------"
+            echo -e "\033[0;31m[FAIL]\033[0m ($tipo)   $archivo -> Falló con código $RET_CODE"
+            echo -e "   --- DETALLE DE SALIDA ---\n$SALIDA\n   -------------------------"
             ((FALLADAS++))
+            LISTA_FALLADAS+=("$archivo (esperado: $tipo, código: $RET_CODE)")
         fi
     else
         if [ $RET_CODE -ne 0 ]; then
-            echo -e ">>> RESULTADO: \033[0;32m[PASS]\033[0m - El programa inválido reportó adecuadamente los errores (Código $RET_CODE)."
+            echo -e "\033[0;32m[PASS]\033[0m ($tipo) $archivo"
             ((PASADAS++))
         else
-            echo -e ">>> RESULTADO: \033[0;31m[FAIL]\033[0m - El programa inválido fue aceptado indebidamente (Código 0)."
-            echo -e "--- DETALLE DE SALIDA DEL COMPILADOR ---\\n$SALIDA\\n---------------------------------------"
+            echo -e "\033[0;31m[FAIL]\033[0m ($tipo) $archivo -> Aceptado indebidamente (Código 0)"
+            echo -e "   --- DETALLE DE SALIDA ---\n$SALIDA\n   -------------------------"
             ((FALLADAS++))
+            LISTA_FALLADAS+=("$archivo (esperado: $tipo, código: $RET_CODE)")
         fi
     fi
-done
+done < <(find "$CARPETA" -type f -name "*.txt" | sort)
 
-# Resumen final de ejecucion
+if [ $TOTAL_PRUEBAS -eq 0 ]; then
+    echo -e "\033[0;33mAVISO: No se encontraron archivos .txt en '$CARPETA/'.\033[0m"
+    exit 1
+fi
+
+# 3. Resumen final
 echo -e "\n================================================================================"
 echo "                             RESUMEN DE LA SUITE                                "
 echo "================================================================================"
 echo " Total de casos ejecutados : $TOTAL_PRUEBAS"
-echo " Pruebas \033[0;32mPASADAS [PASS]\033[0m: $PASADAS"
-echo " Pruebas \033[0;31mFALLADAS [FAIL]\033[0m: $FALLADAS"
+echo -e " Pruebas \033[0;32mPASADAS [PASS]\033[0m    : $PASADAS"
+echo -e " Pruebas \033[0;31mFALLADAS [FAIL]\033[0m   : $FALLADAS"
 echo "================================================================================"
 
 if [ $FALLADAS -eq 0 ]; then
     echo -e "\033[0;32m¡TODAS LAS PRUEBAS SE EJECUTARON CON ÉXITO!\033[0m"
     exit 0
 else
-    echo -e "\033[0;31mSE DETECTARON FALLAS EN ALGUNAS PRUEBAS DE LA SUITE.\033[0m"
+    echo -e "\033[0;31mPRUEBAS QUE FALLARON:\033[0m"
+    for fallada in "${LISTA_FALLADAS[@]}"; do
+        echo "  - $fallada"
+    done
     exit 1
 fi

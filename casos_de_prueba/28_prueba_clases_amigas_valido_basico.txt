@@ -12,6 +12,8 @@ ushortint function validar_clave (ushortint codigo)
         end_if; 
     end;
 
+doublef saldo_actual;
+
 class cuenta_usuario 
     begin 
         private ushortint pin_seguridad;
@@ -34,12 +36,11 @@ class gestor_auditoria
     end;
 
 cuenta_usuario cuenta1;
-doublef saldo_actual;
 ushortint estado, nivel;
 
 
 begin 
-    nivel := 0;
+    nivel := 0$us;
     saldo_actual := 1500.5d+0;
-    estado := 1;
+    estado := 1$us;
 end;
