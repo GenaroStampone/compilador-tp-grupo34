@@ -1,4 +1,4 @@
-{{Caso de Prueba Nro34: Codigo sintacticamente correcto de acceso posicional a atributos}}
+{{Caso de Prueba Nro34: Codigo sintacticamente incorrecto de acceso posicional a atributos}}
 {{Comportamiento Esperado del Compilador: Prueba sobre mal acceso posicional a atributos y acceso posicional invalido}}
 
 programa_incorrecto;

@@ -49,13 +49,13 @@ begin
     var_contador1 := 1$us; 
     var_contador2 := 20$us; 
     var_factor_doble := 3.5d+0; 
-    var_contador1 := 300$us; 
+    var_contador1 := 200$us; 
 
     {{Acceso posicional a atributos de objeto}}
     admin_obj[0$us] := 100.0d+0;
 
     {{Asignación '=' en parámetro e invocación con orden de evaluación [1, 3]}} 
-    var_contador1 := funci_de_procesamiento_de_datos(var_contador1 = 5$us, var_factor_doble) [1, 3];
+    var_contador1 := funcion_de_procesamiento_de_datos(var_contador1 = 5$us, var_factor_doble) [1$us, 3$us];
 
     var_contador1 := funcion_de_procesamiento_de_datos(var_contador1, var_factor_doble);
 

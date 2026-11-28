@@ -24,7 +24,7 @@ ushortint estado;
 begin 
     reg[0$us] := 100$us; 
     reg[1$us] := 45.5d+0; 
-    if (reg[1$us] == 100$us) 
+    if (reg[0$us] == 100$us) 
         begin 
             pout({Acceso posicional al primer atributo exitoso}); 
             estado := evaluar_posicion(1$us); 
