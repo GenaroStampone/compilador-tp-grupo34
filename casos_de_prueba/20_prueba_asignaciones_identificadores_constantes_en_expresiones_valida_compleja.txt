@@ -21,17 +21,17 @@ doublef valor;
 conversor_datos conv; 
 
 begin 
-    val_1 := 20$us; 
-    conv.factor_escala := valor = 1.5d+0; 
-    resultado := procesar_val(val_2 = 10$us, conv.factor_escala); 
-    if (val_1 = val_2 == 10$us) 
+    val_1 := 20$us;
+    conv[0$us] := valor = 1.5d+0; 
+    resultado := procesar_val(val_2 = 10$us, conv[0$us]); 
+    if (val_2 = 20$us == 10$us) 
         begin
             pout({Valores coincidentes tras asignacion interna}); 
-            conv.acum := conv.factor_escala = 3.0d+0 + 1.0d+0; 
+            conv[1$us] := valor = 3.0d+0; 
         end; 
     else 
         begin 
             pout({Valores no coincidentes}); 
-        end
+        end;
     end_if; 
 end;

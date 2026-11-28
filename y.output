@@ -34,100 +34,101 @@
   22  declaracion_funcion : cabecera_funcion bloque_declarativo BEGIN lista_sentencias END ';'
 
   23  cabecera_funcion : type_specifier FUNCTION ID '(' lista_parametros_formales ')'
+  24                   | type_specifier FUNCTION ID '(' error ')'
 
-  24  lista_parametros_formales : type_specifier ID
-  25                            | lista_parametros_formales ',' type_specifier ID
+  25  lista_parametros_formales : type_specifier ID
+  26                            | lista_parametros_formales ',' type_specifier ID
 
-  26  declaracion_clase : encabezado_clase herencia_opcional cuerpo_clase
+  27  declaracion_clase : encabezado_clase herencia_opcional cuerpo_clase
 
-  27  encabezado_clase : CLASS ID
+  28  encabezado_clase : CLASS ID
 
-  28  herencia_opcional : EXTENDS lista_variables ';'
-  29                    |
+  29  herencia_opcional : EXTENDS lista_variables ';'
+  30                    |
 
-  30  cuerpo_clase : BEGIN lista_miembros END ';'
+  31  cuerpo_clase : BEGIN lista_miembros END ';'
 
-  31  lista_miembros : lista_miembros miembro_clase
-  32                 |
+  32  lista_miembros : lista_miembros miembro_clase
+  33                 |
 
-  33  miembro_clase : type_specifier lista_variables ';'
-  34                | PRIVATE type_specifier lista_variables ';'
-  35                | cabecera_metodo bloque_declarativo BEGIN lista_sentencias END ';'
-  36                | FRIEND ID ';'
-  37                | EXTENDS lista_variables ';'
-  38                | error ';'
+  34  miembro_clase : type_specifier lista_variables ';'
+  35                | PRIVATE type_specifier lista_variables ';'
+  36                | cabecera_metodo bloque_declarativo BEGIN lista_sentencias END ';'
+  37                | FRIEND ID ';'
+  38                | EXTENDS lista_variables ';'
+  39                | error ';'
 
-  39  cabecera_metodo : type_specifier FUNCTION ID '(' lista_parametros_formales ')'
-  40                  | PRIVATE type_specifier FUNCTION ID '(' lista_parametros_formales ')'
-  41                  | type_specifier ID '(' lista_parametros_formales ')'
-  42                  | PRIVATE type_specifier ID '(' lista_parametros_formales ')'
+  40  cabecera_metodo : type_specifier FUNCTION ID '(' lista_parametros_formales ')'
+  41                  | PRIVATE type_specifier FUNCTION ID '(' lista_parametros_formales ')'
+  42                  | type_specifier ID '(' lista_parametros_formales ')'
+  43                  | PRIVATE type_specifier ID '(' lista_parametros_formales ')'
 
-  43  bloque_compuesto : sentencia
-  44                   | BEGIN lista_sentencias END ';'
+  44  bloque_compuesto : sentencia
+  45                   | BEGIN lista_sentencias END ';'
 
-  45  lista_sentencias : lista_sentencias sentencia
-  46                   |
+  46  lista_sentencias : lista_sentencias sentencia
+  47                   |
 
-  47  sentencia : asignacion
-  48            | salida_pout ';'
-  49            | sentencia_if
-  50            | sentencia_while
-  51            | sentencia_retorno
-  52            | error ';'
+  48  sentencia : asignacion
+  49            | salida_pout ';'
+  50            | sentencia_if
+  51            | sentencia_while
+  52            | sentencia_retorno
+  53            | error ';'
 
-  53  asignacion : ID ASIGNACION expresion ';'
-  54             | ID CORCHETE_IZQ expresion CORCHETE_DER ASIGNACION expresion ';'
+  54  asignacion : ID ASIGNACION expresion ';'
+  55             | ID CORCHETE_IZQ expresion CORCHETE_DER ASIGNACION expresion ';'
 
-  55  sentencia_if : IF '(' condicion ')' bloque_compuesto rama_else END_IF ';'
+  56  sentencia_if : IF '(' condicion ')' bloque_compuesto rama_else END_IF ';'
 
-  56  rama_else : ELSE bloque_compuesto
-  57            |
+  57  rama_else : ELSE bloque_compuesto
+  58            |
 
-  58  sentencia_while : WHILE '(' condicion ')' REPEAT bloque_compuesto
-  59                  | WHILE error REPEAT bloque_compuesto
+  59  sentencia_while : WHILE '(' condicion ')' REPEAT bloque_compuesto
+  60                  | WHILE error REPEAT bloque_compuesto
 
-  60  sentencia_retorno : RET '(' expresion ')' ';'
+  61  sentencia_retorno : RET '(' expresion ')' ';'
 
-  61  salida_pout : POUT '(' CADENA ')'
-  62              | POUT '(' expresion ')'
+  62  salida_pout : POUT '(' CADENA ')'
+  63              | POUT '(' expresion ')'
 
-  63  condicion : expresion comparador expresion
+  64  condicion : expresion comparador expresion
 
-  64  comparador : COMP_IGUAL
-  65             | COMP_DIST
-  66             | COMP_MAYOR_IGUAL
-  67             | COMP_MENOR_IGUAL
-  68             | '>'
-  69             | '<'
+  65  comparador : COMP_IGUAL
+  66             | COMP_DIST
+  67             | COMP_MAYOR_IGUAL
+  68             | COMP_MENOR_IGUAL
+  69             | '>'
+  70             | '<'
 
-  70  expresion : expresion '+' expresion
-  71            | expresion '-' expresion
-  72            | expresion '*' expresion
-  73            | expresion '/' expresion
-  74            | '-' expresion
-  75            | '(' expresion ')'
-  76            | ID '=' valor_asignable
-  77            | ID '(' lista_expresiones ')' orden_opcional
-  78            | ID '.' ID '(' lista_expresiones ')' orden_opcional
-  79            | ID CORCHETE_IZQ expresion CORCHETE_DER
-  80            | ID
-  81            | constante
+  71  expresion : expresion '+' expresion
+  72            | expresion '-' expresion
+  73            | expresion '*' expresion
+  74            | expresion '/' expresion
+  75            | '-' expresion
+  76            | '(' expresion ')'
+  77            | ID '=' valor_asignable
+  78            | ID '(' lista_expresiones ')' orden_opcional
+  79            | ID '.' ID '(' lista_expresiones ')' orden_opcional
+  80            | ID CORCHETE_IZQ expresion CORCHETE_DER
+  81            | ID
+  82            | constante
 
-  82  valor_asignable : ID
-  83                  | constante
-  84                  | '-' constante
+  83  valor_asignable : ID
+  84                  | constante
+  85                  | '-' constante
 
-  85  lista_expresiones : expresion
-  86                    | lista_expresiones ',' expresion
+  86  lista_expresiones : expresion
+  87                    | lista_expresiones ',' expresion
 
-  87  orden_opcional : CORCHETE_IZQ lista_orden CORCHETE_DER
-  88                 |
+  88  orden_opcional : CORCHETE_IZQ lista_orden CORCHETE_DER
+  89                 |
 
-  89  lista_orden : constante
-  90              | lista_orden ',' constante
+  90  lista_orden : constante
+  91              | lista_orden ',' constante
 
-  91  constante : CTE_USHORT
-  92            | CTE_DOUBLEF
+  92  constante : CTE_USHORT
+  93            | CTE_DOUBLEF
 
 state 0
 	$accept : . programa $end  (0)
@@ -213,9 +214,9 @@ state 7
 
 state 8
 	programa : ID fin_cabecera bloque_declarativo BEGIN . lista_sentencias END ';'  (1)
-	lista_sentencias : .  (46)
+	lista_sentencias : .  (47)
 
-	.  reduce 46
+	.  reduce 47
 
 	lista_sentencias  goto 22
 
@@ -228,7 +229,7 @@ state 9
 
 
 state 10
-	encabezado_clase : CLASS . ID  (27)
+	encabezado_clase : CLASS . ID  (28)
 
 	ID  shift 24
 	.  error
@@ -279,6 +280,7 @@ state 17
 state 18
 	declaracion_variables : type_specifier . lista_variables ';'  (16)
 	cabecera_funcion : type_specifier . FUNCTION ID '(' lista_parametros_formales ')'  (23)
+	cabecera_funcion : type_specifier . FUNCTION ID '(' error ')'  (24)
 
 	ID  shift 25
 	FUNCTION  shift 26
@@ -297,11 +299,11 @@ state 19
 
 
 state 20
-	declaracion_clase : encabezado_clase . herencia_opcional cuerpo_clase  (26)
-	herencia_opcional : .  (29)
+	declaracion_clase : encabezado_clase . herencia_opcional cuerpo_clase  (27)
+	herencia_opcional : .  (30)
 
 	EXTENDS  shift 29
-	BEGIN  reduce 29
+	BEGIN  reduce 30
 
 	herencia_opcional  goto 30
 
@@ -314,7 +316,7 @@ state 21
 
 state 22
 	programa : ID fin_cabecera bloque_declarativo BEGIN lista_sentencias . END ';'  (1)
-	lista_sentencias : lista_sentencias . sentencia  (45)
+	lista_sentencias : lista_sentencias . sentencia  (46)
 
 	error  shift 31
 	ID  shift 32
@@ -341,9 +343,9 @@ state 23
 
 
 state 24
-	encabezado_clase : CLASS ID .  (27)
+	encabezado_clase : CLASS ID .  (28)
 
-	.  reduce 27
+	.  reduce 28
 
 
 state 25
@@ -354,6 +356,7 @@ state 25
 
 state 26
 	cabecera_funcion : type_specifier FUNCTION . ID '(' lista_parametros_formales ')'  (23)
+	cabecera_funcion : type_specifier FUNCTION . ID '(' error ')'  (24)
 
 	ID  shift 45
 	.  error
@@ -392,7 +395,7 @@ state 28
 
 
 state 29
-	herencia_opcional : EXTENDS . lista_variables ';'  (28)
+	herencia_opcional : EXTENDS . lista_variables ';'  (29)
 
 	ID  shift 25
 	.  error
@@ -401,7 +404,7 @@ state 29
 
 
 state 30
-	declaracion_clase : encabezado_clase herencia_opcional . cuerpo_clase  (26)
+	declaracion_clase : encabezado_clase herencia_opcional . cuerpo_clase  (27)
 
 	BEGIN  shift 50
 	.  error
@@ -410,15 +413,15 @@ state 30
 
 
 state 31
-	sentencia : error . ';'  (52)
+	sentencia : error . ';'  (53)
 
 	';'  shift 52
 	.  error
 
 
 state 32
-	asignacion : ID . ASIGNACION expresion ';'  (53)
-	asignacion : ID . CORCHETE_IZQ expresion CORCHETE_DER ASIGNACION expresion ';'  (54)
+	asignacion : ID . ASIGNACION expresion ';'  (54)
+	asignacion : ID . CORCHETE_IZQ expresion CORCHETE_DER ASIGNACION expresion ';'  (55)
 
 	ASIGNACION  shift 53
 	CORCHETE_IZQ  shift 54
@@ -426,7 +429,7 @@ state 32
 
 
 state 33
-	sentencia_if : IF . '(' condicion ')' bloque_compuesto rama_else END_IF ';'  (55)
+	sentencia_if : IF . '(' condicion ')' bloque_compuesto rama_else END_IF ';'  (56)
 
 	'('  shift 55
 	.  error
@@ -440,16 +443,16 @@ state 34
 
 
 state 35
-	salida_pout : POUT . '(' CADENA ')'  (61)
-	salida_pout : POUT . '(' expresion ')'  (62)
+	salida_pout : POUT . '(' CADENA ')'  (62)
+	salida_pout : POUT . '(' expresion ')'  (63)
 
 	'('  shift 57
 	.  error
 
 
 state 36
-	sentencia_while : WHILE . '(' condicion ')' REPEAT bloque_compuesto  (58)
-	sentencia_while : WHILE . error REPEAT bloque_compuesto  (59)
+	sentencia_while : WHILE . '(' condicion ')' REPEAT bloque_compuesto  (59)
+	sentencia_while : WHILE . error REPEAT bloque_compuesto  (60)
 
 	error  shift 58
 	'('  shift 59
@@ -457,47 +460,47 @@ state 36
 
 
 state 37
-	sentencia_retorno : RET . '(' expresion ')' ';'  (60)
+	sentencia_retorno : RET . '(' expresion ')' ';'  (61)
 
 	'('  shift 60
 	.  error
 
 
 state 38
-	lista_sentencias : lista_sentencias sentencia .  (45)
+	lista_sentencias : lista_sentencias sentencia .  (46)
 
-	.  reduce 45
+	.  reduce 46
 
 
 state 39
-	sentencia : asignacion .  (47)
+	sentencia : asignacion .  (48)
 
-	.  reduce 47
+	.  reduce 48
 
 
 state 40
-	sentencia : salida_pout . ';'  (48)
+	sentencia : salida_pout . ';'  (49)
 
 	';'  shift 61
 	.  error
 
 
 state 41
-	sentencia : sentencia_if .  (49)
-
-	.  reduce 49
-
-
-state 42
-	sentencia : sentencia_while .  (50)
+	sentencia : sentencia_if .  (50)
 
 	.  reduce 50
 
 
-state 43
-	sentencia : sentencia_retorno .  (51)
+state 42
+	sentencia : sentencia_while .  (51)
 
 	.  reduce 51
+
+
+state 43
+	sentencia : sentencia_retorno .  (52)
+
+	.  reduce 52
 
 
 state 44
@@ -509,6 +512,7 @@ state 44
 
 state 45
 	cabecera_funcion : type_specifier FUNCTION ID . '(' lista_parametros_formales ')'  (23)
+	cabecera_funcion : type_specifier FUNCTION ID . '(' error ')'  (24)
 
 	'('  shift 63
 	.  error
@@ -529,16 +533,16 @@ state 47
 
 state 48
 	declaracion_funcion : cabecera_funcion bloque_declarativo BEGIN . lista_sentencias END ';'  (22)
-	lista_sentencias : .  (46)
+	lista_sentencias : .  (47)
 
-	.  reduce 46
+	.  reduce 47
 
 	lista_sentencias  goto 65
 
 
 state 49
 	lista_variables : lista_variables . ',' ID  (15)
-	herencia_opcional : EXTENDS lista_variables . ';'  (28)
+	herencia_opcional : EXTENDS lista_variables . ';'  (29)
 
 	';'  shift 66
 	','  shift 47
@@ -546,28 +550,28 @@ state 49
 
 
 state 50
-	cuerpo_clase : BEGIN . lista_miembros END ';'  (30)
-	lista_miembros : .  (32)
+	cuerpo_clase : BEGIN . lista_miembros END ';'  (31)
+	lista_miembros : .  (33)
 
-	.  reduce 32
+	.  reduce 33
 
 	lista_miembros  goto 67
 
 
 state 51
-	declaracion_clase : encabezado_clase herencia_opcional cuerpo_clase .  (26)
+	declaracion_clase : encabezado_clase herencia_opcional cuerpo_clase .  (27)
 
-	.  reduce 26
+	.  reduce 27
 
 
 state 52
-	sentencia : error ';' .  (52)
+	sentencia : error ';' .  (53)
 
-	.  reduce 52
+	.  reduce 53
 
 
 state 53
-	asignacion : ID ASIGNACION . expresion ';'  (53)
+	asignacion : ID ASIGNACION . expresion ';'  (54)
 
 	ID  shift 68
 	CTE_USHORT  shift 69
@@ -581,7 +585,7 @@ state 53
 
 
 state 54
-	asignacion : ID CORCHETE_IZQ . expresion CORCHETE_DER ASIGNACION expresion ';'  (54)
+	asignacion : ID CORCHETE_IZQ . expresion CORCHETE_DER ASIGNACION expresion ';'  (55)
 
 	ID  shift 68
 	CTE_USHORT  shift 69
@@ -595,7 +599,7 @@ state 54
 
 
 state 55
-	sentencia_if : IF '(' . condicion ')' bloque_compuesto rama_else END_IF ';'  (55)
+	sentencia_if : IF '(' . condicion ')' bloque_compuesto rama_else END_IF ';'  (56)
 
 	ID  shift 68
 	CTE_USHORT  shift 69
@@ -616,8 +620,8 @@ state 56
 
 
 state 57
-	salida_pout : POUT '(' . CADENA ')'  (61)
-	salida_pout : POUT '(' . expresion ')'  (62)
+	salida_pout : POUT '(' . CADENA ')'  (62)
+	salida_pout : POUT '(' . expresion ')'  (63)
 
 	ID  shift 68
 	CTE_USHORT  shift 69
@@ -632,14 +636,14 @@ state 57
 
 
 state 58
-	sentencia_while : WHILE error . REPEAT bloque_compuesto  (59)
+	sentencia_while : WHILE error . REPEAT bloque_compuesto  (60)
 
 	REPEAT  shift 80
 	.  error
 
 
 state 59
-	sentencia_while : WHILE '(' . condicion ')' REPEAT bloque_compuesto  (58)
+	sentencia_while : WHILE '(' . condicion ')' REPEAT bloque_compuesto  (59)
 
 	ID  shift 68
 	CTE_USHORT  shift 69
@@ -654,7 +658,7 @@ state 59
 
 
 state 60
-	sentencia_retorno : RET '(' . expresion ')' ';'  (60)
+	sentencia_retorno : RET '(' . expresion ')' ';'  (61)
 
 	ID  shift 68
 	CTE_USHORT  shift 69
@@ -668,9 +672,9 @@ state 60
 
 
 state 61
-	sentencia : salida_pout ';' .  (48)
+	sentencia : salida_pout ';' .  (49)
 
-	.  reduce 48
+	.  reduce 49
 
 
 state 62
@@ -688,14 +692,16 @@ state 62
 
 state 63
 	cabecera_funcion : type_specifier FUNCTION ID '(' . lista_parametros_formales ')'  (23)
+	cabecera_funcion : type_specifier FUNCTION ID '(' . error ')'  (24)
 
+	error  shift 87
 	ID  shift 7
 	USHORTINT  shift 11
 	DOUBLEF  shift 12
 	.  error
 
-	type_specifier  goto 87
-	lista_parametros_formales  goto 88
+	type_specifier  goto 88
+	lista_parametros_formales  goto 89
 
 
 state 64
@@ -706,12 +712,12 @@ state 64
 
 state 65
 	declaracion_funcion : cabecera_funcion bloque_declarativo BEGIN lista_sentencias . END ';'  (22)
-	lista_sentencias : lista_sentencias . sentencia  (45)
+	lista_sentencias : lista_sentencias . sentencia  (46)
 
 	error  shift 31
 	ID  shift 32
 	IF  shift 33
-	END  shift 89
+	END  shift 90
 	POUT  shift 35
 	WHILE  shift 36
 	RET  shift 37
@@ -726,85 +732,71 @@ state 65
 
 
 state 66
-	herencia_opcional : EXTENDS lista_variables ';' .  (28)
+	herencia_opcional : EXTENDS lista_variables ';' .  (29)
 
-	.  reduce 28
+	.  reduce 29
 
 
 state 67
-	cuerpo_clase : BEGIN lista_miembros . END ';'  (30)
-	lista_miembros : lista_miembros . miembro_clase  (31)
+	cuerpo_clase : BEGIN lista_miembros . END ';'  (31)
+	lista_miembros : lista_miembros . miembro_clase  (32)
 
-	error  shift 90
+	error  shift 91
 	ID  shift 7
-	END  shift 91
-	PRIVATE  shift 92
-	FRIEND  shift 93
-	EXTENDS  shift 94
+	END  shift 92
+	PRIVATE  shift 93
+	FRIEND  shift 94
+	EXTENDS  shift 95
 	USHORTINT  shift 11
 	DOUBLEF  shift 12
 	.  error
 
-	type_specifier  goto 95
-	miembro_clase  goto 96
-	cabecera_metodo  goto 97
+	type_specifier  goto 96
+	miembro_clase  goto 97
+	cabecera_metodo  goto 98
 
 
 state 68
-	expresion : ID . '=' valor_asignable  (76)
-	expresion : ID . '(' lista_expresiones ')' orden_opcional  (77)
-	expresion : ID . '.' ID '(' lista_expresiones ')' orden_opcional  (78)
-	expresion : ID . CORCHETE_IZQ expresion CORCHETE_DER  (79)
-	expresion : ID .  (80)
+	expresion : ID . '=' valor_asignable  (77)
+	expresion : ID . '(' lista_expresiones ')' orden_opcional  (78)
+	expresion : ID . '.' ID '(' lista_expresiones ')' orden_opcional  (79)
+	expresion : ID . CORCHETE_IZQ expresion CORCHETE_DER  (80)
+	expresion : ID .  (81)
 
-	CORCHETE_IZQ  shift 98
-	'='  shift 99
-	'('  shift 100
-	'.'  shift 101
-	COMP_IGUAL  reduce 80
-	COMP_DIST  reduce 80
-	CORCHETE_DER  reduce 80
-	COMP_MAYOR_IGUAL  reduce 80
-	COMP_MENOR_IGUAL  reduce 80
-	'>'  reduce 80
-	'<'  reduce 80
-	'+'  reduce 80
-	'-'  reduce 80
-	'*'  reduce 80
-	'/'  reduce 80
-	';'  reduce 80
-	','  reduce 80
-	')'  reduce 80
+	CORCHETE_IZQ  shift 99
+	'='  shift 100
+	'('  shift 101
+	'.'  shift 102
+	COMP_IGUAL  reduce 81
+	COMP_DIST  reduce 81
+	CORCHETE_DER  reduce 81
+	COMP_MAYOR_IGUAL  reduce 81
+	COMP_MENOR_IGUAL  reduce 81
+	'>'  reduce 81
+	'<'  reduce 81
+	'+'  reduce 81
+	'-'  reduce 81
+	'*'  reduce 81
+	'/'  reduce 81
+	';'  reduce 81
+	','  reduce 81
+	')'  reduce 81
 
 
 state 69
-	constante : CTE_USHORT .  (91)
-
-	.  reduce 91
-
-
-state 70
-	constante : CTE_DOUBLEF .  (92)
+	constante : CTE_USHORT .  (92)
 
 	.  reduce 92
 
 
+state 70
+	constante : CTE_DOUBLEF .  (93)
+
+	.  reduce 93
+
+
 state 71
-	expresion : '-' . expresion  (74)
-
-	ID  shift 68
-	CTE_USHORT  shift 69
-	CTE_DOUBLEF  shift 70
-	'-'  shift 71
-	'('  shift 72
-	.  error
-
-	constante  goto 73
-	expresion  goto 102
-
-
-state 72
-	expresion : '(' . expresion ')'  (75)
+	expresion : '-' . expresion  (75)
 
 	ID  shift 68
 	CTE_USHORT  shift 69
@@ -817,107 +809,121 @@ state 72
 	expresion  goto 103
 
 
-state 73
-	expresion : constante .  (81)
+state 72
+	expresion : '(' . expresion ')'  (76)
 
-	.  reduce 81
+	ID  shift 68
+	CTE_USHORT  shift 69
+	CTE_DOUBLEF  shift 70
+	'-'  shift 71
+	'('  shift 72
+	.  error
+
+	constante  goto 73
+	expresion  goto 104
+
+
+state 73
+	expresion : constante .  (82)
+
+	.  reduce 82
 
 
 state 74
-	asignacion : ID ASIGNACION expresion . ';'  (53)
-	expresion : expresion . '+' expresion  (70)
-	expresion : expresion . '-' expresion  (71)
-	expresion : expresion . '*' expresion  (72)
-	expresion : expresion . '/' expresion  (73)
+	asignacion : ID ASIGNACION expresion . ';'  (54)
+	expresion : expresion . '+' expresion  (71)
+	expresion : expresion . '-' expresion  (72)
+	expresion : expresion . '*' expresion  (73)
+	expresion : expresion . '/' expresion  (74)
 
-	'+'  shift 104
-	'-'  shift 105
-	'*'  shift 106
-	'/'  shift 107
-	';'  shift 108
+	'+'  shift 105
+	'-'  shift 106
+	'*'  shift 107
+	'/'  shift 108
+	';'  shift 109
 	.  error
 
 
 state 75
-	asignacion : ID CORCHETE_IZQ expresion . CORCHETE_DER ASIGNACION expresion ';'  (54)
-	expresion : expresion . '+' expresion  (70)
-	expresion : expresion . '-' expresion  (71)
-	expresion : expresion . '*' expresion  (72)
-	expresion : expresion . '/' expresion  (73)
+	asignacion : ID CORCHETE_IZQ expresion . CORCHETE_DER ASIGNACION expresion ';'  (55)
+	expresion : expresion . '+' expresion  (71)
+	expresion : expresion . '-' expresion  (72)
+	expresion : expresion . '*' expresion  (73)
+	expresion : expresion . '/' expresion  (74)
 
-	CORCHETE_DER  shift 109
-	'+'  shift 104
-	'-'  shift 105
-	'*'  shift 106
-	'/'  shift 107
+	CORCHETE_DER  shift 110
+	'+'  shift 105
+	'-'  shift 106
+	'*'  shift 107
+	'/'  shift 108
 	.  error
 
 
 state 76
-	condicion : expresion . comparador expresion  (63)
-	expresion : expresion . '+' expresion  (70)
-	expresion : expresion . '-' expresion  (71)
-	expresion : expresion . '*' expresion  (72)
-	expresion : expresion . '/' expresion  (73)
+	condicion : expresion . comparador expresion  (64)
+	expresion : expresion . '+' expresion  (71)
+	expresion : expresion . '-' expresion  (72)
+	expresion : expresion . '*' expresion  (73)
+	expresion : expresion . '/' expresion  (74)
 
-	COMP_IGUAL  shift 110
-	COMP_DIST  shift 111
-	COMP_MAYOR_IGUAL  shift 112
-	COMP_MENOR_IGUAL  shift 113
-	'>'  shift 114
-	'<'  shift 115
-	'+'  shift 104
-	'-'  shift 105
-	'*'  shift 106
-	'/'  shift 107
+	COMP_IGUAL  shift 111
+	COMP_DIST  shift 112
+	COMP_MAYOR_IGUAL  shift 113
+	COMP_MENOR_IGUAL  shift 114
+	'>'  shift 115
+	'<'  shift 116
+	'+'  shift 105
+	'-'  shift 106
+	'*'  shift 107
+	'/'  shift 108
 	.  error
 
-	comparador  goto 116
+	comparador  goto 117
 
 
 state 77
-	sentencia_if : IF '(' condicion . ')' bloque_compuesto rama_else END_IF ';'  (55)
-
-	')'  shift 117
-	.  error
-
-
-state 78
-	salida_pout : POUT '(' CADENA . ')'  (61)
+	sentencia_if : IF '(' condicion . ')' bloque_compuesto rama_else END_IF ';'  (56)
 
 	')'  shift 118
 	.  error
 
 
-state 79
-	salida_pout : POUT '(' expresion . ')'  (62)
-	expresion : expresion . '+' expresion  (70)
-	expresion : expresion . '-' expresion  (71)
-	expresion : expresion . '*' expresion  (72)
-	expresion : expresion . '/' expresion  (73)
+state 78
+	salida_pout : POUT '(' CADENA . ')'  (62)
 
-	'+'  shift 104
-	'-'  shift 105
-	'*'  shift 106
-	'/'  shift 107
 	')'  shift 119
 	.  error
 
 
+state 79
+	salida_pout : POUT '(' expresion . ')'  (63)
+	expresion : expresion . '+' expresion  (71)
+	expresion : expresion . '-' expresion  (72)
+	expresion : expresion . '*' expresion  (73)
+	expresion : expresion . '/' expresion  (74)
+
+	'+'  shift 105
+	'-'  shift 106
+	'*'  shift 107
+	'/'  shift 108
+	')'  shift 120
+	.  error
+
+
 state 80
-	sentencia_while : WHILE error REPEAT . bloque_compuesto  (59)
+	sentencia_while : WHILE error REPEAT . bloque_compuesto  (60)
 
 	error  shift 31
 	ID  shift 32
 	IF  shift 33
-	BEGIN  shift 120
+	BEGIN  shift 121
 	POUT  shift 35
 	WHILE  shift 36
 	RET  shift 37
 	.  error
 
-	bloque_compuesto  goto 121
-	sentencia  goto 122
+	bloque_compuesto  goto 122
+	sentencia  goto 123
 	asignacion  goto 39
 	salida_pout  goto 40
 	sentencia_if  goto 41
@@ -926,24 +932,24 @@ state 80
 
 
 state 81
-	sentencia_while : WHILE '(' condicion . ')' REPEAT bloque_compuesto  (58)
+	sentencia_while : WHILE '(' condicion . ')' REPEAT bloque_compuesto  (59)
 
-	')'  shift 123
+	')'  shift 124
 	.  error
 
 
 state 82
-	sentencia_retorno : RET '(' expresion . ')' ';'  (60)
-	expresion : expresion . '+' expresion  (70)
-	expresion : expresion . '-' expresion  (71)
-	expresion : expresion . '*' expresion  (72)
-	expresion : expresion . '/' expresion  (73)
+	sentencia_retorno : RET '(' expresion . ')' ';'  (61)
+	expresion : expresion . '+' expresion  (71)
+	expresion : expresion . '-' expresion  (72)
+	expresion : expresion . '*' expresion  (73)
+	expresion : expresion . '/' expresion  (74)
 
-	'+'  shift 104
-	'-'  shift 105
-	'*'  shift 106
-	'/'  shift 107
-	')'  shift 124
+	'+'  shift 105
+	'-'  shift 106
+	'*'  shift 107
+	'/'  shift 108
+	')'  shift 125
 	.  error
 
 
@@ -954,15 +960,15 @@ state 83
 	CTE_DOUBLEF  shift 70
 	.  error
 
-	constante  goto 125
+	constante  goto 126
 
 
 state 84
 	declaracion_typedef : TYPEDEF ID '=' CORCHETE_IZQ lista_valores . CORCHETE_DER ';'  (17)
 	lista_valores : lista_valores . ',' valor_enum  (19)
 
-	CORCHETE_DER  shift 126
-	','  shift 127
+	CORCHETE_DER  shift 127
+	','  shift 128
 	.  error
 
 
@@ -979,202 +985,181 @@ state 86
 
 
 state 87
-	lista_parametros_formales : type_specifier . ID  (24)
+	cabecera_funcion : type_specifier FUNCTION ID '(' error . ')'  (24)
 
-	ID  shift 128
+	')'  shift 129
 	.  error
 
 
 state 88
-	cabecera_funcion : type_specifier FUNCTION ID '(' lista_parametros_formales . ')'  (23)
-	lista_parametros_formales : lista_parametros_formales . ',' type_specifier ID  (25)
+	lista_parametros_formales : type_specifier . ID  (25)
 
-	','  shift 129
-	')'  shift 130
+	ID  shift 130
 	.  error
 
 
 state 89
-	declaracion_funcion : cabecera_funcion bloque_declarativo BEGIN lista_sentencias END . ';'  (22)
+	cabecera_funcion : type_specifier FUNCTION ID '(' lista_parametros_formales . ')'  (23)
+	lista_parametros_formales : lista_parametros_formales . ',' type_specifier ID  (26)
 
-	';'  shift 131
+	','  shift 131
+	')'  shift 132
 	.  error
 
 
 state 90
-	miembro_clase : error . ';'  (38)
-
-	';'  shift 132
-	.  error
-
-
-state 91
-	cuerpo_clase : BEGIN lista_miembros END . ';'  (30)
+	declaracion_funcion : cabecera_funcion bloque_declarativo BEGIN lista_sentencias END . ';'  (22)
 
 	';'  shift 133
 	.  error
 
 
+state 91
+	miembro_clase : error . ';'  (39)
+
+	';'  shift 134
+	.  error
+
+
 state 92
-	miembro_clase : PRIVATE . type_specifier lista_variables ';'  (34)
-	cabecera_metodo : PRIVATE . type_specifier FUNCTION ID '(' lista_parametros_formales ')'  (40)
-	cabecera_metodo : PRIVATE . type_specifier ID '(' lista_parametros_formales ')'  (42)
+	cuerpo_clase : BEGIN lista_miembros END . ';'  (31)
+
+	';'  shift 135
+	.  error
+
+
+state 93
+	miembro_clase : PRIVATE . type_specifier lista_variables ';'  (35)
+	cabecera_metodo : PRIVATE . type_specifier FUNCTION ID '(' lista_parametros_formales ')'  (41)
+	cabecera_metodo : PRIVATE . type_specifier ID '(' lista_parametros_formales ')'  (43)
 
 	ID  shift 7
 	USHORTINT  shift 11
 	DOUBLEF  shift 12
 	.  error
 
-	type_specifier  goto 134
-
-
-state 93
-	miembro_clase : FRIEND . ID ';'  (36)
-
-	ID  shift 135
-	.  error
+	type_specifier  goto 136
 
 
 state 94
-	miembro_clase : EXTENDS . lista_variables ';'  (37)
+	miembro_clase : FRIEND . ID ';'  (37)
+
+	ID  shift 137
+	.  error
+
+
+state 95
+	miembro_clase : EXTENDS . lista_variables ';'  (38)
 
 	ID  shift 25
 	.  error
 
-	lista_variables  goto 136
-
-
-state 95
-	miembro_clase : type_specifier . lista_variables ';'  (33)
-	cabecera_metodo : type_specifier . FUNCTION ID '(' lista_parametros_formales ')'  (39)
-	cabecera_metodo : type_specifier . ID '(' lista_parametros_formales ')'  (41)
-
-	ID  shift 137
-	FUNCTION  shift 138
-	.  error
-
-	lista_variables  goto 139
+	lista_variables  goto 138
 
 
 state 96
-	lista_miembros : lista_miembros miembro_clase .  (31)
+	miembro_clase : type_specifier . lista_variables ';'  (34)
+	cabecera_metodo : type_specifier . FUNCTION ID '(' lista_parametros_formales ')'  (40)
+	cabecera_metodo : type_specifier . ID '(' lista_parametros_formales ')'  (42)
 
-	.  reduce 31
+	ID  shift 139
+	FUNCTION  shift 140
+	.  error
+
+	lista_variables  goto 141
 
 
 state 97
-	miembro_clase : cabecera_metodo . bloque_declarativo BEGIN lista_sentencias END ';'  (35)
+	lista_miembros : lista_miembros miembro_clase .  (32)
+
+	.  reduce 32
+
+
+state 98
+	miembro_clase : cabecera_metodo . bloque_declarativo BEGIN lista_sentencias END ';'  (36)
 	bloque_declarativo : .  (5)
 
 	.  reduce 5
 
-	bloque_declarativo  goto 140
-
-
-state 98
-	expresion : ID CORCHETE_IZQ . expresion CORCHETE_DER  (79)
-
-	ID  shift 68
-	CTE_USHORT  shift 69
-	CTE_DOUBLEF  shift 70
-	'-'  shift 71
-	'('  shift 72
-	.  error
-
-	constante  goto 73
-	expresion  goto 141
+	bloque_declarativo  goto 142
 
 
 state 99
-	expresion : ID '=' . valor_asignable  (76)
+	expresion : ID CORCHETE_IZQ . expresion CORCHETE_DER  (80)
 
-	ID  shift 142
+	ID  shift 68
 	CTE_USHORT  shift 69
 	CTE_DOUBLEF  shift 70
-	'-'  shift 143
+	'-'  shift 71
+	'('  shift 72
 	.  error
 
-	constante  goto 144
-	valor_asignable  goto 145
+	constante  goto 73
+	expresion  goto 143
 
 
 state 100
-	expresion : ID '(' . lista_expresiones ')' orden_opcional  (77)
+	expresion : ID '=' . valor_asignable  (77)
 
-	ID  shift 68
+	ID  shift 144
 	CTE_USHORT  shift 69
 	CTE_DOUBLEF  shift 70
-	'-'  shift 71
-	'('  shift 72
+	'-'  shift 145
 	.  error
 
-	constante  goto 73
-	expresion  goto 146
-	lista_expresiones  goto 147
+	constante  goto 146
+	valor_asignable  goto 147
 
 
 state 101
-	expresion : ID '.' . ID '(' lista_expresiones ')' orden_opcional  (78)
+	expresion : ID '(' . lista_expresiones ')' orden_opcional  (78)
 
-	ID  shift 148
+	ID  shift 68
+	CTE_USHORT  shift 69
+	CTE_DOUBLEF  shift 70
+	'-'  shift 71
+	'('  shift 72
 	.  error
+
+	constante  goto 73
+	expresion  goto 148
+	lista_expresiones  goto 149
 
 
 state 102
-	expresion : expresion . '+' expresion  (70)
-	expresion : expresion . '-' expresion  (71)
-	expresion : expresion . '*' expresion  (72)
-	expresion : expresion . '/' expresion  (73)
-	expresion : '-' expresion .  (74)
+	expresion : ID '.' . ID '(' lista_expresiones ')' orden_opcional  (79)
 
-	.  reduce 74
+	ID  shift 150
+	.  error
 
 
 state 103
-	expresion : expresion . '+' expresion  (70)
-	expresion : expresion . '-' expresion  (71)
-	expresion : expresion . '*' expresion  (72)
-	expresion : expresion . '/' expresion  (73)
-	expresion : '(' expresion . ')'  (75)
+	expresion : expresion . '+' expresion  (71)
+	expresion : expresion . '-' expresion  (72)
+	expresion : expresion . '*' expresion  (73)
+	expresion : expresion . '/' expresion  (74)
+	expresion : '-' expresion .  (75)
 
-	'+'  shift 104
-	'-'  shift 105
-	'*'  shift 106
-	'/'  shift 107
-	')'  shift 149
-	.  error
+	.  reduce 75
 
 
 state 104
-	expresion : expresion '+' . expresion  (70)
+	expresion : expresion . '+' expresion  (71)
+	expresion : expresion . '-' expresion  (72)
+	expresion : expresion . '*' expresion  (73)
+	expresion : expresion . '/' expresion  (74)
+	expresion : '(' expresion . ')'  (76)
 
-	ID  shift 68
-	CTE_USHORT  shift 69
-	CTE_DOUBLEF  shift 70
-	'-'  shift 71
-	'('  shift 72
+	'+'  shift 105
+	'-'  shift 106
+	'*'  shift 107
+	'/'  shift 108
+	')'  shift 151
 	.  error
-
-	constante  goto 73
-	expresion  goto 150
 
 
 state 105
-	expresion : expresion '-' . expresion  (71)
-
-	ID  shift 68
-	CTE_USHORT  shift 69
-	CTE_DOUBLEF  shift 70
-	'-'  shift 71
-	'('  shift 72
-	.  error
-
-	constante  goto 73
-	expresion  goto 151
-
-
-state 106
-	expresion : expresion '*' . expresion  (72)
+	expresion : expresion '+' . expresion  (71)
 
 	ID  shift 68
 	CTE_USHORT  shift 69
@@ -1187,8 +1172,8 @@ state 106
 	expresion  goto 152
 
 
-state 107
-	expresion : expresion '/' . expresion  (73)
+state 106
+	expresion : expresion '-' . expresion  (72)
 
 	ID  shift 68
 	CTE_USHORT  shift 69
@@ -1201,57 +1186,22 @@ state 107
 	expresion  goto 153
 
 
-state 108
-	asignacion : ID ASIGNACION expresion ';' .  (53)
+state 107
+	expresion : expresion '*' . expresion  (73)
 
-	.  reduce 53
-
-
-state 109
-	asignacion : ID CORCHETE_IZQ expresion CORCHETE_DER . ASIGNACION expresion ';'  (54)
-
-	ASIGNACION  shift 154
+	ID  shift 68
+	CTE_USHORT  shift 69
+	CTE_DOUBLEF  shift 70
+	'-'  shift 71
+	'('  shift 72
 	.  error
 
-
-state 110
-	comparador : COMP_IGUAL .  (64)
-
-	.  reduce 64
+	constante  goto 73
+	expresion  goto 154
 
 
-state 111
-	comparador : COMP_DIST .  (65)
-
-	.  reduce 65
-
-
-state 112
-	comparador : COMP_MAYOR_IGUAL .  (66)
-
-	.  reduce 66
-
-
-state 113
-	comparador : COMP_MENOR_IGUAL .  (67)
-
-	.  reduce 67
-
-
-state 114
-	comparador : '>' .  (68)
-
-	.  reduce 68
-
-
-state 115
-	comparador : '<' .  (69)
-
-	.  reduce 69
-
-
-state 116
-	condicion : expresion comparador . expresion  (63)
+state 108
+	expresion : expresion '/' . expresion  (74)
 
 	ID  shift 68
 	CTE_USHORT  shift 69
@@ -1264,20 +1214,83 @@ state 116
 	expresion  goto 155
 
 
+state 109
+	asignacion : ID ASIGNACION expresion ';' .  (54)
+
+	.  reduce 54
+
+
+state 110
+	asignacion : ID CORCHETE_IZQ expresion CORCHETE_DER . ASIGNACION expresion ';'  (55)
+
+	ASIGNACION  shift 156
+	.  error
+
+
+state 111
+	comparador : COMP_IGUAL .  (65)
+
+	.  reduce 65
+
+
+state 112
+	comparador : COMP_DIST .  (66)
+
+	.  reduce 66
+
+
+state 113
+	comparador : COMP_MAYOR_IGUAL .  (67)
+
+	.  reduce 67
+
+
+state 114
+	comparador : COMP_MENOR_IGUAL .  (68)
+
+	.  reduce 68
+
+
+state 115
+	comparador : '>' .  (69)
+
+	.  reduce 69
+
+
+state 116
+	comparador : '<' .  (70)
+
+	.  reduce 70
+
+
 state 117
-	sentencia_if : IF '(' condicion ')' . bloque_compuesto rama_else END_IF ';'  (55)
+	condicion : expresion comparador . expresion  (64)
+
+	ID  shift 68
+	CTE_USHORT  shift 69
+	CTE_DOUBLEF  shift 70
+	'-'  shift 71
+	'('  shift 72
+	.  error
+
+	constante  goto 73
+	expresion  goto 157
+
+
+state 118
+	sentencia_if : IF '(' condicion ')' . bloque_compuesto rama_else END_IF ';'  (56)
 
 	error  shift 31
 	ID  shift 32
 	IF  shift 33
-	BEGIN  shift 120
+	BEGIN  shift 121
 	POUT  shift 35
 	WHILE  shift 36
 	RET  shift 37
 	.  error
 
-	bloque_compuesto  goto 156
-	sentencia  goto 122
+	bloque_compuesto  goto 158
+	sentencia  goto 123
 	asignacion  goto 39
 	salida_pout  goto 40
 	sentencia_if  goto 41
@@ -1285,67 +1298,67 @@ state 117
 	sentencia_retorno  goto 43
 
 
-state 118
-	salida_pout : POUT '(' CADENA ')' .  (61)
-
-	.  reduce 61
-
-
 state 119
-	salida_pout : POUT '(' expresion ')' .  (62)
+	salida_pout : POUT '(' CADENA ')' .  (62)
 
 	.  reduce 62
 
 
 state 120
-	bloque_compuesto : BEGIN . lista_sentencias END ';'  (44)
-	lista_sentencias : .  (46)
+	salida_pout : POUT '(' expresion ')' .  (63)
 
-	.  reduce 46
-
-	lista_sentencias  goto 157
+	.  reduce 63
 
 
 state 121
-	sentencia_while : WHILE error REPEAT bloque_compuesto .  (59)
+	bloque_compuesto : BEGIN . lista_sentencias END ';'  (45)
+	lista_sentencias : .  (47)
 
-	.  reduce 59
+	.  reduce 47
+
+	lista_sentencias  goto 159
 
 
 state 122
-	bloque_compuesto : sentencia .  (43)
+	sentencia_while : WHILE error REPEAT bloque_compuesto .  (60)
 
-	.  reduce 43
+	.  reduce 60
 
 
 state 123
-	sentencia_while : WHILE '(' condicion ')' . REPEAT bloque_compuesto  (58)
+	bloque_compuesto : sentencia .  (44)
 
-	REPEAT  shift 158
-	.  error
+	.  reduce 44
 
 
 state 124
-	sentencia_retorno : RET '(' expresion ')' . ';'  (60)
+	sentencia_while : WHILE '(' condicion ')' . REPEAT bloque_compuesto  (59)
 
-	';'  shift 159
+	REPEAT  shift 160
 	.  error
 
 
 state 125
+	sentencia_retorno : RET '(' expresion ')' . ';'  (61)
+
+	';'  shift 161
+	.  error
+
+
+state 126
 	valor_enum : '-' constante .  (21)
 
 	.  reduce 21
 
 
-state 126
+state 127
 	declaracion_typedef : TYPEDEF ID '=' CORCHETE_IZQ lista_valores CORCHETE_DER . ';'  (17)
 
-	';'  shift 160
+	';'  shift 162
 	.  error
 
 
-state 127
+state 128
 	lista_valores : lista_valores ',' . valor_enum  (19)
 
 	CTE_USHORT  shift 69
@@ -1353,111 +1366,117 @@ state 127
 	'-'  shift 83
 	.  error
 
-	valor_enum  goto 161
+	valor_enum  goto 163
 	constante  goto 86
 
 
-state 128
-	lista_parametros_formales : type_specifier ID .  (24)
+state 129
+	cabecera_funcion : type_specifier FUNCTION ID '(' error ')' .  (24)
 
 	.  reduce 24
 
 
-state 129
-	lista_parametros_formales : lista_parametros_formales ',' . type_specifier ID  (25)
+state 130
+	lista_parametros_formales : type_specifier ID .  (25)
+
+	.  reduce 25
+
+
+state 131
+	lista_parametros_formales : lista_parametros_formales ',' . type_specifier ID  (26)
 
 	ID  shift 7
 	USHORTINT  shift 11
 	DOUBLEF  shift 12
 	.  error
 
-	type_specifier  goto 162
+	type_specifier  goto 164
 
 
-state 130
+state 132
 	cabecera_funcion : type_specifier FUNCTION ID '(' lista_parametros_formales ')' .  (23)
 
 	.  reduce 23
 
 
-state 131
+state 133
 	declaracion_funcion : cabecera_funcion bloque_declarativo BEGIN lista_sentencias END ';' .  (22)
 
 	.  reduce 22
 
 
-state 132
-	miembro_clase : error ';' .  (38)
-
-	.  reduce 38
-
-
-state 133
-	cuerpo_clase : BEGIN lista_miembros END ';' .  (30)
-
-	.  reduce 30
-
-
 state 134
-	miembro_clase : PRIVATE type_specifier . lista_variables ';'  (34)
-	cabecera_metodo : PRIVATE type_specifier . FUNCTION ID '(' lista_parametros_formales ')'  (40)
-	cabecera_metodo : PRIVATE type_specifier . ID '(' lista_parametros_formales ')'  (42)
+	miembro_clase : error ';' .  (39)
 
-	ID  shift 163
-	FUNCTION  shift 164
-	.  error
-
-	lista_variables  goto 165
+	.  reduce 39
 
 
 state 135
-	miembro_clase : FRIEND ID . ';'  (36)
+	cuerpo_clase : BEGIN lista_miembros END ';' .  (31)
 
-	';'  shift 166
-	.  error
+	.  reduce 31
 
 
 state 136
-	lista_variables : lista_variables . ',' ID  (15)
-	miembro_clase : EXTENDS lista_variables . ';'  (37)
+	miembro_clase : PRIVATE type_specifier . lista_variables ';'  (35)
+	cabecera_metodo : PRIVATE type_specifier . FUNCTION ID '(' lista_parametros_formales ')'  (41)
+	cabecera_metodo : PRIVATE type_specifier . ID '(' lista_parametros_formales ')'  (43)
 
-	';'  shift 167
-	','  shift 47
+	ID  shift 165
+	FUNCTION  shift 166
 	.  error
+
+	lista_variables  goto 167
 
 
 state 137
-	lista_variables : ID .  (14)
-	cabecera_metodo : type_specifier ID . '(' lista_parametros_formales ')'  (41)
+	miembro_clase : FRIEND ID . ';'  (37)
 
-	'('  shift 168
-	';'  reduce 14
-	','  reduce 14
+	';'  shift 168
+	.  error
 
 
 state 138
-	cabecera_metodo : type_specifier FUNCTION . ID '(' lista_parametros_formales ')'  (39)
+	lista_variables : lista_variables . ',' ID  (15)
+	miembro_clase : EXTENDS lista_variables . ';'  (38)
 
-	ID  shift 169
+	';'  shift 169
+	','  shift 47
 	.  error
 
 
 state 139
-	lista_variables : lista_variables . ',' ID  (15)
-	miembro_clase : type_specifier lista_variables . ';'  (33)
+	lista_variables : ID .  (14)
+	cabecera_metodo : type_specifier ID . '(' lista_parametros_formales ')'  (42)
 
-	';'  shift 170
+	'('  shift 170
+	';'  reduce 14
+	','  reduce 14
+
+
+state 140
+	cabecera_metodo : type_specifier FUNCTION . ID '(' lista_parametros_formales ')'  (40)
+
+	ID  shift 171
+	.  error
+
+
+state 141
+	lista_variables : lista_variables . ',' ID  (15)
+	miembro_clase : type_specifier lista_variables . ';'  (34)
+
+	';'  shift 172
 	','  shift 47
 	.  error
 
 
-state 140
+state 142
 	bloque_declarativo : bloque_declarativo . declaracion  (4)
-	miembro_clase : cabecera_metodo bloque_declarativo . BEGIN lista_sentencias END ';'  (35)
+	miembro_clase : cabecera_metodo bloque_declarativo . BEGIN lista_sentencias END ';'  (36)
 
 	error  shift 6
 	ID  shift 7
-	BEGIN  shift 171
+	BEGIN  shift 173
 	TYPEDEF  shift 9
 	CLASS  shift 10
 	USHORTINT  shift 11
@@ -1474,118 +1493,95 @@ state 140
 	encabezado_clase  goto 20
 
 
-state 141
-	expresion : expresion . '+' expresion  (70)
-	expresion : expresion . '-' expresion  (71)
-	expresion : expresion . '*' expresion  (72)
-	expresion : expresion . '/' expresion  (73)
-	expresion : ID CORCHETE_IZQ expresion . CORCHETE_DER  (79)
-
-	CORCHETE_DER  shift 172
-	'+'  shift 104
-	'-'  shift 105
-	'*'  shift 106
-	'/'  shift 107
-	.  error
-
-
-state 142
-	valor_asignable : ID .  (82)
-
-	.  reduce 82
-
-
 state 143
-	valor_asignable : '-' . constante  (84)
+	expresion : expresion . '+' expresion  (71)
+	expresion : expresion . '-' expresion  (72)
+	expresion : expresion . '*' expresion  (73)
+	expresion : expresion . '/' expresion  (74)
+	expresion : ID CORCHETE_IZQ expresion . CORCHETE_DER  (80)
 
-	CTE_USHORT  shift 69
-	CTE_DOUBLEF  shift 70
+	CORCHETE_DER  shift 174
+	'+'  shift 105
+	'-'  shift 106
+	'*'  shift 107
+	'/'  shift 108
 	.  error
-
-	constante  goto 173
 
 
 state 144
-	valor_asignable : constante .  (83)
+	valor_asignable : ID .  (83)
 
 	.  reduce 83
 
 
 state 145
-	expresion : ID '=' valor_asignable .  (76)
+	valor_asignable : '-' . constante  (85)
+
+	CTE_USHORT  shift 69
+	CTE_DOUBLEF  shift 70
+	.  error
+
+	constante  goto 175
+
+
+state 146
+	valor_asignable : constante .  (84)
+
+	.  reduce 84
+
+
+state 147
+	expresion : ID '=' valor_asignable .  (77)
+
+	.  reduce 77
+
+
+state 148
+	expresion : expresion . '+' expresion  (71)
+	expresion : expresion . '-' expresion  (72)
+	expresion : expresion . '*' expresion  (73)
+	expresion : expresion . '/' expresion  (74)
+	lista_expresiones : expresion .  (86)
+
+	'+'  shift 105
+	'-'  shift 106
+	'*'  shift 107
+	'/'  shift 108
+	','  reduce 86
+	')'  reduce 86
+
+
+state 149
+	expresion : ID '(' lista_expresiones . ')' orden_opcional  (78)
+	lista_expresiones : lista_expresiones . ',' expresion  (87)
+
+	','  shift 176
+	')'  shift 177
+	.  error
+
+
+state 150
+	expresion : ID '.' ID . '(' lista_expresiones ')' orden_opcional  (79)
+
+	'('  shift 178
+	.  error
+
+
+state 151
+	expresion : '(' expresion ')' .  (76)
 
 	.  reduce 76
 
 
-state 146
-	expresion : expresion . '+' expresion  (70)
-	expresion : expresion . '-' expresion  (71)
-	expresion : expresion . '*' expresion  (72)
-	expresion : expresion . '/' expresion  (73)
-	lista_expresiones : expresion .  (85)
+state 152
+	expresion : expresion . '+' expresion  (71)
+	expresion : expresion '+' expresion .  (71)
+	expresion : expresion . '-' expresion  (72)
+	expresion : expresion . '*' expresion  (73)
+	expresion : expresion . '/' expresion  (74)
 
-	'+'  shift 104
-	'-'  shift 105
-	'*'  shift 106
-	'/'  shift 107
-	','  reduce 85
-	')'  reduce 85
-
-
-state 147
-	expresion : ID '(' lista_expresiones . ')' orden_opcional  (77)
-	lista_expresiones : lista_expresiones . ',' expresion  (86)
-
-	','  shift 174
-	')'  shift 175
-	.  error
-
-
-state 148
-	expresion : ID '.' ID . '(' lista_expresiones ')' orden_opcional  (78)
-
-	'('  shift 176
-	.  error
-
-
-state 149
-	expresion : '(' expresion ')' .  (75)
-
-	.  reduce 75
-
-
-state 150
-	expresion : expresion . '+' expresion  (70)
-	expresion : expresion '+' expresion .  (70)
-	expresion : expresion . '-' expresion  (71)
-	expresion : expresion . '*' expresion  (72)
-	expresion : expresion . '/' expresion  (73)
-
-	'*'  shift 106
-	'/'  shift 107
-	COMP_IGUAL  reduce 70
-	COMP_DIST  reduce 70
-	CORCHETE_DER  reduce 70
-	COMP_MAYOR_IGUAL  reduce 70
-	COMP_MENOR_IGUAL  reduce 70
-	'>'  reduce 70
-	'<'  reduce 70
-	'+'  reduce 70
-	'-'  reduce 70
-	';'  reduce 70
-	','  reduce 70
-	')'  reduce 70
-
-
-state 151
-	expresion : expresion . '+' expresion  (70)
-	expresion : expresion . '-' expresion  (71)
-	expresion : expresion '-' expresion .  (71)
-	expresion : expresion . '*' expresion  (72)
-	expresion : expresion . '/' expresion  (73)
-
-	'*'  shift 106
-	'/'  shift 107
+	'*'  shift 107
+	'/'  shift 108
 	COMP_IGUAL  reduce 71
 	COMP_DIST  reduce 71
 	CORCHETE_DER  reduce 71
@@ -1600,28 +1596,51 @@ state 151
 	')'  reduce 71
 
 
-state 152
-	expresion : expresion . '+' expresion  (70)
-	expresion : expresion . '-' expresion  (71)
-	expresion : expresion . '*' expresion  (72)
-	expresion : expresion '*' expresion .  (72)
-	expresion : expresion . '/' expresion  (73)
-
-	.  reduce 72
-
-
 state 153
-	expresion : expresion . '+' expresion  (70)
-	expresion : expresion . '-' expresion  (71)
-	expresion : expresion . '*' expresion  (72)
-	expresion : expresion . '/' expresion  (73)
-	expresion : expresion '/' expresion .  (73)
+	expresion : expresion . '+' expresion  (71)
+	expresion : expresion . '-' expresion  (72)
+	expresion : expresion '-' expresion .  (72)
+	expresion : expresion . '*' expresion  (73)
+	expresion : expresion . '/' expresion  (74)
+
+	'*'  shift 107
+	'/'  shift 108
+	COMP_IGUAL  reduce 72
+	COMP_DIST  reduce 72
+	CORCHETE_DER  reduce 72
+	COMP_MAYOR_IGUAL  reduce 72
+	COMP_MENOR_IGUAL  reduce 72
+	'>'  reduce 72
+	'<'  reduce 72
+	'+'  reduce 72
+	'-'  reduce 72
+	';'  reduce 72
+	','  reduce 72
+	')'  reduce 72
+
+
+state 154
+	expresion : expresion . '+' expresion  (71)
+	expresion : expresion . '-' expresion  (72)
+	expresion : expresion . '*' expresion  (73)
+	expresion : expresion '*' expresion .  (73)
+	expresion : expresion . '/' expresion  (74)
 
 	.  reduce 73
 
 
-state 154
-	asignacion : ID CORCHETE_IZQ expresion CORCHETE_DER ASIGNACION . expresion ';'  (54)
+state 155
+	expresion : expresion . '+' expresion  (71)
+	expresion : expresion . '-' expresion  (72)
+	expresion : expresion . '*' expresion  (73)
+	expresion : expresion . '/' expresion  (74)
+	expresion : expresion '/' expresion .  (74)
+
+	.  reduce 74
+
+
+state 156
+	asignacion : ID CORCHETE_IZQ expresion CORCHETE_DER ASIGNACION . expresion ';'  (55)
 
 	ID  shift 68
 	CTE_USHORT  shift 69
@@ -1631,41 +1650,41 @@ state 154
 	.  error
 
 	constante  goto 73
-	expresion  goto 177
-
-
-state 155
-	condicion : expresion comparador expresion .  (63)
-	expresion : expresion . '+' expresion  (70)
-	expresion : expresion . '-' expresion  (71)
-	expresion : expresion . '*' expresion  (72)
-	expresion : expresion . '/' expresion  (73)
-
-	'+'  shift 104
-	'-'  shift 105
-	'*'  shift 106
-	'/'  shift 107
-	')'  reduce 63
-
-
-state 156
-	sentencia_if : IF '(' condicion ')' bloque_compuesto . rama_else END_IF ';'  (55)
-	rama_else : .  (57)
-
-	ELSE  shift 178
-	END_IF  reduce 57
-
-	rama_else  goto 179
+	expresion  goto 179
 
 
 state 157
-	bloque_compuesto : BEGIN lista_sentencias . END ';'  (44)
-	lista_sentencias : lista_sentencias . sentencia  (45)
+	condicion : expresion comparador expresion .  (64)
+	expresion : expresion . '+' expresion  (71)
+	expresion : expresion . '-' expresion  (72)
+	expresion : expresion . '*' expresion  (73)
+	expresion : expresion . '/' expresion  (74)
+
+	'+'  shift 105
+	'-'  shift 106
+	'*'  shift 107
+	'/'  shift 108
+	')'  reduce 64
+
+
+state 158
+	sentencia_if : IF '(' condicion ')' bloque_compuesto . rama_else END_IF ';'  (56)
+	rama_else : .  (58)
+
+	ELSE  shift 180
+	END_IF  reduce 58
+
+	rama_else  goto 181
+
+
+state 159
+	bloque_compuesto : BEGIN lista_sentencias . END ';'  (45)
+	lista_sentencias : lista_sentencias . sentencia  (46)
 
 	error  shift 31
 	ID  shift 32
 	IF  shift 33
-	END  shift 180
+	END  shift 182
 	POUT  shift 35
 	WHILE  shift 36
 	RET  shift 37
@@ -1679,20 +1698,20 @@ state 157
 	sentencia_retorno  goto 43
 
 
-state 158
-	sentencia_while : WHILE '(' condicion ')' REPEAT . bloque_compuesto  (58)
+state 160
+	sentencia_while : WHILE '(' condicion ')' REPEAT . bloque_compuesto  (59)
 
 	error  shift 31
 	ID  shift 32
 	IF  shift 33
-	BEGIN  shift 120
+	BEGIN  shift 121
 	POUT  shift 35
 	WHILE  shift 36
 	RET  shift 37
 	.  error
 
-	bloque_compuesto  goto 181
-	sentencia  goto 122
+	bloque_compuesto  goto 183
+	sentencia  goto 123
 	asignacion  goto 39
 	salida_pout  goto 40
 	sentencia_if  goto 41
@@ -1700,153 +1719,116 @@ state 158
 	sentencia_retorno  goto 43
 
 
-state 159
-	sentencia_retorno : RET '(' expresion ')' ';' .  (60)
+state 161
+	sentencia_retorno : RET '(' expresion ')' ';' .  (61)
 
-	.  reduce 60
+	.  reduce 61
 
 
-state 160
+state 162
 	declaracion_typedef : TYPEDEF ID '=' CORCHETE_IZQ lista_valores CORCHETE_DER ';' .  (17)
 
 	.  reduce 17
 
 
-state 161
+state 163
 	lista_valores : lista_valores ',' valor_enum .  (19)
 
 	.  reduce 19
 
 
-state 162
-	lista_parametros_formales : lista_parametros_formales ',' type_specifier . ID  (25)
-
-	ID  shift 182
-	.  error
-
-
-state 163
-	lista_variables : ID .  (14)
-	cabecera_metodo : PRIVATE type_specifier ID . '(' lista_parametros_formales ')'  (42)
-
-	'('  shift 183
-	';'  reduce 14
-	','  reduce 14
-
-
 state 164
-	cabecera_metodo : PRIVATE type_specifier FUNCTION . ID '(' lista_parametros_formales ')'  (40)
+	lista_parametros_formales : lista_parametros_formales ',' type_specifier . ID  (26)
 
 	ID  shift 184
 	.  error
 
 
 state 165
-	lista_variables : lista_variables . ',' ID  (15)
-	miembro_clase : PRIVATE type_specifier lista_variables . ';'  (34)
+	lista_variables : ID .  (14)
+	cabecera_metodo : PRIVATE type_specifier ID . '(' lista_parametros_formales ')'  (43)
 
-	';'  shift 185
+	'('  shift 185
+	';'  reduce 14
+	','  reduce 14
+
+
+state 166
+	cabecera_metodo : PRIVATE type_specifier FUNCTION . ID '(' lista_parametros_formales ')'  (41)
+
+	ID  shift 186
+	.  error
+
+
+state 167
+	lista_variables : lista_variables . ',' ID  (15)
+	miembro_clase : PRIVATE type_specifier lista_variables . ';'  (35)
+
+	';'  shift 187
 	','  shift 47
 	.  error
 
 
-state 166
-	miembro_clase : FRIEND ID ';' .  (36)
-
-	.  reduce 36
-
-
-state 167
-	miembro_clase : EXTENDS lista_variables ';' .  (37)
+state 168
+	miembro_clase : FRIEND ID ';' .  (37)
 
 	.  reduce 37
 
 
-state 168
-	cabecera_metodo : type_specifier ID '(' . lista_parametros_formales ')'  (41)
+state 169
+	miembro_clase : EXTENDS lista_variables ';' .  (38)
+
+	.  reduce 38
+
+
+state 170
+	cabecera_metodo : type_specifier ID '(' . lista_parametros_formales ')'  (42)
 
 	ID  shift 7
 	USHORTINT  shift 11
 	DOUBLEF  shift 12
 	.  error
 
-	type_specifier  goto 87
-	lista_parametros_formales  goto 186
-
-
-state 169
-	cabecera_metodo : type_specifier FUNCTION ID . '(' lista_parametros_formales ')'  (39)
-
-	'('  shift 187
-	.  error
-
-
-state 170
-	miembro_clase : type_specifier lista_variables ';' .  (33)
-
-	.  reduce 33
+	type_specifier  goto 88
+	lista_parametros_formales  goto 188
 
 
 state 171
-	miembro_clase : cabecera_metodo bloque_declarativo BEGIN . lista_sentencias END ';'  (35)
-	lista_sentencias : .  (46)
+	cabecera_metodo : type_specifier FUNCTION ID . '(' lista_parametros_formales ')'  (40)
 
-	.  reduce 46
-
-	lista_sentencias  goto 188
+	'('  shift 189
+	.  error
 
 
 state 172
-	expresion : ID CORCHETE_IZQ expresion CORCHETE_DER .  (79)
+	miembro_clase : type_specifier lista_variables ';' .  (34)
 
-	.  reduce 79
+	.  reduce 34
 
 
 state 173
-	valor_asignable : '-' constante .  (84)
+	miembro_clase : cabecera_metodo bloque_declarativo BEGIN . lista_sentencias END ';'  (36)
+	lista_sentencias : .  (47)
 
-	.  reduce 84
+	.  reduce 47
+
+	lista_sentencias  goto 190
 
 
 state 174
-	lista_expresiones : lista_expresiones ',' . expresion  (86)
+	expresion : ID CORCHETE_IZQ expresion CORCHETE_DER .  (80)
 
-	ID  shift 68
-	CTE_USHORT  shift 69
-	CTE_DOUBLEF  shift 70
-	'-'  shift 71
-	'('  shift 72
-	.  error
-
-	constante  goto 73
-	expresion  goto 189
+	.  reduce 80
 
 
 state 175
-	expresion : ID '(' lista_expresiones ')' . orden_opcional  (77)
-	orden_opcional : .  (88)
+	valor_asignable : '-' constante .  (85)
 
-	CORCHETE_IZQ  shift 190
-	COMP_IGUAL  reduce 88
-	COMP_DIST  reduce 88
-	CORCHETE_DER  reduce 88
-	COMP_MAYOR_IGUAL  reduce 88
-	COMP_MENOR_IGUAL  reduce 88
-	'>'  reduce 88
-	'<'  reduce 88
-	'+'  reduce 88
-	'-'  reduce 88
-	'*'  reduce 88
-	'/'  reduce 88
-	';'  reduce 88
-	','  reduce 88
-	')'  reduce 88
-
-	orden_opcional  goto 191
+	.  reduce 85
 
 
 state 176
-	expresion : ID '.' ID '(' . lista_expresiones ')' orden_opcional  (78)
+	lista_expresiones : lista_expresiones ',' . expresion  (87)
 
 	ID  shift 68
 	CTE_USHORT  shift 69
@@ -1856,39 +1838,76 @@ state 176
 	.  error
 
 	constante  goto 73
-	expresion  goto 146
-	lista_expresiones  goto 192
+	expresion  goto 191
 
 
 state 177
-	asignacion : ID CORCHETE_IZQ expresion CORCHETE_DER ASIGNACION expresion . ';'  (54)
-	expresion : expresion . '+' expresion  (70)
-	expresion : expresion . '-' expresion  (71)
-	expresion : expresion . '*' expresion  (72)
-	expresion : expresion . '/' expresion  (73)
+	expresion : ID '(' lista_expresiones ')' . orden_opcional  (78)
+	orden_opcional : .  (89)
 
-	'+'  shift 104
-	'-'  shift 105
-	'*'  shift 106
-	'/'  shift 107
-	';'  shift 193
-	.  error
+	CORCHETE_IZQ  shift 192
+	COMP_IGUAL  reduce 89
+	COMP_DIST  reduce 89
+	CORCHETE_DER  reduce 89
+	COMP_MAYOR_IGUAL  reduce 89
+	COMP_MENOR_IGUAL  reduce 89
+	'>'  reduce 89
+	'<'  reduce 89
+	'+'  reduce 89
+	'-'  reduce 89
+	'*'  reduce 89
+	'/'  reduce 89
+	';'  reduce 89
+	','  reduce 89
+	')'  reduce 89
+
+	orden_opcional  goto 193
 
 
 state 178
-	rama_else : ELSE . bloque_compuesto  (56)
+	expresion : ID '.' ID '(' . lista_expresiones ')' orden_opcional  (79)
+
+	ID  shift 68
+	CTE_USHORT  shift 69
+	CTE_DOUBLEF  shift 70
+	'-'  shift 71
+	'('  shift 72
+	.  error
+
+	constante  goto 73
+	expresion  goto 148
+	lista_expresiones  goto 194
+
+
+state 179
+	asignacion : ID CORCHETE_IZQ expresion CORCHETE_DER ASIGNACION expresion . ';'  (55)
+	expresion : expresion . '+' expresion  (71)
+	expresion : expresion . '-' expresion  (72)
+	expresion : expresion . '*' expresion  (73)
+	expresion : expresion . '/' expresion  (74)
+
+	'+'  shift 105
+	'-'  shift 106
+	'*'  shift 107
+	'/'  shift 108
+	';'  shift 195
+	.  error
+
+
+state 180
+	rama_else : ELSE . bloque_compuesto  (57)
 
 	error  shift 31
 	ID  shift 32
 	IF  shift 33
-	BEGIN  shift 120
+	BEGIN  shift 121
 	POUT  shift 35
 	WHILE  shift 36
 	RET  shift 37
 	.  error
 
-	bloque_compuesto  goto 194
-	sentencia  goto 122
+	bloque_compuesto  goto 196
+	sentencia  goto 123
 	asignacion  goto 39
 	salida_pout  goto 40
 	sentencia_if  goto 41
@@ -1896,86 +1915,86 @@ state 178
 	sentencia_retorno  goto 43
 
 
-state 179
-	sentencia_if : IF '(' condicion ')' bloque_compuesto rama_else . END_IF ';'  (55)
-
-	END_IF  shift 195
-	.  error
-
-
-state 180
-	bloque_compuesto : BEGIN lista_sentencias END . ';'  (44)
-
-	';'  shift 196
-	.  error
-
-
 state 181
-	sentencia_while : WHILE '(' condicion ')' REPEAT bloque_compuesto .  (58)
+	sentencia_if : IF '(' condicion ')' bloque_compuesto rama_else . END_IF ';'  (56)
 
-	.  reduce 58
+	END_IF  shift 197
+	.  error
 
 
 state 182
-	lista_parametros_formales : lista_parametros_formales ',' type_specifier ID .  (25)
+	bloque_compuesto : BEGIN lista_sentencias END . ';'  (45)
 
-	.  reduce 25
+	';'  shift 198
+	.  error
 
 
 state 183
-	cabecera_metodo : PRIVATE type_specifier ID '(' . lista_parametros_formales ')'  (42)
+	sentencia_while : WHILE '(' condicion ')' REPEAT bloque_compuesto .  (59)
+
+	.  reduce 59
+
+
+state 184
+	lista_parametros_formales : lista_parametros_formales ',' type_specifier ID .  (26)
+
+	.  reduce 26
+
+
+state 185
+	cabecera_metodo : PRIVATE type_specifier ID '(' . lista_parametros_formales ')'  (43)
 
 	ID  shift 7
 	USHORTINT  shift 11
 	DOUBLEF  shift 12
 	.  error
 
-	type_specifier  goto 87
-	lista_parametros_formales  goto 197
-
-
-state 184
-	cabecera_metodo : PRIVATE type_specifier FUNCTION ID . '(' lista_parametros_formales ')'  (40)
-
-	'('  shift 198
-	.  error
-
-
-state 185
-	miembro_clase : PRIVATE type_specifier lista_variables ';' .  (34)
-
-	.  reduce 34
+	type_specifier  goto 88
+	lista_parametros_formales  goto 199
 
 
 state 186
-	lista_parametros_formales : lista_parametros_formales . ',' type_specifier ID  (25)
-	cabecera_metodo : type_specifier ID '(' lista_parametros_formales . ')'  (41)
+	cabecera_metodo : PRIVATE type_specifier FUNCTION ID . '(' lista_parametros_formales ')'  (41)
 
-	','  shift 129
-	')'  shift 199
+	'('  shift 200
 	.  error
 
 
 state 187
-	cabecera_metodo : type_specifier FUNCTION ID '(' . lista_parametros_formales ')'  (39)
+	miembro_clase : PRIVATE type_specifier lista_variables ';' .  (35)
+
+	.  reduce 35
+
+
+state 188
+	lista_parametros_formales : lista_parametros_formales . ',' type_specifier ID  (26)
+	cabecera_metodo : type_specifier ID '(' lista_parametros_formales . ')'  (42)
+
+	','  shift 131
+	')'  shift 201
+	.  error
+
+
+state 189
+	cabecera_metodo : type_specifier FUNCTION ID '(' . lista_parametros_formales ')'  (40)
 
 	ID  shift 7
 	USHORTINT  shift 11
 	DOUBLEF  shift 12
 	.  error
 
-	type_specifier  goto 87
-	lista_parametros_formales  goto 200
+	type_specifier  goto 88
+	lista_parametros_formales  goto 202
 
 
-state 188
-	miembro_clase : cabecera_metodo bloque_declarativo BEGIN lista_sentencias . END ';'  (35)
-	lista_sentencias : lista_sentencias . sentencia  (45)
+state 190
+	miembro_clase : cabecera_metodo bloque_declarativo BEGIN lista_sentencias . END ';'  (36)
+	lista_sentencias : lista_sentencias . sentencia  (46)
 
 	error  shift 31
 	ID  shift 32
 	IF  shift 33
-	END  shift 201
+	END  shift 203
 	POUT  shift 35
 	WHILE  shift 36
 	RET  shift 37
@@ -1989,219 +2008,219 @@ state 188
 	sentencia_retorno  goto 43
 
 
-state 189
-	expresion : expresion . '+' expresion  (70)
-	expresion : expresion . '-' expresion  (71)
-	expresion : expresion . '*' expresion  (72)
-	expresion : expresion . '/' expresion  (73)
-	lista_expresiones : lista_expresiones ',' expresion .  (86)
+state 191
+	expresion : expresion . '+' expresion  (71)
+	expresion : expresion . '-' expresion  (72)
+	expresion : expresion . '*' expresion  (73)
+	expresion : expresion . '/' expresion  (74)
+	lista_expresiones : lista_expresiones ',' expresion .  (87)
 
-	'+'  shift 104
-	'-'  shift 105
-	'*'  shift 106
-	'/'  shift 107
-	','  reduce 86
-	')'  reduce 86
+	'+'  shift 105
+	'-'  shift 106
+	'*'  shift 107
+	'/'  shift 108
+	','  reduce 87
+	')'  reduce 87
 
 
-state 190
-	orden_opcional : CORCHETE_IZQ . lista_orden CORCHETE_DER  (87)
+state 192
+	orden_opcional : CORCHETE_IZQ . lista_orden CORCHETE_DER  (88)
 
 	CTE_USHORT  shift 69
 	CTE_DOUBLEF  shift 70
 	.  error
 
-	constante  goto 202
-	lista_orden  goto 203
-
-
-state 191
-	expresion : ID '(' lista_expresiones ')' orden_opcional .  (77)
-
-	.  reduce 77
-
-
-state 192
-	expresion : ID '.' ID '(' lista_expresiones . ')' orden_opcional  (78)
-	lista_expresiones : lista_expresiones . ',' expresion  (86)
-
-	','  shift 174
-	')'  shift 204
-	.  error
+	constante  goto 204
+	lista_orden  goto 205
 
 
 state 193
-	asignacion : ID CORCHETE_IZQ expresion CORCHETE_DER ASIGNACION expresion ';' .  (54)
+	expresion : ID '(' lista_expresiones ')' orden_opcional .  (78)
 
-	.  reduce 54
+	.  reduce 78
 
 
 state 194
-	rama_else : ELSE bloque_compuesto .  (56)
+	expresion : ID '.' ID '(' lista_expresiones . ')' orden_opcional  (79)
+	lista_expresiones : lista_expresiones . ',' expresion  (87)
 
-	.  reduce 56
-
-
-state 195
-	sentencia_if : IF '(' condicion ')' bloque_compuesto rama_else END_IF . ';'  (55)
-
-	';'  shift 205
-	.  error
-
-
-state 196
-	bloque_compuesto : BEGIN lista_sentencias END ';' .  (44)
-
-	.  reduce 44
-
-
-state 197
-	lista_parametros_formales : lista_parametros_formales . ',' type_specifier ID  (25)
-	cabecera_metodo : PRIVATE type_specifier ID '(' lista_parametros_formales . ')'  (42)
-
-	','  shift 129
+	','  shift 176
 	')'  shift 206
 	.  error
 
 
+state 195
+	asignacion : ID CORCHETE_IZQ expresion CORCHETE_DER ASIGNACION expresion ';' .  (55)
+
+	.  reduce 55
+
+
+state 196
+	rama_else : ELSE bloque_compuesto .  (57)
+
+	.  reduce 57
+
+
+state 197
+	sentencia_if : IF '(' condicion ')' bloque_compuesto rama_else END_IF . ';'  (56)
+
+	';'  shift 207
+	.  error
+
+
 state 198
-	cabecera_metodo : PRIVATE type_specifier FUNCTION ID '(' . lista_parametros_formales ')'  (40)
+	bloque_compuesto : BEGIN lista_sentencias END ';' .  (45)
+
+	.  reduce 45
+
+
+state 199
+	lista_parametros_formales : lista_parametros_formales . ',' type_specifier ID  (26)
+	cabecera_metodo : PRIVATE type_specifier ID '(' lista_parametros_formales . ')'  (43)
+
+	','  shift 131
+	')'  shift 208
+	.  error
+
+
+state 200
+	cabecera_metodo : PRIVATE type_specifier FUNCTION ID '(' . lista_parametros_formales ')'  (41)
 
 	ID  shift 7
 	USHORTINT  shift 11
 	DOUBLEF  shift 12
 	.  error
 
-	type_specifier  goto 87
-	lista_parametros_formales  goto 207
-
-
-state 199
-	cabecera_metodo : type_specifier ID '(' lista_parametros_formales ')' .  (41)
-
-	.  reduce 41
-
-
-state 200
-	lista_parametros_formales : lista_parametros_formales . ',' type_specifier ID  (25)
-	cabecera_metodo : type_specifier FUNCTION ID '(' lista_parametros_formales . ')'  (39)
-
-	','  shift 129
-	')'  shift 208
-	.  error
+	type_specifier  goto 88
+	lista_parametros_formales  goto 209
 
 
 state 201
-	miembro_clase : cabecera_metodo bloque_declarativo BEGIN lista_sentencias END . ';'  (35)
-
-	';'  shift 209
-	.  error
-
-
-state 202
-	lista_orden : constante .  (89)
-
-	.  reduce 89
-
-
-state 203
-	orden_opcional : CORCHETE_IZQ lista_orden . CORCHETE_DER  (87)
-	lista_orden : lista_orden . ',' constante  (90)
-
-	CORCHETE_DER  shift 210
-	','  shift 211
-	.  error
-
-
-state 204
-	expresion : ID '.' ID '(' lista_expresiones ')' . orden_opcional  (78)
-	orden_opcional : .  (88)
-
-	CORCHETE_IZQ  shift 190
-	COMP_IGUAL  reduce 88
-	COMP_DIST  reduce 88
-	CORCHETE_DER  reduce 88
-	COMP_MAYOR_IGUAL  reduce 88
-	COMP_MENOR_IGUAL  reduce 88
-	'>'  reduce 88
-	'<'  reduce 88
-	'+'  reduce 88
-	'-'  reduce 88
-	'*'  reduce 88
-	'/'  reduce 88
-	';'  reduce 88
-	','  reduce 88
-	')'  reduce 88
-
-	orden_opcional  goto 212
-
-
-state 205
-	sentencia_if : IF '(' condicion ')' bloque_compuesto rama_else END_IF ';' .  (55)
-
-	.  reduce 55
-
-
-state 206
-	cabecera_metodo : PRIVATE type_specifier ID '(' lista_parametros_formales ')' .  (42)
+	cabecera_metodo : type_specifier ID '(' lista_parametros_formales ')' .  (42)
 
 	.  reduce 42
 
 
-state 207
-	lista_parametros_formales : lista_parametros_formales . ',' type_specifier ID  (25)
-	cabecera_metodo : PRIVATE type_specifier FUNCTION ID '(' lista_parametros_formales . ')'  (40)
+state 202
+	lista_parametros_formales : lista_parametros_formales . ',' type_specifier ID  (26)
+	cabecera_metodo : type_specifier FUNCTION ID '(' lista_parametros_formales . ')'  (40)
 
-	','  shift 129
-	')'  shift 213
+	','  shift 131
+	')'  shift 210
 	.  error
 
 
-state 208
-	cabecera_metodo : type_specifier FUNCTION ID '(' lista_parametros_formales ')' .  (39)
+state 203
+	miembro_clase : cabecera_metodo bloque_declarativo BEGIN lista_sentencias END . ';'  (36)
 
-	.  reduce 39
+	';'  shift 211
+	.  error
+
+
+state 204
+	lista_orden : constante .  (90)
+
+	.  reduce 90
+
+
+state 205
+	orden_opcional : CORCHETE_IZQ lista_orden . CORCHETE_DER  (88)
+	lista_orden : lista_orden . ',' constante  (91)
+
+	CORCHETE_DER  shift 212
+	','  shift 213
+	.  error
+
+
+state 206
+	expresion : ID '.' ID '(' lista_expresiones ')' . orden_opcional  (79)
+	orden_opcional : .  (89)
+
+	CORCHETE_IZQ  shift 192
+	COMP_IGUAL  reduce 89
+	COMP_DIST  reduce 89
+	CORCHETE_DER  reduce 89
+	COMP_MAYOR_IGUAL  reduce 89
+	COMP_MENOR_IGUAL  reduce 89
+	'>'  reduce 89
+	'<'  reduce 89
+	'+'  reduce 89
+	'-'  reduce 89
+	'*'  reduce 89
+	'/'  reduce 89
+	';'  reduce 89
+	','  reduce 89
+	')'  reduce 89
+
+	orden_opcional  goto 214
+
+
+state 207
+	sentencia_if : IF '(' condicion ')' bloque_compuesto rama_else END_IF ';' .  (56)
+
+	.  reduce 56
+
+
+state 208
+	cabecera_metodo : PRIVATE type_specifier ID '(' lista_parametros_formales ')' .  (43)
+
+	.  reduce 43
 
 
 state 209
-	miembro_clase : cabecera_metodo bloque_declarativo BEGIN lista_sentencias END ';' .  (35)
+	lista_parametros_formales : lista_parametros_formales . ',' type_specifier ID  (26)
+	cabecera_metodo : PRIVATE type_specifier FUNCTION ID '(' lista_parametros_formales . ')'  (41)
 
-	.  reduce 35
+	','  shift 131
+	')'  shift 215
+	.  error
 
 
 state 210
-	orden_opcional : CORCHETE_IZQ lista_orden CORCHETE_DER .  (87)
+	cabecera_metodo : type_specifier FUNCTION ID '(' lista_parametros_formales ')' .  (40)
 
-	.  reduce 87
+	.  reduce 40
 
 
 state 211
-	lista_orden : lista_orden ',' . constante  (90)
+	miembro_clase : cabecera_metodo bloque_declarativo BEGIN lista_sentencias END ';' .  (36)
+
+	.  reduce 36
+
+
+state 212
+	orden_opcional : CORCHETE_IZQ lista_orden CORCHETE_DER .  (88)
+
+	.  reduce 88
+
+
+state 213
+	lista_orden : lista_orden ',' . constante  (91)
 
 	CTE_USHORT  shift 69
 	CTE_DOUBLEF  shift 70
 	.  error
 
-	constante  goto 214
-
-
-state 212
-	expresion : ID '.' ID '(' lista_expresiones ')' orden_opcional .  (78)
-
-	.  reduce 78
-
-
-state 213
-	cabecera_metodo : PRIVATE type_specifier FUNCTION ID '(' lista_parametros_formales ')' .  (40)
-
-	.  reduce 40
+	constante  goto 216
 
 
 state 214
-	lista_orden : lista_orden ',' constante .  (90)
+	expresion : ID '.' ID '(' lista_expresiones ')' orden_opcional .  (79)
 
-	.  reduce 90
+	.  reduce 79
+
+
+state 215
+	cabecera_metodo : PRIVATE type_specifier FUNCTION ID '(' lista_parametros_formales ')' .  (41)
+
+	.  reduce 41
+
+
+state 216
+	lista_orden : lista_orden ',' constante .  (91)
+
+	.  reduce 91
 
 
 43 terminals, 38 nonterminals
-93 grammar rules, 215 states
+94 grammar rules, 217 states

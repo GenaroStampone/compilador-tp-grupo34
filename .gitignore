@@ -7,6 +7,10 @@
 /ParserVal.java
 /Parser.output
 
+# WebAssembly generated artifacts 
+*.wat 
+*.wasm
+
 # Log file
 *.log
 

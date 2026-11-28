@@ -59,7 +59,7 @@ declaracion
     | declaracion_funcion
     | error ';'
       {
-        yyerrflag = 0;;
+        yyerrflag = 0;
         yyerror("Declaración inválida; se resincroniza en ';'.");
         $$ = new ParserVal((Object) null);
       }
@@ -179,6 +179,12 @@ cabecera_funcion
       {
         $$ = new ParserVal(abrirFuncion((String) $1.obj, (RegistroTS) $3.obj,
                 (List<ParametroFormal>) $5.obj, "nombre_funcion", "public"));
+      }
+    | type_specifier FUNCTION ID '(' error ')'
+      {
+        yyerrflag = 0;
+        yyerror("Parámetros formales inválidos en la función; se resincroniza al cerrar paréntesis.");
+        $$ = new ParserVal(abrirFuncion((String) $1.obj, (RegistroTS) $3.obj, new ArrayList<>(), "nombre_funcion", "public"));
       }
     ;
 
