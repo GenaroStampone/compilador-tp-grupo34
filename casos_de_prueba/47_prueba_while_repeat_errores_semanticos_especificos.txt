@@ -59,7 +59,7 @@ begin
     while (contador < limite) repeat
     begin
         {{Asignación a una variable no declarada dentro del cuerpo del WHILE}}
-        var_fantasma_cuerpo := 5$us;
+        variable_fantasma_cuerpo := 5$us;
 
         {{Intento de modificar una FUNCIÓN en el lado izquierdo (LHS) dentro del WHILE}}
         funcion_obtener_limite := 10$us;
@@ -68,7 +68,7 @@ begin
         estado_sistema := 1$us;
 
         {{Infracción de encapsulamiento/privacidad dentro del WHILE.}}
-        mi_cuenta[1$us] := 123$us;
+        mi_cuenta.pin_privado := 1234$us;
         contador := contador + 1$us;
     end;
     while (contador < 20$us) repeat

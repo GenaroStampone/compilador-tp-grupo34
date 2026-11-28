@@ -52,6 +52,7 @@ begin
 
     {{Incompatibilidad de tipos en '=' dentro de la condición de un IF}}
     if (val_entero_a = val_doble_b == 10$us)
+    begin
         res_entero := 1$us;
     end_if;
 

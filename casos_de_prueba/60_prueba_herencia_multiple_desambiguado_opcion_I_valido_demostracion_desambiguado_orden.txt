@@ -61,9 +61,9 @@ class derivada_sobrescribe
 begin
     ushortint id_derivada_c;
     extends base_alfa, base_beta;
-    ushortint procesar_datos(ushortint aux)
+    ushortint procesar_datos(aux)
     begin
-        ret (200$us);
+        ret (200$i);
     end;
 end;
 
@@ -89,7 +89,7 @@ begin
     res_entero := obj_a.procesar_datos(aux);
     res_entero := obj_a.obtener_id_alfa(aux);
     res_doble := obj_a.obtener_saldo_beta(aux);
-    obj_a[0$us] := 5$us;
+    obj_a[0$i] := 5$us;
     res_entero := obj_a[1$us];
     obj_b[3$us] := 20$us;
     obj_b[1$us] := 100.0d+0;

@@ -86,5 +86,5 @@ modulo_ventas v;
 modulo_compras c;
 
 begin
-    calc[0$us] := 1.05d+0;
+    calc.tasa_interes := 1.05d+0;
 end;

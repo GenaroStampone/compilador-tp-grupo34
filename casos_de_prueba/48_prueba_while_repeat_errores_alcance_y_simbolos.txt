@@ -69,7 +69,7 @@ begin
     while (contador < limite) repeat
     begin
         {{Atributo 'pin_privado' es private y 'main' no posee permisos 'friend'}}
-        res := c1[1$us];
+        res := c1.[$1us];
         {{Método 'validar_pin' es private y 'main' no posee permisos 'friend'}}
         res := c1.validar_pin(123$us);
         contador := contador + 1$us;
@@ -84,3 +84,10 @@ begin
     end;
 end;
 
+{{Declaraciones tardías para forzar los errores de visibilidad secuencial}}
+ushortint var_tardia;
+
+ushortint function funcion_tardia(ushortint n)
+begin
+    ret (n * 2$us);
+end;

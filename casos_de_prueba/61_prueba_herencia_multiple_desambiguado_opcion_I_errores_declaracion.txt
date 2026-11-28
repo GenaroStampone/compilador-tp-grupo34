@@ -33,7 +33,7 @@ end;
 class error_uso_tardio
 begin
     ushortint val;
-    extends clase_declarada_desps;
+    extends clase_declarada_despues;
 end;
 
 {{Intentar heredar de un identificador de VARIABLE (Uso='nombre_variable')}}
@@ -91,7 +91,7 @@ begin
 end;
 
 {{Declaración tardía usada para probar visibilidad secuencial}}
-class clase_declarada_desps
+class clase_declarada_despues
 begin
     ushortint id_tardio;
 end;

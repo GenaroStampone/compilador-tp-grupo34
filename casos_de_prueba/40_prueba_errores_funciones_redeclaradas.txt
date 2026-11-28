@@ -5,31 +5,31 @@ programa_incorrecto;
 
 class procesador_datos 
     begin 
-        ushortint var_a;
-    end;
+        ushortint a
+    end; 
 
-ushortint function f_global(ushortint alfa) 
+ushortint function f_global(ushortint a) 
     begin 
-        ret (alfa); 
+        ret (a); 
     end; 
 
 {{Intento de redeclarar 'f_global' en el ámbito global 'main'}}
-doublef function f_global(doublef beta) 
+doublef function f_global(doublef b) 
     begin 
-        ret (beta); 
+        ret (b); 
     end;
 
 ushortint function funcion_padre(ushortint val) 
     ushortint res; 
-    ushortint function sub_proceso(ushortint aux) 
+    ushortint function sub_proceso(ushortint x) 
         begin 
-            ret (aux * 2$us); 
+            ret (x * 2$us); 
         end; 
     
     {{Redeclaración de función anidada 'sub_proceso' dentro del ámbito 'funcion_padre'}} 
-    doublef function sub_proceso(doublef var_y) 
+    doublef function sub_proceso(doublef y) 
         begin 
-            ret (var_y); 
+            ret (y); 
         end; 
     begin 
         res := sub_proceso(val); 
@@ -40,15 +40,15 @@ ushortint function funcion_conflicto(ushortint mi_parametro)
     ushortint variable_local; 
     
     {{Intentar declarar una función anidada con el nombre del parámetro 'mi_parametro'}} 
-    ushortint function mi_parametro(ushortint var_a) 
+    ushortint function mi_parametro(ushortint a) 
         begin 
-            ret (var_a); 
+            ret (a); 
         end; 
 
     {{Intentar declarar una función anidada con el nombre de la variable 'variable_local'}} 
-    doublef function variable_local(doublef beta) 
+    doublef function variable_local(doublef b) 
         begin 
-            ret (beta); 
+            ret (b); 
         end; 
     begin 
         ret (mi_parametro); 
@@ -57,19 +57,19 @@ ushortint function funcion_conflicto(ushortint mi_parametro)
 typedef mi_enum = [1$us, 2$us]; 
 
 {{Intentar declarar una función global con el nombre del tipo 'mi_enum' ya existente en 'main'}} 
-ushortint function mi_enum(ushortint aux_c) 
+ushortint function mi_enum(ushortint c) 
     begin 
-        ret (aux_c); 
+        ret (c); 
     end; 
 
 {{Intentar declarar una función global con el nombre de la clase 'procesador_datos'}}
-doublef function procesador_datos(doublef aux_d) 
+doublef function procesador_datos(doublef d) 
     begin 
-        ret (aux_d); 
+        ret (d); 
     end;
 
-ushortint alfa;
+ushortint a;
 
 begin
-    alfa := 10$us;
+    a := 10$us;
 end;

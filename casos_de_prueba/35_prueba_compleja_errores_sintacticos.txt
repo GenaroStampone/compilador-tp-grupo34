@@ -56,7 +56,7 @@ begin
     srv.carga_trabajo := 10.0d+0;
 
     {{Uso de ':=' en lugar de '=' en asignación de parámetro}} 
-    v_int1 := funcion_revisora(v_int1 := 5$us, v_doble, v_int2) [1$us, 2$us, 3$us];
+    v_int1 := funcion_revisora(v_int1 := 5$us, v_doble, v_int2) [1$us, 2$us, 4];
 
     {{Invocación válida sin corchetes para confirmar recuperación sintáctica}} 
     v_int2 := funcion_revisora(v_int1, v_doble); 

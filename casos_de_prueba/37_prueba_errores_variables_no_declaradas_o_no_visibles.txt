@@ -39,11 +39,11 @@ cuenta_bancaria mi_cuenta;
 
 begin
     total_global := 50$us; 
-    mi_cuenta[0$us] := 1000.0d+0; 
+    mi_cuenta.saldo_publico := 1000.0d+0; 
 
     {{Intento de acceder a 'recargo' (variable local de 'procesar_pago')}} 
-    total_global := total_global + recargo;
+    total_global := total\_global + recargo;
 
     {{Variable usada antes de ser declarada en el mismo ámbito global}} 
-    total_global := var_declarada_tarde;
+    total_global := variable_declarada_tarde;
 end;

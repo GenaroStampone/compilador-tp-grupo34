@@ -1,4 +1,4 @@
-{{Caso de Prueba Nro77: Codigo incorrecto sobre overflow en suma de punto flotante}}
+{{Caso de Prueba Nro75: Codigo incorrecto sobre overflow en suma de punto flotante}}
 {{Comportamiento Esperado del Compilador: Prueba de errores sobre overflow en casos estaticos y dinamicos en tiempo de ejecucion}}
 
 programa_incorrecto;
@@ -55,7 +55,7 @@ begin
 
     {{Incremento en bucle WHILE acumulando hasta desbordar la FPU}}
     res_flotante := 1.0d+308;
-    while (res_flotante < res_flotante) repeat
+    while (res_flotante < 2.0d+308) repeat
     begin
         res_flotante := res_flotante + 0.5d+308;
     end;

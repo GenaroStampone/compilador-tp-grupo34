@@ -31,7 +31,7 @@ tipo_estado estado_actual;     {{Uso = "nombre_variable"}}
 begin
     variable_entera := 5$us;
     variable_doble := 12.5d+0;
-    objeto_cliente[0$us] := 100.0d+0;
+    objeto_cliente.saldo_atributo := 100.0d+0;
 
     {{Usar una FUNCIÓN como si fuera una VARIABLE}}
     {{Asignar un valor a una función en el lado izquierdo (LHS)}}
@@ -66,7 +66,7 @@ begin
 
     {{Conflicto de Roles en MIEMBROS DE CLASE (Atributo vs Método)}}
     {{Invocar un atributo de clase como si fuera un método}}
-    variable_doble := objeto_cliente.saldo_atributo(1$us);
+    variable_doble := objeto_cliente[0$us](1$us);
 
     {{Asignar un valor a un método de clase en el lado izquierdo}}
     objeto_cliente.obtener_saldo_metodo := 200.0d+0;

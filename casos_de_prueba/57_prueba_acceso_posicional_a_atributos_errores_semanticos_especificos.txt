@@ -22,7 +22,7 @@ doublef n_doble;
 estado_enum estado_actual;
 
 begin
-    cliente1[0$us] := 500.0d+0;
+    cliente1.saldo_publico := 500.0d+0;
     n_entero := 10$us;
     n_doble := 20.0d+0;
 
@@ -60,8 +60,8 @@ begin
     cliente1[1$us] := 123$us;
 
     {{Asignación en expresión (=) sobre atributo posicional 1 private desde 'main'}}
-    n_doble := (cliente1[1$us] = 123$us);
+    n_doble := (cliente1[1$us] = 1234$us);
 
     {{Intentar invocar un acceso posicional como si fuera un método}}
-    n_doble := cliente1.saldo_publico(5$us);
+    n_doble := cliente1[0$us](5$us);
 end;

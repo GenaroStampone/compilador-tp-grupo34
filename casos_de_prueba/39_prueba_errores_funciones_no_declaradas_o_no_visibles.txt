@@ -23,7 +23,7 @@ ushortint function proceso_b(ushortint factor)
         res := sub_proceso_a(factor); 
         
         {{Invocación a una función totalmente inexistente en el programa}} 
-        res := func_fantasma_inexist(factor); 
+        res := funcion_fantasma_inexistente(factor); 
         
         ret (res); 
     end;
@@ -31,7 +31,8 @@ ushortint function proceso_b(ushortint factor)
 ushortint codigo_global, res_main; 
 
 begin
-    codigo_global := 10$us;
+    codigo_global := 10$us; 
+    serv_main.tarifa_base := 15.0d+0; 
     
     {{Intento de invocar la función anidada 'sub_proceso_a' desde main}} 
     res_main := sub_proceso_a(codigo_global); 
