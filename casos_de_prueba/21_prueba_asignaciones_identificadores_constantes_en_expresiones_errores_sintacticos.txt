@@ -7,18 +7,18 @@ ushortint a, b = c;
 doublef x, y; 
 
 begin 
-    {Uso del operador ':= ' dentro de una expresión (se debe usar '=')}
+    {{Uso del operador ':= ' dentro de una expresión (se debe usar '=')}}
     a := b := 10$us; 
     
-    {Uso del operador ':=' dentro de la condición de un IF}
+    {{Uso del operador ':=' dentro de la condición de un IF}}
     if (a := 5$us == 5$us) 
         b := 1$us; 
     end_if; 
     
-    {Uso del operador '=' para la asignación principal de la sentencia}
+    {{Uso del operador '=' para la asignación principal de la sentencia}}
     a = b + 2$us; 
     
-    {Uso de ':=' dentro de los parámetros de una función}
+    {{Uso de ':=' dentro de los parámetros de una función}}
     pout({Prueba de error}); 
     x := y + (a := 2$us); 
 end;

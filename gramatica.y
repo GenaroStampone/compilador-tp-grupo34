@@ -59,7 +59,7 @@ declaracion
     | declaracion_funcion
     | error ';'
       {
-        yyerrflag = 0;;
+        yyerrflag = 0;
         yyerror("Declaración inválida; se resincroniza en ';'.");
         $$ = new ParserVal((Object) null);
       }
