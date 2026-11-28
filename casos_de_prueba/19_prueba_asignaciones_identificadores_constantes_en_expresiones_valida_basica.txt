@@ -26,5 +26,5 @@ begin
     END_If;
     IF (x==y=x+z)
         x := 2.0;
-    END_IF
+    END_IF;
 END;

@@ -3,15 +3,15 @@
 
 programa_correcto;
 
-USHORTINT val_minimo, val_maximo, val medio;
-doublef factor_presicion, umbral_calculo;
+USHORTINT val_minimo, val_maximo, val_medio;
+doublef factor_precision, umbral_calculo;
 
 begin
-    {Inicializacion de variables USHORTIN}
+    {{Inicializacion de variables USHORTIN}}
     val_minimo := 0$us;
     val_maximo := 255$us;
-    {Inicializa de variables DOUBLEF}
-    factor_precision := 1.7976931348623157d+308;
+    {{Inicializa de variables DOUBLEF}}
+    factor_precision := 1.7976931348623154d+308;
     umbral_calculo := .6;
     val_medio := 3$us;
     val_medio := 100$us;
