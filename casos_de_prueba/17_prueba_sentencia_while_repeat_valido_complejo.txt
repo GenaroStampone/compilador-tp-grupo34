@@ -29,12 +29,13 @@ procesador_datos proc;
 begin
     total := 0$us; 
     limite_global := 20$us; 
-    proc.factor := 2.5d+0; 
+    proc[0$us] := 2.5d+0; 
     
-    {Invocación a función y métodos dentro de la estructura general} 
+    {{Invocación a función y métodos dentro de la estructura general}}
     while (total < limite_global) repeat 
         begin 
-            total := calcular_iteraciones(total, proc.factor); 
+            total := total + calcular_iteraciones(total, proc[0$us]) + 1$us; 
             pout({Procesando en bucle complejo...}); 
+            pout(total);
         end;
 end;

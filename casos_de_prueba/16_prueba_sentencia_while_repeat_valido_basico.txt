@@ -4,22 +4,23 @@
 programa_correcto;
 
 USHORTINT contador, limite;
-doublef acumulador
+doublef acumulador;
 
 begin
     contador := 0$us;
     limite := 10$us;
     acumulador := 0.0;
 
-    {WHILE con una sola sentencia ejecutable}
+    {{WHILE con una sola sentencia ejecutable}}
     WHILE (contador < limite) REPEAT 
         contador := contador + 1$us;
 
-    {WHILE con un bloque delimitado por BEGIN ... END}
+    {{WHILE con un bloque delimitado por BEGIN ... END}}
     while (contador > 0$us) repeat 
         begin 
             acumulador := acumulador + 1.5d+0; 
             contador := contador - 1$us; 
             pout({Iteracion finalizada}); 
+            pout(acumulador);
         END;
 end;
