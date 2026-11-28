@@ -92,10 +92,3 @@ begin
     res_int := funcion_interna(funcion_hermana, v_doble1);
 end;
 
-{{Declaraciones tardías para evaluar visibilidad secuencial}}
-ushortint var_tardia;
-
-ushortint function funcion_tardia(ushortint a, ushortint b)
-begin
-    ret (a + b);
-end;

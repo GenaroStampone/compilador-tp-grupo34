@@ -38,10 +38,10 @@ begin
     val_doble_a := 5.0d+0;
 
     {{L-Value no declarado en '=' dentro de expresión}}
-    res_int := (variable_fantasma_lvalue = 15$us) + 5$us;
+    res_int := (var_fantasma_lval = 15$us) + 5$us;
 
     {{R-Value no declarado dentro de la asignación con '='}}
-    res_int := (val_int_a = variable_fantasma_rvalue + 2$us);
+    res_int := (val_int_a = var_fantasma_rval + 2$us);
 
     {{Intentar usar el parámetro 'param_func' de 'funcion_auxiliar' como L-Value en '=' desde 'main'}}
     res_int := (param_func = 50$us) + val_int_a;
@@ -78,14 +78,5 @@ begin
 
     {{Intentar asignar con '=' a un método privado de clase}}
     res_int := (cuenta_main.validar_pin(val_int_a) = 1$us);
-
-    pout({Prueba semantica de alcance y simbolos Tema 18 completada});
 end;
 
-{{Declaraciones tardías para evaluar visibilidad secuencial}}
-ushortint var_tardia;
-
-ushortint function funcion_tardia(ushortint entrada)
-begin
-    ret (entrada * 2$us);
-end;

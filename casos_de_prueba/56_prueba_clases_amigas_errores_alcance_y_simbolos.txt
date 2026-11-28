@@ -18,7 +18,7 @@ begin
     ushortint id_beta;
     private doublef secreto_beta;
 
-    doublef obtener_secreto()
+    doublef obtener_secreto(ushortint aux)
     begin
         ret (secreto_beta);
     end;
@@ -67,21 +67,21 @@ begin
     friend tipo_enum;
 
     {{Intentar declarar como friend a una variable de objeto instanciada}}
-    friend objeto_instanciado_invalido;
+    friend obj_instanciado_inval;
 end;
 
-servidor_central objeto_instanciado_invalido;
+servidor_central obj_instanciado_inval;
 
 class clase_no_transitiva
 begin
-    doublef verificar_acceso_indirecto(servidor_central s, ushortint cod)
+    doublef verif_acceso_indirecto(servidor_central s, ushortint cod)
     begin
         {{'clase_alfa' es amiga de 'clase_beta', y 'clase_beta' es amiga de 'servidor_central'.}}
         ret (s[1$us]);
     end;
 end;
 
-ushortint function funcion_amiga_padre_real(servidor_central s, ushortint p)
+ushortint function func_amiga_padre_real(servidor_central s, ushortint p)
 ushortint local_p;
 
     ushortint function sub_funcion_anidada(ushortint k)
@@ -114,7 +114,7 @@ begin
         res := s.clave_privada(10$us);
 
         {{Intentar asignar un valor a un MÉTODO privado ('validar_clave') en el lado izquierdo}}
-        s.validar_clave := 100$us;
+        s.validar_clave(1$us) := 100$us;
 
         {{Intentar usar el nombre de una CLASE como objeto receptor del miembro privado}}
         res := servidor_central[1$us];

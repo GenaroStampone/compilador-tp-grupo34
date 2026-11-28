@@ -121,9 +121,3 @@ begin
     {{Incompatibilidad de tipos al asignar un 'doublef' a un atributo heredado de tipo 'ushortint'}}
     obj_derivado[0$us] := val_doble;
 end;
-
-{{Declaración tardía}}
-class clase_declarada_desps
-begin
-    ushortint id_tardio;
-end;

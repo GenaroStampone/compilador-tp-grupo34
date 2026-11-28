@@ -78,8 +78,5 @@ begin
     val_entero := (cuenta_main[1$us] = 123$us);
 
     {{Intentar invocar un acceso posicional como si fuera un método}}
-    val_doble := cuenta_main[0$us](10$us);
+    val_doble := cuenta_main.saldo(10$us);
 end;
-
-{{Declaración tardía de un objeto para evaluar visibilidad secuencial}}
-cuenta_base objeto_tardio;

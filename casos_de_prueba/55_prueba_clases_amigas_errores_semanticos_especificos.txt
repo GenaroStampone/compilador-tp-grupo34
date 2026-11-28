@@ -4,12 +4,12 @@
 
 programa_incorrecto;
 
-ushortint function funcion_amiga_autorizada(ushortint cod)
+ushortint function func_amiga_autorizada(ushortint cod)
 begin
     ret (cod + 1$us);
 end;
 
-ushortint function funcion_comun_no_amiga(ushortint cod)
+ushortint function func_comun_no_amiga(ushortint cod)
 begin
     ret (cod);
 end;
@@ -50,13 +50,13 @@ begin
     end;
 
     friend clase_amiga_autorizada;
-    friend funcion_amiga_autorizada;
+    friend func_amiga_autorizada;
 
     {{Declarar como friend a una clase que no existe en la Tabla de Símbolos}}
-    friend clase_fantasma_inexistente;
+    friend clase_fantasma_inexist;
 
     {{Declarar como friend a una función que no existe}}
-    friend funcion_fantasma_inexistente;
+    friend func_fantasma_inexist;
 end;
 
 class procesador_autorizado
@@ -70,35 +70,35 @@ end;
 
 class auditor_no_autorizado
 begin
-    doublef auditar(cuenta_bancaria c, ushortint p)
+    doublef auditar(cuenta_bancaria aux_c, ushortint aux_p)
     doublef temp;
     begin
         {{Acceso a atributo privado ('pin_privado') desde clase NO amiga}}
-        temp := c[1$us];
+        temp := aux_c[1$us];
 
         {{Modificación de atributo privado ('tasa_bonificacion') desde clase NO amiga}}
-        c[2$us] := 1.5d+0;
+        aux_c[2$us] := 1.5d+0;
 
         {{Invocación a método privado ('validar_pin_interno') desde clase NO amiga}}
-        if (c.validar_pin_interno(p) == 1$us)
-            ret (c[0$us]);
+        if (aux_c.validar_pin_interno(p) == 1$us)
+            ret (aux_c[0$us]);
         else
             ret (0.0d+0);
         end_if;
 
         {{Acceso posicional a atributo privado sin permisos friend}}
-        temp := c[1$us];
+        temp := aux_c[1$us];
     end;
 end;
 
-ushortint function auditoria_global_no_amiga(cuenta_bancaria c, ushortint p)
+ushortint function audi_global_no_amiga(cuenta_bancaria aux_c, ushortint aux_p)
 ushortint res;
 begin
     {{Acceso a atributo privado desde función global NO amiga}}
-    res := c[1$us];
+    res := aux_c[1$us];
 
     {{Invocación a método privado desde función global NO amiga}}
-    res := c.validar_pin_interno(p);
+    res := aux_c.validar_pin_interno(aux_p);
 
     ret (res);
 end;
@@ -108,7 +108,7 @@ ushortint res_entero;
 doublef res_doble;
 
 begin
-    mi_cuenta.saldo_publico := 100.0d+0;
+    mi_cuenta[0$us] := 100.0d+0;
 
     {{Lectura directa de atributo privado ('pin_privado') desde 'main'}}
     res_entero := mi_cuenta[1$us];
@@ -127,7 +127,6 @@ begin
 
     {{Uso de miembro privado en la condición de un IF desde 'main'}}
     if (mi_cuenta[1$us] == 123$us)
-    begin
         res_entero := 1$us;
     end_if;
 

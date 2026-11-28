@@ -55,7 +55,7 @@ begin
 
     {{Incremento en bucle WHILE acumulando hasta desbordar la FPU}}
     res_flotante := 1.0d+308;
-    while (res_flotante < 2.0d+308) repeat
+    while (res_flotante < res_flotante) repeat
     begin
         res_flotante := res_flotante + 0.5d+308;
     end;

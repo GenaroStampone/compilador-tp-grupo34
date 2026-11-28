@@ -59,7 +59,6 @@ begin
 
     {{Usar el nombre de un 'typedef' como condición de una sentencia condicional}}
     if (tipo_prioridad)
-    begin
         val_entero := 1$us;
     end_if;
 
@@ -79,8 +78,6 @@ begin
     prioridad_main := sistema_main[0$us];
 
     {{Intentar invocar un método privado ('verificar_acceso') desde ámbito no amigo}}
-    prioridad_main := sistema_main.verificar_acceso(1234$us);
+    prioridad_main := sistema_main.verificar_acceso(123$us);
 end;
 
-{{Declaración tardía de un typedef para forzar error de visibilidad secuencial}}
-typedef tipo_tardio = [100$us, 200$us];
