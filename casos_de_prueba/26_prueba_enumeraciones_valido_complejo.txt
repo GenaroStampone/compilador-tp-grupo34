@@ -4,16 +4,16 @@
 programa_correcto;
 
 typedef niveles_prioridad = [1$us, 2$us, 3$us, 4$us];
-typedef puntuacion = [5.0, 10.0];
+typedef puntuacion = [5.0, 10.0]
 
 class gestor_tareas 
     begin 
         doublef calcular_costo (doublef base, ushortint multiplicador) 
             begin 
                 if (multiplicador > 1$us)  
-                    ret(base * 2.0d+0); 
+                    ret (base \* 2.0d+0); 
                 else 
-                    ret(base); 
+                    ret (base); 
                 end_if; 
             end; 
     end;
